@@ -1,0 +1,1 @@
+Use: mpirun -np <number_procs> ./<file_path>
