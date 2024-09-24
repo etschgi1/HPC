@@ -7,8 +7,6 @@
 #SBATCH --partition=compute
 #SBATCH --mem-per-cpu=1G
 #SBATCH --account=Education-EEMCS-Courses-WI4049TU
-#SBATCH --reservation=wi4049tu
-#SBATCH --qos=reservation
 
 module load 2023r1
 module load openmpi

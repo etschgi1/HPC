@@ -1,0 +1,7 @@
+Hello, World!
+The following nodes are reporting for duty:
+cmp183
+cmp183
+cmp183
+cmp183
+Have a great day!

@@ -7,8 +7,6 @@
 #SBATCH --partition=compute
 #SBATCH --mem=1G
 #SBATCH --account=Education-EEMCS-Courses-WI4049TU
-#SBATCH --reservation=wi4049tu
-#SBATCH --qos=reservation
 
 echo "Hello, World!" >> helloworld.txt
 echo "The following nodes are reporting for duty:" >> helloworld.txt

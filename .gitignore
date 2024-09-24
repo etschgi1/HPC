@@ -1,0 +1,26 @@
+# Ignore object files and binaries
+*.o
+*.out
+*.exe
+*.mpi
+
+# Ignore any core dumps or crash logs
+core
+*.core
+
+# Ignore generated files from MPI
+*.log
+*.trace
+
+# Ignore executable files
+/program_name
+
+# Ignore build directories
+/build/
+/bin/
+/obj/
+
+# Ignore temporary files
+*.tmp
+*.swp
+*~
