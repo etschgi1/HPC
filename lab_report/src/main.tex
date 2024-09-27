@@ -28,6 +28,23 @@
 \usepackage{xcolor}
 \definecolor{darkgreen}{rgb}{0.0, 0.4, 0.0}
 
+\lstdefinestyle{CStyle}{
+    language=C,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red},
+    tabsize=4,
+    showspaces=false,
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    captionpos=b
+}
+
 %%% Stuff for code
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -84,5 +101,5 @@ Elias Wachmann (6300421) \\[1.5cm]
 \end{titlepage}
 
 TEST
-
+\input{input/intro.tex}
 \end{document}

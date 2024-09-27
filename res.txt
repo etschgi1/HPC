@@ -1,0 +1,12 @@
+# load mpi on delftblue
+module load 2024r1 openmpi 
+
+# compile
+mpicc <prog.c> -o <name_of_prog>
+
+# Execute
+srun --ntasks P --cpus-per-task=<#> --mem-per-cpu=<#>GB --account=Education-EEMCS-Courses-WI4049TU <name_of_prog>
+# or another way: 
+srun -n <#> -c <#> --mem-per-cpu=<#>GB myprog
+
+# Queue
