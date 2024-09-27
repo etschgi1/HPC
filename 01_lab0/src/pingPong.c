@@ -5,6 +5,7 @@
 // Maximum array size 2^20= 1048576 elements
 #define MAX_EXPONENT 20
 #define MAX_ARRAY_SIZE (1<<MAX_EXPONENT)
+#define SAMPLE_COUNT 1000
 
 int main(int argc, char **argv)
 {
@@ -54,7 +55,7 @@ int main(int argc, char **argv)
             // TODO: Measure the time spent in MPI communication
             //       (use the variables startTime and endTime)
             startTime = MPI_Wtime();
-            for (i=0; i<5; i++) 
+            for (i=0; i<SAMPLE_COUNT; i++) 
             {
                 MPI_Send(myArray, number_of_elements_to_send, MPI_INT, 1, 0,
                     MPI_COMM_WORLD);
@@ -72,7 +73,7 @@ int main(int argc, char **argv)
             //     myRank, number_of_elements_received);
 
             // average communication time of 1 send-receive (total 5*2 times)
-            printf("Rank %2.1i: Received %i elements: Ping Pong took %f seconds\n", myRank, number_of_elements_received,(endTime - startTime)/10);
+            printf("Rank %2.1i: Received %i elements: Ping Pong took %f seconds\n", myRank, number_of_elements_received,(endTime - startTime)/(2*SAMPLE_COUNT));
         }
         else if (myRank == 1)
         {
@@ -80,7 +81,7 @@ int main(int argc, char **argv)
             MPI_Probe(MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
             MPI_Get_count(&status, MPI_INT, &number_of_elements_received);
     
-            for (i=0; i<5; i++)
+            for (i=0; i<SAMPLE_COUNT; i++)
             {
                 MPI_Recv(myArray, number_of_elements_received, MPI_INT, 0, 0,
                 MPI_COMM_WORLD, MPI_STATUS_IGNORE);
@@ -95,7 +96,7 @@ int main(int argc, char **argv)
                 MPI_Send(myArray, number_of_elements_to_send, MPI_INT, 0, 0,
                 MPI_COMM_WORLD);
             } // end of for-loop
-            printf("Rank %2.1i: Received %i elements: Ping Pong took %f seconds\n",myRank, number_of_elements_received, (endTime - startTime)/10);
+            // printf("Rank %2.1i: Received %i elements: Ping Pong took %f seconds\n",myRank, number_of_elements_received, (endTime - startTime)/10);
 
         }
     }
