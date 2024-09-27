@@ -1,0 +1,273 @@
+Rank  1: Received 1 elements
+Rank  1: Sending back 1 elements
+Rank  1: Received 1 elements
+Rank  1: Sending back 1 elements
+Rank  1: Received 1 elements
+Rank  1: Sending back 1 elements
+Rank  1: Received 1 elements
+Rank  1: Sending back 1 elements
+Rank  1: Received 1 elements
+Rank  1: Sending back 1 elements
+Rank  1: Received 2 elements
+Rank  1: Sending back 2 elements
+Rank  1: Received 2 elements
+Rank  1: Sending back 2 elements
+Rank  1: Received 2 elements
+Rank  1: Sending back 2 elements
+Rank  1: Received 2 elements
+Rank  1: Sending back 2 elements
+Rank  1: Received 2 elements
+Rank  1: Sending back 2 elements
+Rank  1: Received 4 elements
+Rank  1: Sending back 4 elements
+Rank  1: Received 4 elements
+Rank  1: Sending back 4 elements
+Rank  1: Received 4 elements
+Rank  1: Sending back 4 elements
+Rank  1: Received 4 elements
+Rank  1: Sending back 4 elements
+Rank  1: Received 4 elements
+Rank  1: Sending back 4 elements
+Rank  1: Received 8 elements
+Rank  1: Sending back 8 elements
+Rank  1: Received 8 elements
+Rank  1: Sending back 8 elements
+Rank  1: Received 8 elements
+Rank  1: Sending back 8 elements
+Rank  1: Received 8 elements
+Rank  1: Sending back 8 elements
+Rank  1: Received 8 elements
+Rank  1: Sending back 8 elements
+Rank  1: Received 16 elements
+Rank  1: Sending back 16 elements
+Rank  1: Received 16 elements
+Rank  1: Sending back 16 elements
+Rank  1: Received 16 elements
+Rank  1: Sending back 16 elements
+Rank  1: Received 16 elements
+Rank  1: Sending back 16 elements
+Rank  1: Received 16 elements
+Rank  1: Sending back 16 elements
+Rank  1: Received 32 elements
+Rank  1: Sending back 32 elements
+Rank  1: Received 32 elements
+Rank  1: Sending back 32 elements
+Rank  1: Received 32 elements
+Rank  1: Sending back 32 elements
+Rank  1: Received 32 elements
+Rank  1: Sending back 32 elements
+Rank  1: Received 32 elements
+Rank  1: Sending back 32 elements
+Rank  1: Received 64 elements
+Rank  1: Sending back 64 elements
+Rank  1: Received 64 elements
+Rank  1: Sending back 64 elements
+Rank  1: Received 64 elements
+Rank  1: Sending back 64 elements
+Rank  1: Received 64 elements
+Rank  1: Sending back 64 elements
+Rank  1: Received 64 elements
+Rank  1: Sending back 64 elements
+Rank  1: Received 128 elements
+Rank  1: Sending back 128 elements
+Rank  1: Received 128 elements
+Rank  1: Sending back 128 elements
+Rank  1: Received 128 elements
+Rank  1: Sending back 128 elements
+Rank  1: Received 128 elements
+Rank  1: Sending back 128 elements
+Rank  1: Received 128 elements
+Rank  1: Sending back 128 elements
+Rank  1: Received 256 elements
+Rank  1: Sending back 256 elements
+Rank  1: Received 256 elements
+Rank  1: Sending back 256 elements
+Rank  1: Received 256 elements
+Rank  1: Sending back 256 elements
+Rank  1: Received 256 elements
+Rank  1: Sending back 256 elements
+Rank  1: Received 256 elements
+Rank  1: Sending back 256 elements
+Rank  1: Received 512 elements
+Rank  1: Sending back 512 elements
+Rank  1: Received 512 elements
+Rank  1: Sending back 512 elements
+Rank  1: Received 512 elements
+Rank  1: Sending back 512 elements
+Rank  1: Received 512 elements
+Rank  1: Sending back 512 elements
+Rank  1: Received 512 elements
+Rank  1: Sending back 512 elements
+Rank  1: Received 1024 elements
+Rank  1: Sending back 1024 elements
+Rank  1: Received 1024 elements
+Rank  1: Sending back 1024 elements
+Rank  1: Received 1024 elements
+Rank  1: Sending back 1024 elements
+Rank  1: Received 1024 elements
+Rank  1: Sending back 1024 elements
+Rank  1: Received 1024 elements
+Rank  1: Sending back 1024 elements
+Rank  1: Received 2048 elements
+Rank  1: Sending back 2048 elements
+Rank  1: Received 2048 elements
+Rank  1: Sending back 2048 elements
+Rank  1: Received 2048 elements
+Rank  1: Sending back 2048 elements
+Rank  1: Received 2048 elements
+Rank  1: Sending back 2048 elements
+Rank  1: Received 2048 elements
+Rank  1: Sending back 2048 elements
+Rank  1: Received 4096 elements
+Rank  1: Sending back 4096 elements
+Rank  1: Received 4096 elements
+Rank  1: Sending back 4096 elements
+Rank  1: Received 4096 elements
+Rank  1: Sending back 4096 elements
+Current array size 1Rank  0: Sending 1 elements
+Rank  0: Received 1 elements
+Ping Pong took 0.001048 seconds
+Current array size 2Rank  0: Sending 2 elements
+Rank  0: Received 2 elements
+Ping Pong took 0.000001 seconds
+Current array size 4Rank  0: Sending 4 elements
+Rank  0: Received 4 elements
+Ping Pong took 0.000001 seconds
+Current array size 8Rank  0: Sending 8 elements
+Rank  0: Received 8 elements
+Ping Pong took 0.000001 seconds
+Current array size 16Rank  0: Sending 16 elements
+Rank  0: Received 16 elements
+Ping Pong took 0.000015 seconds
+Current array size 32Rank  0: Sending 32 elements
+Rank  0: Received 32 elements
+Ping Pong took 0.000005 seconds
+Current array size 64Rank  0: Sending 64 elements
+Rank  0: Received 64 elements
+Ping Pong took 0.000003 seconds
+Current array size 128Rank  0: Sending 128 elements
+Rank  0: Received 128 elements
+Ping Pong took 0.000002 seconds
+Current array size 256Rank  0: Sending 256 elements
+Rank  0: Received 256 elements
+Ping Pong took 0.000006 seconds
+Current array size 512Rank  0: Sending 512 elements
+Rank  0: Received 512 elements
+Ping Pong took 0.000008 seconds
+Current array size 1024Rank  0: Sending 1024 elements
+Rank  0: Received 1024 elements
+Ping Pong took 0.000008 seconds
+Current array size 2048Rank  0: Sending 2048 elements
+Rank  0: Received 2048 elements
+Ping Pong took 0.000010 seconds
+Current array size 4096Rank  0: Sending 4096 elements
+Rank  0: Received 4096 elements
+Ping Pong took 0.000032 seconds
+Current array size 8192Rank  0: Sending 8192 elements
+Rank  0: Received 8192 elements
+Ping Pong took 0.000027 seconds
+Current array size 16384Rank  0: Sending 16384 elements
+Rank  0: Received 16384 elements
+Ping Pong took 0.000049 seconds
+Current array size 32768Rank  0: Sending 32768 elements
+Rank  0: Received 32768 elements
+Ping Pong took 0.000093 seconds
+Current array size 65536Rank  0: Sending 65536 elements
+Rank  0: Received 65536 elements
+Ping Pong took 0.000115 seconds
+Current array size 131072Rank  0: Sending 131072 elements
+Rank  0: Received 131072 elements
+Ping Pong took 0.000167 seconds
+Current array size 262144Rank  0: Sending 262144 elements
+Rank  0: Received 262144 elements
+Ping Pong took 0.000313 seconds
+Current array size 524288Rank  0: Sending 524288 elements
+Rank  0: Received 524288 elements
+Ping Pong took 0.000595 seconds
+Current array size 1048576Rank  0: Sending 1048576 elements
+Rank  0: Received 1048576 elements
+Ping Pong took 0.001120 seconds
+Rank  1: Received 4096 elements
+Rank  1: Sending back 4096 elements
+Rank  1: Received 4096 elements
+Rank  1: Sending back 4096 elements
+Rank  1: Received 8192 elements
+Rank  1: Sending back 8192 elements
+Rank  1: Received 8192 elements
+Rank  1: Sending back 8192 elements
+Rank  1: Received 8192 elements
+Rank  1: Sending back 8192 elements
+Rank  1: Received 8192 elements
+Rank  1: Sending back 8192 elements
+Rank  1: Received 8192 elements
+Rank  1: Sending back 8192 elements
+Rank  1: Received 16384 elements
+Rank  1: Sending back 16384 elements
+Rank  1: Received 16384 elements
+Rank  1: Sending back 16384 elements
+Rank  1: Received 16384 elements
+Rank  1: Sending back 16384 elements
+Rank  1: Received 16384 elements
+Rank  1: Sending back 16384 elements
+Rank  1: Received 16384 elements
+Rank  1: Sending back 16384 elements
+Rank  1: Received 32768 elements
+Rank  1: Sending back 32768 elements
+Rank  1: Received 32768 elements
+Rank  1: Sending back 32768 elements
+Rank  1: Received 32768 elements
+Rank  1: Sending back 32768 elements
+Rank  1: Received 32768 elements
+Rank  1: Sending back 32768 elements
+Rank  1: Received 32768 elements
+Rank  1: Sending back 32768 elements
+Rank  1: Received 65536 elements
+Rank  1: Sending back 65536 elements
+Rank  1: Received 65536 elements
+Rank  1: Sending back 65536 elements
+Rank  1: Received 65536 elements
+Rank  1: Sending back 65536 elements
+Rank  1: Received 65536 elements
+Rank  1: Sending back 65536 elements
+Rank  1: Received 65536 elements
+Rank  1: Sending back 65536 elements
+Rank  1: Received 131072 elements
+Rank  1: Sending back 131072 elements
+Rank  1: Received 131072 elements
+Rank  1: Sending back 131072 elements
+Rank  1: Received 131072 elements
+Rank  1: Sending back 131072 elements
+Rank  1: Received 131072 elements
+Rank  1: Sending back 131072 elements
+Rank  1: Received 131072 elements
+Rank  1: Sending back 131072 elements
+Rank  1: Received 262144 elements
+Rank  1: Sending back 262144 elements
+Rank  1: Received 262144 elements
+Rank  1: Sending back 262144 elements
+Rank  1: Received 262144 elements
+Rank  1: Sending back 262144 elements
+Rank  1: Received 262144 elements
+Rank  1: Sending back 262144 elements
+Rank  1: Received 262144 elements
+Rank  1: Sending back 262144 elements
+Rank  1: Received 524288 elements
+Rank  1: Sending back 524288 elements
+Rank  1: Received 524288 elements
+Rank  1: Sending back 524288 elements
+Rank  1: Received 524288 elements
+Rank  1: Sending back 524288 elements
+Rank  1: Received 524288 elements
+Rank  1: Sending back 524288 elements
+Rank  1: Received 524288 elements
+Rank  1: Sending back 524288 elements
+Rank  1: Received 1048576 elements
+Rank  1: Sending back 1048576 elements
+Rank  1: Received 1048576 elements
+Rank  1: Sending back 1048576 elements
+Rank  1: Received 1048576 elements
+Rank  1: Sending back 1048576 elements
+Rank  1: Received 1048576 elements
+Rank  1: Sending back 1048576 elements
+Rank  1: Received 1048576 elements
+Rank  1: Sending back 1048576 elements
