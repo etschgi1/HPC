@@ -40,9 +40,9 @@ int main(int argc, char **argv)
     double startTime, endTime;
 
     // TODO: Use a loop to vary the message size
-    for (size_t i = 0; i <= MAX_EXPONENT; i++)
+    for (size_t j = 0; j <= MAX_EXPONENT; j++)
     {
-        number_of_elements_to_send = 1<<i;
+        number_of_elements_to_send = 1<<j;
         if (myRank == 0)
         {
             printf("Current array size %d", number_of_elements_to_send);
