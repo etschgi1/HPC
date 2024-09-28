@@ -1,7 +1,8 @@
 # Fdb version 4
-["pdflatex"] 1727465442 "c:/REPOS/HPC/HPC/lab_report/src/main.tex" "main.pdf" "main" 1727465443 0
+["pdflatex"] 1727514916 "c:/REPOS/HPC/HPC/lab_report/src/main.tex" "main.pdf" "main" 1727514918 0
   "../fig/TU_delft_logo.jpg" 1727457380 223574 0e88875469a96842b9de20ff3fb2e2e9 ""
-  "../fig/lab0/pingPong.png" 1727465108 60729 35cbbb435e766cc5a66134bf4509b6a2 ""
+  "../fig/lab0/pingPong.png" 1727514208 60729 35cbbb435e766cc5a66134bf4509b6a2 ""
+  "../fig/lab0/pingPongSR.png" 1727514210 53823 c2d0a87fc3948095a23ca49f93cb4450 ""
   "c:/REPOS/HPC/HPC/lab_report/src/main.tex" 1727463493 2842 933c9e06d09f37d300ca6a419301e28e ""
   "c:/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1658947957 2971 def0b6c1f0b107b3b936def894055589 ""
   "c:/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1658947957 2900 1537cc8184ad1792082cd229ecc269f4 ""
@@ -203,11 +204,12 @@
   "c:/texlive/2022/texmf-var/web2c/pdftex/pdflatex.fmt" 1677533211 7879864 d704638d4a1b9836d1e5742e18700f21 ""
   "c:/texlive/2022/texmf.cnf" 1658956557 713 e69b156964470283e0530f5060668171 ""
   "input/code/00/helloworld1.c" 1727457380 285 1627be9f269e80627d61b68f51937a55 ""
-  "input/code/00/pingPong.c" 1727457380 3730 34396de6e5e1fe625b1432d23633c61e ""
-  "input/code_intro.tex" 1727465027 187 96a5bb15a28f75cb5c3b34dce827ca95 ""
-  "input/intro.tex" 1727465441 3108 f49e76dbc9b68a152ad2464e739eae85 ""
-  "main.aux" 1727465443 2499 9520dc82df0c9696e329ce83b375cc76 "pdflatex"
-  "main.out" 1727465443 487 450962ba17fa1e2c784398449beb32d5 "pdflatex"
+  "input/code/00/pingPong.c" 1727514610 2745 ec3760dfd6dc1781bb8c6d768d7ad896 ""
+  "input/code/00/pingPongBonus.c" 1727514618 2145 8ea4e0f7dc4d48cc915bb6c1389654a5 ""
+  "input/code_intro.tex" 1727514574 296 894512a6a8e5a3cc12eb19695583dbb7 ""
+  "input/intro.tex" 1727514915 4867 7fd13e2d36a707beef0f8814b594206d ""
+  "main.aux" 1727514917 3698 69f220469ca50b88cdfc160d73f7094a "pdflatex"
+  "main.out" 1727514917 487 450962ba17fa1e2c784398449beb32d5 "pdflatex"
   "main.tex" 1727463493 2842 933c9e06d09f37d300ca6a419301e28e ""
   (generated)
   "main.aux"

@@ -55,7 +55,34 @@ For our runs we get the following fits and R² values:
 Further analysis needed? 
 
 \subsubsection*{Extra: Ping Pong with MPI\_SendRecv}
+We do the same analysis for the changed program utilizing \texttt{MPI\_SendRecv}. The code can be found in the appendix for this section. \\
+We get the following graph from the measurements which were performed in the same way as for the previous program:
+% add figure
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../fig/lab0/pingPongSR.png}
+    \caption{Ping Pong with MPI\_SendRecv: Number of bytes sent vs. average time taken from 1000 pairs of send / receive. 5 runs shown for each size as scatter plot. Mean of these 5 runs shown as line. Blue small fit includes all data points up to 32768 bytes, blue large from there. Red small fit includes all data points up to 32768 bytes, red large from there.}
+    \label{fig:pingpongSendRecv}
+\end{figure}
+
+We get the following fits and R² values for the runs:
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+        \hline
+        \textbf{Run Type}   & \textbf{Data Size} & \textbf{Fit Equation}                                      & \textbf{R² Value} \\ \hline
+        \textbf{Single Node} & Small (<=32768)  & $3.51 \times 10^{-7} \cdot x + 1.19 \times 10^{-3}$        & 0.98              \\ \hline
+        \textbf{Single Node} & Large (>=32768)  & $1.69 \times 10^{-7} \cdot x + 4.00 \times 10^{-3}$        & 1.00              \\ \hline
+        \textbf{Two Node}    & Small (<=32768)  & $6.65 \times 10^{-7} \cdot x + 9.47 \times 10^{-4}$        & 0.98              \\ \hline
+        \textbf{Two Node}    & Large (>=32768)  & $1.66 \times 10^{-7} \cdot x + 4.93 \times 10^{-3}$        & 1.00              \\ \hline
+    \end{tabular}
+    \caption{Fit Equations and R² Values for Single Node and Two Node Runs}
+\end{table}
+
 \textbf{TODO: }
+Further analysis - less variance etc
+
+
 
 \subsection{MM-product}
 

@@ -23,7 +23,7 @@ def getdata(filename, base_dir= "01_lab0/res/"):
 # get all 5 samples
 samples = [getdata(f'pingPong{i}.txt') for i in range(1, 6)]
 samples_n2 = [getdata(f'pingPong{i}_2_nodes.txt') for i in range(1, 6)]
-def plot(samples, samples_n2, fit_samples, fit_samples_n2):
+def plot(samples, samples_n2, fit_samples, fit_samples_n2, filename='pingPong.png'):
     num_elements = samples[0][0]
     time = np.mean([s[1] for s in samples], axis=0)
     time_n2 = np.mean([s[1] for s in samples_n2], axis=0)
@@ -54,7 +54,7 @@ def plot(samples, samples_n2, fit_samples, fit_samples_n2):
     # plt.xscale('log')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('lab_report/fig/lab0/pingPong.png')
+    plt.savefig(f'lab_report/fig/lab0/{filename}')
     # plt.show()
 
 
@@ -104,3 +104,9 @@ fit_samples_n2 = analyze(samples_n2, 33000)
 
 plot(samples, samples_n2, fit_samples, fit_samples_n2) 
 
+# other bonus stuff
+samples_bonus = [getdata(f'pingPongSR{i}.txt') for i in range(1, 6)]
+samples_bonus_n2 = [getdata(f'pingPongSR{i}_2_nodes.txt') for i in range(1, 6)]
+fit_samples_bonus = analyze(samples_bonus, 33000)
+fit_samples_bonus_n2 = analyze(samples_bonus_n2, 33000)
+plot(samples_bonus, samples_bonus_n2, fit_samples_bonus, fit_samples_bonus_n2, filename='pingPongSR.png')
