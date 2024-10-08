@@ -95,6 +95,7 @@ int main(int argc, char *argv[]) {
 
     double *res = malloc(sizeof(double) * NRA * NCB);
     productSequential(res);
+    free(res);
 
     return 0;
 }
