@@ -11,19 +11,19 @@
  ******************************************************************************/
 
 #include <math.h>
+#include <mpi.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define NRA 1000 /* number of rows in matrix A */
 #define NCA 1000 /* number of columns in matrix A */
 #define NCB 1000 /* number of columns in matrix B */
-#define N 1000
+// #define N 1000
 #define EPS 1e-9
 
-bool eps_equal(double a, double b) {
-    return fabs(a - b) < EPS;
-}
+bool eps_equal(double a, double b) { return fabs(a - b) < EPS; }
 
 int checkResult(double *truth, double *test, size_t Nr_col, size_t Nr_rows) {
     for (size_t i = 0; i < Nr_rows; ++i) {
@@ -38,9 +38,11 @@ int checkResult(double *truth, double *test, size_t Nr_col, size_t Nr_rows) {
 }
 
 int productSequential(double *res) {
-    double a[NRA][NCA], /* matrix A to be multiplied */
-        b[NCA][NCB],    /* matrix B to be multiplied */
-        c[NRA][NCB];    /* result matrix C */
+    // dynamically allocate to not run into stack overflow - usually stacks are
+    // 8192 bytes big -> 1024 doubles but we have 1 Mio. per matrix
+    double(*a)[NCA] = malloc(sizeof(double) * NRA * NCA);
+    double(*b)[NCB] = malloc(sizeof(double) * NCA * NCB);
+    double(*c)[NCB] = malloc(sizeof(double) * NRA * NCB);
 
     /*** Initialize matrices ***/
 
@@ -61,6 +63,10 @@ int productSequential(double *res) {
             c[i][j] = 0;
         }
     }
+    /* Parallelize the computation of the following matrix-matrix
+   multiplication. How to partition and distribute the initial matrices, the
+   work, and collecting final results.
+*/
     // multiply
     for (size_t i = 0; i < NRA; i++) {
         for (size_t j = 0; j < NCB; j++) {
@@ -70,22 +76,20 @@ int productSequential(double *res) {
         }
     }
 
-    /* Parallelize the computation of the following matrix-matrix multiplication.
-   How to partition and distribute the initial matrices, the work, and
-   collecting final results.
-*/
+    /*  perform time measurement. Always check the correctness of the parallel
+       results by printing a few values of c[i][j] and compare with the
+       sequential output.
+    */
 
-    // write to res
+    // write to res - no time measured here!
     for (size_t i = 0; i < NRA; i++) {
         for (size_t j = 0; j < NCB; j++) {
             res[i * NCB + j] = c[i][j];
         }
     }
-
-    /*  perform time measurement. Always check the correctness of the parallel
-       results by printing a few values of c[i][j] and compare with the sequential
-       output.
-    */
+    free(a);
+    free(b);
+    free(c);
     return 0;
 }
 
@@ -93,9 +97,36 @@ int main(int argc, char *argv[]) {
     int tid, nthreads, i, j, k;
     /* for simplicity, set NRA=NCA=NCB=N  */
 
-    double *res = malloc(sizeof(double) * NRA * NCB);
-    productSequential(res);
-    free(res);
+    if (argc > 1 && strcmp(argv[1], "parallel") == 0) {
+        // Variables for the process rank and number of processes
+        int myRank, numProcs, i;
+        MPI_Status status;
+
+        // Initialize MPI, find out MPI communicator size and process rank
+        MPI_Init(&argc, &argv);
+        MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
+        MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+
+        if (myRank == 0) {
+            printf("Run parallel!\n");
+            printf("Hello from master!\n");
+        } else {
+            printf("Worker bee %d...\n", myRank);
+        }
+
+        MPI_Finalize();
+    } else  // run sequantial
+    {
+        printf("Run sequantial!\n");
+        double *res = malloc(sizeof(double) * NRA * NCB);
+        productSequential(res);
+        if (checkResult(res, res, NCB, NRA)) {
+            printf("Matrices do not match!!!\n");
+            return 1;
+        }
+        printf("Matrices match!\n");
+        free(res);
+    }
 
     return 0;
 }
