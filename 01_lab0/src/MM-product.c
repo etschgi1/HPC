@@ -51,12 +51,32 @@ char* getbuffer(MM_input *in, size_t size_of_buffer){
         printf("Buffer couldn't be allocated.");
         return NULL;
     }
-
-    memcpy(buffer, &in->rows, sizeof(size_t));
-    memcpy(buffer + sizeof(size_t), &in->cols, sizeof(size_t));
-    memcpy(buffer + 2*sizeof(size_t), in->a, in->rows*in->cols*sizeof(double));
-    memcpy(buffer + 2*sizeof(size_t) + in->rows*in->cols*sizeof(double), in->b, in->rows*in->cols*sizeof(double));
+    size_t offset = 0;
+    memcpy(buffer + offset, &in->rows, sizeof(size_t));
+    offset += sizeof(size_t);
+    memcpy(buffer + offset, &in->cols, sizeof(size_t));
+    offset += sizeof(size_t);
+    size_t matrix_size = in->rows * in->cols * sizeof(double);
+    memcpy(buffer + offset, in->a, matrix_size);
+    offset += matrix_size;
+    memcpy(buffer + offset, in->b, matrix_size);
     return buffer;
+}
+
+MM_input* readbuffer(char* buffer, size_t size_of_buffer){
+    MM_input *mm = (MM_input*)malloc(sizeof(MM_input));
+
+    mm->rows = ((size_t*)buffer)[0];
+    mm->cols = ((size_t*)buffer)[1];
+    size_t offset = 2*sizeof(size_t);
+    size_t matrix_size =  mm->rows * mm->cols;
+    mm->a = (double*)malloc(sizeof(double)*matrix_size);
+    mm->b = (double*)malloc(sizeof(double)*matrix_size);
+    memcpy(a, &(buffer[offset]), matrix_size);
+    offset += matrix_size;
+    memcpy(b, &(buffer[offset]), matrix_size);
+    free(buffer);
+    return mm;
 }
 
 
@@ -122,10 +142,11 @@ double productSequential(double *res) {
 }
 
 double splitwork(double* res, size_t num_workers){
-    if (num_workers == 0) // sadly noone will help me :((
-    {
-        return productSequential(res);
-    }
+    // if (num_workers == 0) // sadly noone will help me :((
+    // {
+    //     printf("Run sequential!");
+    //     return productSequential(res);
+    // }
     
     double(*a)[NCA] = malloc(sizeof(double) * NRA * NCA);
     double(*b)[NCB] = malloc(sizeof(double) * NCA * NCB);
@@ -154,11 +175,11 @@ double splitwork(double* res, size_t num_workers){
     data_first->cols = row_end_first;
     data_first->a = (double*)a; //they both start of with no offset!
     data_first->b = (double*)b_transposed;
-    size_t total_size = 2*sizeof(size_t) + 2*(data_first->rows * data_first->cols);
+    size_t total_size = 2*sizeof(size_t) + 2*(data_first->rows * data_first->cols)*sizeof(double);
     char* buffer = getbuffer(data_first, total_size);    //first one
     // Tag is just nr-cpu -1
-    // MPI_Isend(buffer, total_size, MPI_CHAR, 1, 0,MPI_COMM_WORLD, requests[0]);
-    total_size = 2*sizeof(size_t) + 2*(rows_per_worker * rows_per_worker); //size is the same for all other - just compute once!
+    MPI_Isend(buffer, total_size, MPI_CHAR, 1, 0,MPI_COMM_WORLD, requests[0]);
+    total_size = 2*sizeof(size_t) + 2*(rows_per_worker * rows_per_worker)*sizeof(double); //size is the same for all other - just compute once!
     size_t i;
     for (i = 0; i < (num_workers-1); ++i)
     {
@@ -168,10 +189,10 @@ double splitwork(double* res, size_t num_workers){
         data->a = (double*)(a + (row_end_first + rows_per_worker*i));
         data->b = (double*)(b_transposed+(row_end_first + rows_per_worker*i));
         buffer = getbuffer(data, total_size);
-        printf("nr_worker - %zu", i);
-        // MPI_Isend(buffer, total_size, MPI_CHAR, i+2, i+1,MPI_COMM_WORLD, requests[i+1]);
+        printf("nr_worker - %zu\n", i);
+        MPI_Isend(buffer, total_size, MPI_CHAR, i+2, i+1,MPI_COMM_WORLD, requests[i+1]);
     }
-    printf("me %zu", i);
+    printf("me %zu\n", i);
     //rest belongs to me!
 
     //TODO multiply and add rest!
@@ -183,8 +204,16 @@ double splitwork(double* res, size_t num_workers){
     return 0;
 }
 
-int work(int rank){
-    return 0;
+int work(int rank, size_t num_workers){
+    size_t rows_per_worker = NRA / (num_workers+1);
+    char* buffer;
+    if (rank == 1) // first always get's most work
+    {
+        size_t row_end_first = NRA - rows_per_worker*num_workers; 
+        buffer = (char*)malloc(sizeof(char)*row_end_first*row_end_first)
+    }
+    
+    MPI_recv()
 }
 
 int main(int argc, char *argv[]) {
