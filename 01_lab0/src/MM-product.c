@@ -37,25 +37,25 @@ int checkResult(double *truth, double *test, size_t Nr_col, size_t Nr_rows) {
     return 0;
 }
 
-struct mm_input {
+typedef struct {
     size_t rows;
     size_t cols;
     double *a;  
     double *b;  
-}MM_input;
+} MM_input;
 
-char* getbuffer(mm_input *in, size_t size_of_buffer){
-    char* buffer = (char*)malloc(size_of_buffer);
+char* getbuffer(MM_input *in, size_t size_of_buffer){
+    char* buffer = (char*)malloc(size_of_buffer * sizeof(char));
     if (buffer == 0)
     {
         printf("Buffer couldn't be allocated.");
         return NULL;
     }
 
-    memcpy(buffer, &in.rows, sizeof(size_t));
-    memcpy(buffer + sizeof(size_t), &in.cols, sizeof(size_t));
-    memcpy(buffer + 2*sizeof(size_t), in.a, in.rows*in.cols*sizeof(double));
-    memcpy(buffer + 2*sizeof(size_t) + in.rows*in.cols*sizeof(double), in.b, in.rows*in.cols*sizeof(double));
+    memcpy(buffer, &in->rows, sizeof(size_t));
+    memcpy(buffer + sizeof(size_t), &in->cols, sizeof(size_t));
+    memcpy(buffer + 2*sizeof(size_t), in->a, in->rows*in->cols*sizeof(double));
+    memcpy(buffer + 2*sizeof(size_t) + in->rows*in->cols*sizeof(double), in->b, in->rows*in->cols*sizeof(double));
     return buffer;
 }
 
@@ -121,12 +121,18 @@ double productSequential(double *res) {
     return time;
 }
 
-int splitwork(size_t num_workers){
+double splitwork(double* res, size_t num_workers){
+    if (num_workers == 0) // sadly noone will help me :((
+    {
+        return productSequential(res);
+    }
     
     double(*a)[NCA] = malloc(sizeof(double) * NRA * NCA);
     double(*b)[NCB] = malloc(sizeof(double) * NCA * NCB);
     double(*c)[NCB] = malloc(sizeof(double) * NRA * NCB);
     // Transpose matrix b to make accessing columns easier - in row major way - better cache performance
+    setupMatrices(a,b,c);
+
     double (*b_transposed)[NCA] = malloc(sizeof(double) * NCA * NCB);
     for (size_t i = 0; i < NCA; i++) {
         for (size_t j = 0; j < NCB; j++) {
@@ -135,7 +141,6 @@ int splitwork(size_t num_workers){
     }
 
     /*** Initialize matrices ***/
-    setupMatrices(a,b,c);
     // given number of workers I'll split
     size_t rows_per_worker = NRA / (num_workers+1); //takes corresponding columns from other matrix
     printf("rows per worker: %zu\n", rows_per_worker);
@@ -143,24 +148,32 @@ int splitwork(size_t num_workers){
     printf("first gets most: %zu\n", row_end_first);
 
     //setup requests
-    MPI_Request[num_workers] requests;
-    MM_input data_first; 
-    data_first.rows = row_end_first;
-    data_first.cols = row_end_first;
-    data_first.a = a; //they both start of with no offset!
-    data_first.b = b;
-    //first one
-    // MPI_Isend();
-    for (size_t i = 0; i < (num_workers-1); i++)
+    MPI_Request requests[num_workers];
+    MM_input *data_first = (MM_input*)malloc(sizeof(MM_input));
+    data_first->rows = row_end_first;
+    data_first->cols = row_end_first;
+    data_first->a = (double*)a; //they both start of with no offset!
+    data_first->b = (double*)b_transposed;
+    size_t total_size = 2*sizeof(size_t) + 2*(data_first->rows * data_first->cols);
+    char* buffer = getbuffer(data_first, total_size);    //first one
+    // Tag is just nr-cpu -1
+    // MPI_Isend(buffer, total_size, MPI_CHAR, 1, 0,MPI_COMM_WORLD, requests[0]);
+    total_size = 2*sizeof(size_t) + 2*(rows_per_worker * rows_per_worker); //size is the same for all other - just compute once!
+    size_t i;
+    for (i = 0; i < (num_workers-1); ++i)
     {
-        MM_input data;
-        data.rows = rows_per_worker;
-        data.cols = rows_per_worker;
-        data.a = &(a[row_end_first + rows_per_worker*i]);
-        data.b = &(b[row_end_first + rows_per_worker*i]);
-        //MPI_Isend(); // send other stuff!
+        MM_input *data = (MM_input*)malloc(sizeof(MM_input));
+        data->rows = rows_per_worker;
+        data->cols = rows_per_worker;
+        data->a = (double*)(a + (row_end_first + rows_per_worker*i));
+        data->b = (double*)(b_transposed+(row_end_first + rows_per_worker*i));
+        buffer = getbuffer(data, total_size);
+        printf("nr_worker - %zu", i);
+        // MPI_Isend(buffer, total_size, MPI_CHAR, i+2, i+1,MPI_COMM_WORLD, requests[i+1]);
     }
+    printf("me %zu", i);
     //rest belongs to me!
+
     //TODO multiply and add rest!
     //free all pointers!
     free(a);
@@ -170,7 +183,7 @@ int splitwork(size_t num_workers){
     return 0;
 }
 
-int work(){
+int work(int rank){
     return 0;
 }
 
@@ -192,10 +205,12 @@ int main(int argc, char *argv[]) {
             printf("Run parallel!\n");
             printf("Hello from master! - I have %d workers!\n", numProcs-1);
             // send out work
-            splitwork(5);
+            double *res = malloc(sizeof(double)*NRA*NCB);
+            double time = splitwork(res, numProcs-1);
+            free(res);
         } else {
             printf("Worker bee %d...\n", myRank);
-            work();
+            work(myRank);
         }
 
     } else  // run sequantial
