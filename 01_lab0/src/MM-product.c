@@ -72,9 +72,9 @@ MM_input* readbuffer(char* buffer, size_t size_of_buffer){
     size_t matrix_size =  mm->rows * mm->cols;
     mm->a = (double*)malloc(sizeof(double)*matrix_size);
     mm->b = (double*)malloc(sizeof(double)*matrix_size);
-    memcpy(a, &(buffer[offset]), matrix_size);
+    memcpy(mm->a, &(buffer[offset]), matrix_size);
     offset += matrix_size;
-    memcpy(b, &(buffer[offset]), matrix_size);
+    memcpy(mm->b, &(buffer[offset]), matrix_size);
     free(buffer);
     return mm;
 }
@@ -142,11 +142,11 @@ double productSequential(double *res) {
 }
 
 double splitwork(double* res, size_t num_workers){
-    // if (num_workers == 0) // sadly noone will help me :((
-    // {
-    //     printf("Run sequential!");
-    //     return productSequential(res);
-    // }
+    if (num_workers == 0) // sadly noone will help me :((
+    {
+        printf("Run sequential!");
+        return productSequential(res);
+    }
     
     double(*a)[NCA] = malloc(sizeof(double) * NRA * NCA);
     double(*b)[NCB] = malloc(sizeof(double) * NCA * NCB);
@@ -178,7 +178,7 @@ double splitwork(double* res, size_t num_workers){
     size_t total_size = 2*sizeof(size_t) + 2*(data_first->rows * data_first->cols)*sizeof(double);
     char* buffer = getbuffer(data_first, total_size);    //first one
     // Tag is just nr-cpu -1
-    MPI_Isend(buffer, total_size, MPI_CHAR, 1, 0,MPI_COMM_WORLD, requests[0]);
+    MPI_Isend(buffer, total_size, MPI_CHAR, 1, 0,MPI_COMM_WORLD, &requests[0]);
     total_size = 2*sizeof(size_t) + 2*(rows_per_worker * rows_per_worker)*sizeof(double); //size is the same for all other - just compute once!
     size_t i;
     for (i = 0; i < (num_workers-1); ++i)
@@ -190,7 +190,7 @@ double splitwork(double* res, size_t num_workers){
         data->b = (double*)(b_transposed+(row_end_first + rows_per_worker*i));
         buffer = getbuffer(data, total_size);
         printf("nr_worker - %zu\n", i);
-        MPI_Isend(buffer, total_size, MPI_CHAR, i+2, i+1,MPI_COMM_WORLD, requests[i+1]);
+        MPI_Isend(buffer, total_size, MPI_CHAR, i+2, i+1,MPI_COMM_WORLD, &requests[i+1]);
     }
     printf("me %zu\n", i);
     //rest belongs to me!
@@ -207,13 +207,18 @@ double splitwork(double* res, size_t num_workers){
 int work(int rank, size_t num_workers){
     size_t rows_per_worker = NRA / (num_workers+1);
     char* buffer;
+    MPI_Status status;
     if (rank == 1) // first always get's most work
     {
-        size_t row_end_first = NRA - rows_per_worker*num_workers; 
-        buffer = (char*)malloc(sizeof(char)*row_end_first*row_end_first)
+        rows_per_worker = NRA - rows_per_worker*num_workers; 
     }
+    size_t buffersize = 2*sizeof(size_t)+2*sizeof(double)*rows_per_worker*rows_per_worker;
+    buffer = (char*)malloc(buffersize);
     
-    MPI_recv()
+    MPI_Recv(buffer, buffersize, MPI_CHAR, 0, rank-1, MPI_COMM_WORLD, &status);
+    int count;
+    MPI_Get_count(&status, MPI_CHAR, &count);
+    printf("I'm rank %d and I got %d bytes of data from %d with tag %d.\n", rank, count, status.MPI_SOURCE, status.MPI_TAG);
 }
 
 int main(int argc, char *argv[]) {
@@ -225,21 +230,19 @@ int main(int argc, char *argv[]) {
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
-
+    int num_Workers = numProcs-1;
     if (argc > 1 && strcmp(argv[1], "parallel") == 0) {
         // Variables for the process rank and number of processes
-
-
-        if (myRank == 0) {
+       if (myRank == 0) {
             printf("Run parallel!\n");
-            printf("Hello from master! - I have %d workers!\n", numProcs-1);
+            printf("Hello from master! - I have %d workers!\n", num_Workers);
             // send out work
             double *res = malloc(sizeof(double)*NRA*NCB);
-            double time = splitwork(res, numProcs-1);
+            double time = splitwork(res, num_Workers);
             free(res);
         } else {
             printf("Worker bee %d...\n", myRank);
-            work(myRank);
+            work(myRank, num_Workers);
         }
 
     } else  // run sequantial
