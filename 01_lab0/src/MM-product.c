@@ -17,13 +17,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NRA 1000 /* number of rows in matrix A */
-#define NCA 1000 /* number of columns in matrix A */
-#define NCB 1000 /* number of columns in matrix B */
+#define NRA 5 /* number of rows in matrix A */
+#define NCA 5 /* number of columns in matrix A */
+#define NCB 5 /* number of columns in matrix B */
 // #define N 1000
 #define EPS 1e-9
+#define SIZE_OF_B NCA*NCB*sizeof(double)
 
 bool eps_equal(double a, double b) { return fabs(a - b) < EPS; }
+
+void print_flattened_matrix(double *matrix, size_t rows, size_t cols, int rank) {
+    printf("[%d]\n", rank);
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            printf("%10.2f ", matrix[i * cols + j]);  // Accessing element in the 1D array
+        }
+        printf("\n");  // Newline after each row
+    }
+}
+
+void doubleDump(double* ptr, size_t size){
+    for (size_t i = 0; i < size; i++)
+    {
+        printf("%.0f ", ptr[i]);
+    }
+    printf("\n");
+}
 
 int checkResult(double *truth, double *test, size_t Nr_col, size_t Nr_rows) {
     for (size_t i = 0; i < Nr_rows; ++i) {
@@ -39,7 +58,6 @@ int checkResult(double *truth, double *test, size_t Nr_col, size_t Nr_rows) {
 
 typedef struct {
     size_t rows;
-    size_t cols;
     double *a;  
     double *b;  
 } MM_input;
@@ -54,12 +72,19 @@ char* getbuffer(MM_input *in, size_t size_of_buffer){
     size_t offset = 0;
     memcpy(buffer + offset, &in->rows, sizeof(size_t));
     offset += sizeof(size_t);
-    memcpy(buffer + offset, &in->cols, sizeof(size_t));
-    offset += sizeof(size_t);
-    size_t matrix_size = in->rows * in->cols * sizeof(double);
+    size_t matrix_size = in->rows * NCA * sizeof(double);
     memcpy(buffer + offset, in->a, matrix_size);
+    // printf("Rows %zu cols %zu mat size %zu\n", in->rows, in->cols, matrix_size);
+    // printf("%p\n", (void*)(buffer +  sizeof(size_t)));
+    // printf("Dump a from in: \n");
+    // doubleDump(in->a,NCA*NRA);
+
+    //a and b dump: 
+    // printf("Dump: \n");
+    // doubleDump((double*)&buffer[sizeof(size_t)], NCA*NRA);
+
     offset += matrix_size;
-    memcpy(buffer + offset, in->b, matrix_size);
+    memcpy(buffer + offset, in->b, NCA*NCB*sizeof(double));
     return buffer;
 }
 
@@ -67,14 +92,13 @@ MM_input* readbuffer(char* buffer, size_t size_of_buffer){
     MM_input *mm = (MM_input*)malloc(sizeof(MM_input));
 
     mm->rows = ((size_t*)buffer)[0];
-    mm->cols = ((size_t*)buffer)[1];
-    size_t offset = 2*sizeof(size_t);
-    size_t matrix_size =  mm->rows * mm->cols;
+    size_t offset = sizeof(size_t);
+    size_t matrix_size =  mm->rows * NCA;
     mm->a = (double*)malloc(sizeof(double)*matrix_size);
     mm->b = (double*)malloc(sizeof(double)*matrix_size);
     memcpy(mm->a, &(buffer[offset]), matrix_size);
     offset += matrix_size;
-    memcpy(mm->b, &(buffer[offset]), matrix_size);
+    memcpy(mm->b, &(buffer[offset]), NCA*NCB*sizeof(double));
     free(buffer);
     return mm;
 }
@@ -98,6 +122,24 @@ void setupMatrices(double (*a)[NCA], double (*b)[NCB], double (*c)[NCB]){
             c[i][j] = 0;
         }
     }
+
+    print_flattened_matrix((double*)a, NRA, NCA,-1);
+    print_flattened_matrix((double*)b, NCA, NCB,-2);
+}
+
+double multsum(double* a,double* b_transposed, size_t size){
+    double acc = 0;
+
+    printf("a\n");
+    doubleDump(a,size);
+    printf("b\n");
+    doubleDump(b_transposed,size);
+
+    for (size_t i = 0; i < size; i++)
+    {
+        acc += a[i]*b_transposed[i];
+    }
+    return acc;
 }
 
 double productSequential(double *res) {
@@ -172,30 +214,57 @@ double splitwork(double* res, size_t num_workers){
     MPI_Request requests[num_workers];
     MM_input *data_first = (MM_input*)malloc(sizeof(MM_input));
     data_first->rows = row_end_first;
-    data_first->cols = row_end_first;
     data_first->a = (double*)a; //they both start of with no offset!
     data_first->b = (double*)b_transposed;
-    size_t total_size = 2*sizeof(size_t) + 2*(data_first->rows * data_first->cols)*sizeof(double);
+    size_t total_size = sizeof(size_t) + (data_first->rows * NCA)*sizeof(double)+SIZE_OF_B;
     char* buffer = getbuffer(data_first, total_size);    //first one
+
     // Tag is just nr-cpu -1
     MPI_Isend(buffer, total_size, MPI_CHAR, 1, 0,MPI_COMM_WORLD, &requests[0]);
-    total_size = 2*sizeof(size_t) + 2*(rows_per_worker * rows_per_worker)*sizeof(double); //size is the same for all other - just compute once!
+    free(data_first);
+    total_size = sizeof(size_t) + (rows_per_worker * NCA)*sizeof(double) + SIZE_OF_B; //size is the same for all other - just compute once!
     size_t i;
     for (i = 0; i < (num_workers-1); ++i)
     {
         MM_input *data = (MM_input*)malloc(sizeof(MM_input));
         data->rows = rows_per_worker;
-        data->cols = rows_per_worker;
         data->a = (double*)(a + (row_end_first + rows_per_worker*i));
-        data->b = (double*)(b_transposed+(row_end_first + rows_per_worker*i));
+        data->b = (double*)(b_transposed); // send everyting - all needed
         buffer = getbuffer(data, total_size);
         printf("nr_worker - %zu\n", i);
         MPI_Isend(buffer, total_size, MPI_CHAR, i+2, i+1,MPI_COMM_WORLD, &requests[i+1]);
+        free(data);
     }
-    printf("me %zu\n", i);
+    // printf("me %zu\n", i);
     //rest belongs to me!
+    double* my_a = (double*)(a + (row_end_first + rows_per_worker*i));
+    // print_flattened_matrix(my_a,rows_per_worker, NCA, 0);
+    // print_flattened_matrix((double*)b, NCA, NCB, 0);
 
     //TODO multiply and add rest!
+    size_t offset = 0;
+    for (size_t row = (NRA-rows_per_worker); row < NRA; row++)
+    {
+        for (size_t col = 0; col < NCB; col++)
+        {
+            c[row][col] = multsum(my_a+offset, (((double*)b_transposed)+col*NCA), NCA);
+        }
+        offset += NCA;
+    }
+    printf("My c: \n");
+    print_flattened_matrix((double*)c, NRA, NCB, 0);
+    
+    //wait for rest
+    MPI_Status stats[num_workers];
+    if(MPI_Waitall(num_workers, requests, stats) == MPI_ERR_IN_STATUS){
+        printf("Communication failed!!! - abort\n");
+    }
+    printf(">>>Everything sent and recieved\n");
+
+    //built c!
+    size_t self_row, self_col;
+    // self_row = 
+
     //free all pointers!
     free(a);
     free(b);
@@ -203,6 +272,8 @@ double splitwork(double* res, size_t num_workers){
     free(c);
     return 0;
 }
+
+
 
 int work(int rank, size_t num_workers){
     size_t rows_per_worker = NRA / (num_workers+1);
@@ -212,13 +283,23 @@ int work(int rank, size_t num_workers){
     {
         rows_per_worker = NRA - rows_per_worker*num_workers; 
     }
-    size_t buffersize = 2*sizeof(size_t)+2*sizeof(double)*rows_per_worker*rows_per_worker;
+    size_t size_of_meta = sizeof(size_t);
+    size_t size_of_a = sizeof(double)*rows_per_worker*NCA;
+    size_t buffersize = size_of_meta+size_of_a + SIZE_OF_B;
     buffer = (char*)malloc(buffersize);
     
     MPI_Recv(buffer, buffersize, MPI_CHAR, 0, rank-1, MPI_COMM_WORLD, &status);
     int count;
     MPI_Get_count(&status, MPI_CHAR, &count);
-    printf("I'm rank %d and I got %d bytes of data from %d with tag %d.\n", rank, count, status.MPI_SOURCE, status.MPI_TAG);
+    printf("I'm rank %d and I got %d bytes (%ld doubles) of data from %d with tag %d.\n", rank, count, (count-sizeof(size_t))/sizeof(double), status.MPI_SOURCE, status.MPI_TAG);
+    
+    MM_input *mm = (MM_input*)malloc(sizeof(MM_input));
+    mm->a = (double*)&buffer[size_of_meta];
+    mm->b = (double*)&buffer[size_of_meta+size_of_a];
+
+    print_flattened_matrix(mm->a, rows_per_worker, NCA,rank);
+    
+
 }
 
 int main(int argc, char *argv[]) {

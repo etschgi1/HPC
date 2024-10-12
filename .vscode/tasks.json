@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build MPI Program", // Task label
+            "type": "shell", // Type of task: shell command
+            "command": "mpicc", // MPI compiler command
+            "args": [
+                "-g", // Include debug symbols
+                "-o",
+                "${workspaceFolder}/01_lab0/src/MM.out", // Output binary path
+                "${workspaceFolder}/01_lab0/src/MM-product.c" // Source file to compile
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ], // GCC problem matcher for errors
+            "detail": "Compiles the MPI program with mpicc."
+        }
+    ]
+}

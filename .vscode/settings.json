@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "*.cpp": "cpp",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "algorithm": "c"
     },
     "editor.formatOnSave": true,
     "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Microsoft, UseTab: Never, IndentWidth: 2, TabWidth: 2, SortIncludes: 'false' }."

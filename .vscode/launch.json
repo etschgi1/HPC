@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug MPI Program",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/01_lab0/src/MM.out", // Path to the compiled binary
+            "args": [
+                "parallel" // Arguments to pass to the program
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb", // Ensure this points to GDB installation
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "Build MPI Program", // Task to build the program before debugging
+            "miDebuggerArgs": "--args mpirun -np 4", // Command to launch MPI processes (4 in this case)
+            "logging": {
+                "moduleLoad": true,
+                "trace": true
+            }
+        }
+    ]
+}
