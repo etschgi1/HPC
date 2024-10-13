@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NRA 1000 /* number of rows in matrix A */
-#define NCA 1000 /* number of columns in matrix A */
-#define NCB 1000 /* number of columns in matrix B */
+#define NRA 2000 /* number of rows in matrix A */
+#define NCA 2000 /* number of columns in matrix A */
+#define NCB 2000 /* number of columns in matrix B */
 // #define N 1000
 #define EPS 1e-9
 #define SIZE_OF_B NCA*NCB*sizeof(double)
@@ -178,7 +178,7 @@ double productSequential(double *res) {
 double splitwork(double* res, double*truth, size_t num_workers){
     if (num_workers == 0) // sadly noone will help me :((
     {
-        printf("Run sequential!");
+        printf("Run sequential!\n");
         return productSequential(res);
     }
     
@@ -240,7 +240,7 @@ double splitwork(double* res, double*truth, size_t num_workers){
     {
         for (size_t col = 0; col < NCB; col++)
         {
-            c[row][col] = multsum(my_a+offset, (((double*)b_transposed)+col*NCA), NCA);
+            res[row * NCB + col] = multsum(my_a+offset, (((double*)b_transposed)+col*NCA), NCA);
         }
         offset += NCA;
     }
@@ -262,7 +262,7 @@ double splitwork(double* res, double*truth, size_t num_workers){
     {
         revbuf = (double*)malloc(buf_size); //first gets largest buffer
         MPI_Recv(revbuf, buf_size/sizeof(double), MPI_DOUBLE, worker+1, worker, MPI_COMM_WORLD,&stats[worker]);
-        memcpy(&c[offset/sizeof(double)], revbuf, buf_size);
+        memcpy(&res[offset/sizeof(double)], revbuf, buf_size);
         free(revbuf);
         offset += buf_size;
         buf_size = sizeof(double)*rows_per_worker*NCB; 
@@ -280,7 +280,7 @@ double splitwork(double* res, double*truth, size_t num_workers){
 
 
 
-int work(int rank, size_t num_workers){
+double work(int rank, size_t num_workers){
     size_t rows_per_worker = NRA / (num_workers+1);
     char* buffer;
     MPI_Status status;
@@ -294,6 +294,7 @@ int work(int rank, size_t num_workers){
     buffer = (char*)malloc(buffersize);
     
     MPI_Recv(buffer, buffersize, MPI_CHAR, 0, rank-1, MPI_COMM_WORLD, &status);
+    double start = MPI_Wtime();
     int count;
     MPI_Get_count(&status, MPI_CHAR, &count);
     printf("I'm rank %d and I got %d bytes (%ld doubles) of data from %d with tag %d.\n", rank, count, (count-sizeof(size_t))/sizeof(double), status.MPI_SOURCE, status.MPI_TAG);
@@ -319,7 +320,7 @@ int work(int rank, size_t num_workers){
     MPI_Send(res, rows_per_worker*NCB, MPI_DOUBLE, 0,rank-1, MPI_COMM_WORLD);
     printf("[%d] sent res home\n",rank);
     free(res);
-    return 0;
+    return MPI_Wtime() - start;
 }
 
 int main(int argc, char *argv[]) {
@@ -333,26 +334,26 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
     int num_Workers = numProcs-1;
     if (argc > 1 && strcmp(argv[1], "parallel") == 0) {
-        printf("Run parallel!\n");
-        double *truth = malloc(sizeof(double) * NRA * NCB);
-        double time = productSequential(truth);
-        printf("Computed reference results in %.2f s\n", time);
         // Variables for the process rank and number of processes
        if (myRank == 0) {
+            printf("Run parallel!\n");
+            double *truth = malloc(sizeof(double) * NRA * NCB);
+            double time = productSequential(truth);
+            printf("Computed reference results in %.6f s\n", time);
             printf("Hello from master! - I have %d workers!\n", num_Workers);
             // send out work
             double *res = malloc(sizeof(double)*NRA*NCB);
-            double time = splitwork(res, truth, num_Workers);
+            time = splitwork(res, truth, num_Workers);
             if (checkResult(res, res, NCB, NRA)) {
                 printf("Matrices do not match!!!\n");
                 return 1;
             }
-            printf("Matrices match (parallel)! - took: %.2f s\n", time);
+            printf("Matrices match (parallel [eps %.10f])! - took: %.6f s\n", EPS, time);
             free(truth);
             free(res);
         } else {
-            printf("Worker bee %d...\n", myRank);
-            work(myRank, num_Workers);
+            double time = work(myRank, num_Workers);
+            printf("Worker bee %d took %.6f s (after recv) for my work\n", myRank, time);
         }
 
     } else  // run sequantial
@@ -365,7 +366,7 @@ int main(int argc, char *argv[]) {
             printf("Matrices do not match!!!\n");
             return 1;
         }
-        printf("Matrices match (sequantial-trivial)! - took: %.2f s\n", time);
+        printf("Matrices match (sequantial-trivial)! - took: %.6f s\n", time);
         free(res);
     }
 
