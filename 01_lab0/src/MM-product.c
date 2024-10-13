@@ -17,9 +17,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NRA 5 /* number of rows in matrix A */
-#define NCA 5 /* number of columns in matrix A */
-#define NCB 5 /* number of columns in matrix B */
+#define NRA 1000 /* number of rows in matrix A */
+#define NCA 1000 /* number of columns in matrix A */
+#define NCB 1000 /* number of columns in matrix B */
 // #define N 1000
 #define EPS 1e-9
 #define SIZE_OF_B NCA*NCB*sizeof(double)
@@ -123,18 +123,12 @@ void setupMatrices(double (*a)[NCA], double (*b)[NCB], double (*c)[NCB]){
         }
     }
 
-    print_flattened_matrix((double*)a, NRA, NCA,-1);
-    print_flattened_matrix((double*)b, NCA, NCB,-2);
+  //print_flattened_matrix((double*)a, NRA, NCA,-1);
+  //print_flattened_matrix((double*)b, NCA, NCB,-2);
 }
 
 double multsum(double* a,double* b_transposed, size_t size){
     double acc = 0;
-
-    printf("a\n");
-    doubleDump(a,size);
-    printf("b\n");
-    doubleDump(b_transposed,size);
-
     for (size_t i = 0; i < size; i++)
     {
         acc += a[i]*b_transposed[i];
@@ -161,29 +155,27 @@ double productSequential(double *res) {
     for (size_t i = 0; i < NRA; i++) {
         for (size_t j = 0; j < NCB; j++) {
             for (size_t k = 0; k < NCA; k++) {
-                c[i][j] += a[i][k] * b[k][j];
+                res[i * NCB + j] += a[i][k] * b[k][j];
             }
         }
     }
-    double time = MPI_Wtime()-start;
     /*  perform time measurement. Always check the correctness of the parallel
        results by printing a few values of c[i][j] and compare with the
        sequential output.
     */
-
-    // write to res - no time measured here!
-    for (size_t i = 0; i < NRA; i++) {
-        for (size_t j = 0; j < NCB; j++) {
-            res[i * NCB + j] = c[i][j];
-        }
-    }
+    // for (size_t i = 0; i < NRA; i++) {
+    //     for (size_t j = 0; j < NCB; j++) {
+    //         res[i * NCB + j] = c[i][j];
+    //     }
+    // }
+    double time = MPI_Wtime()-start;
     free(a);
     free(b);
     free(c);
     return time;
 }
 
-double splitwork(double* res, size_t num_workers){
+double splitwork(double* res, double*truth, size_t num_workers){
     if (num_workers == 0) // sadly noone will help me :((
     {
         printf("Run sequential!");
@@ -196,6 +188,7 @@ double splitwork(double* res, size_t num_workers){
     // Transpose matrix b to make accessing columns easier - in row major way - better cache performance
     setupMatrices(a,b,c);
 
+    double start_time = MPI_Wtime();
     double (*b_transposed)[NCA] = malloc(sizeof(double) * NCA * NCB);
     for (size_t i = 0; i < NCA; i++) {
         for (size_t j = 0; j < NCB; j++) {
@@ -241,7 +234,7 @@ double splitwork(double* res, size_t num_workers){
     // print_flattened_matrix(my_a,rows_per_worker, NCA, 0);
     // print_flattened_matrix((double*)b, NCA, NCB, 0);
 
-    //TODO multiply and add rest!
+    //I multiply the rest
     size_t offset = 0;
     for (size_t row = (NRA-rows_per_worker); row < NRA; row++)
     {
@@ -252,7 +245,7 @@ double splitwork(double* res, size_t num_workers){
         offset += NCA;
     }
     printf("My c: \n");
-    print_flattened_matrix((double*)c, NRA, NCB, 0);
+    // print_flattened_matrix((double*)c, NRA, NCB, 0);
     
     //wait for rest
     MPI_Status stats[num_workers];
@@ -261,16 +254,28 @@ double splitwork(double* res, size_t num_workers){
     }
     printf(">>>Everything sent and recieved\n");
 
-    //built c!
-    size_t self_row, self_col;
-    // self_row = 
-
+    // reviece rest
+    size_t buf_size = sizeof(double)*row_end_first*NCB;
+    double* revbuf;
+    offset = 0;
+    for (size_t worker = 0; worker < num_workers; worker++)
+    {
+        revbuf = (double*)malloc(buf_size); //first gets largest buffer
+        MPI_Recv(revbuf, buf_size/sizeof(double), MPI_DOUBLE, worker+1, worker, MPI_COMM_WORLD,&stats[worker]);
+        memcpy(&c[offset/sizeof(double)], revbuf, buf_size);
+        free(revbuf);
+        offset += buf_size;
+        buf_size = sizeof(double)*rows_per_worker*NCB; 
+    }
+    double time = MPI_Wtime()-start_time;
+  //print_flattened_matrix((double*)c, NRA, NCB, 0);
+    
     //free all pointers!
     free(a);
     free(b);
     free(b_transposed);
     free(c);
-    return 0;
+    return time;
 }
 
 
@@ -297,9 +302,24 @@ int work(int rank, size_t num_workers){
     mm->a = (double*)&buffer[size_of_meta];
     mm->b = (double*)&buffer[size_of_meta+size_of_a];
 
-    print_flattened_matrix(mm->a, rows_per_worker, NCA,rank);
+    // print_flattened_matrix(mm->a, rows_per_worker, NCA,rank);
     
+    double *res =(double*)malloc(sizeof(double)*rows_per_worker*NCB);
 
+    size_t offset = 0;
+    for (size_t row = 0; row < rows_per_worker; row++)
+    {
+        for (size_t col = 0; col < NCB; col++)
+        {
+            res[row * NCB + col] = multsum(mm->a+offset, (((double*)mm->b)+col*NCA), NCA);
+        }
+        offset += NCA;
+    }
+    // print_flattened_matrix((double*)res, NRA, NCB, rank);
+    MPI_Send(res, rows_per_worker*NCB, MPI_DOUBLE, 0,rank-1, MPI_COMM_WORLD);
+    printf("[%d] sent res home\n",rank);
+    free(res);
+    return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -313,13 +333,22 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
     int num_Workers = numProcs-1;
     if (argc > 1 && strcmp(argv[1], "parallel") == 0) {
+        printf("Run parallel!\n");
+        double *truth = malloc(sizeof(double) * NRA * NCB);
+        double time = productSequential(truth);
+        printf("Computed reference results in %.2f s\n", time);
         // Variables for the process rank and number of processes
        if (myRank == 0) {
-            printf("Run parallel!\n");
             printf("Hello from master! - I have %d workers!\n", num_Workers);
             // send out work
             double *res = malloc(sizeof(double)*NRA*NCB);
-            double time = splitwork(res, num_Workers);
+            double time = splitwork(res, truth, num_Workers);
+            if (checkResult(res, res, NCB, NRA)) {
+                printf("Matrices do not match!!!\n");
+                return 1;
+            }
+            printf("Matrices match (parallel)! - took: %.2f s\n", time);
+            free(truth);
             free(res);
         } else {
             printf("Worker bee %d...\n", myRank);
@@ -331,11 +360,12 @@ int main(int argc, char *argv[]) {
         printf("Run sequantial!\n");
         double *res = malloc(sizeof(double) * NRA * NCB);
         double time = productSequential(res);
+      //print_flattened_matrix((double*)res, NRA, NCB, -10);
         if (checkResult(res, res, NCB, NRA)) {
             printf("Matrices do not match!!!\n");
             return 1;
         }
-        printf("Matrices match! - took: %.2f s\n", time);
+        printf("Matrices match (sequantial-trivial)! - took: %.2f s\n", time);
         free(res);
     }
 
