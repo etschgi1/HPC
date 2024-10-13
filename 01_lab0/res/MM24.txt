@@ -1,0 +1,99 @@
+I'm rank 1 and I got 33456008 bytes (4182000 doubles) of data from 0 with tag 0.
+[1] sent res home
+Worker bee 1 took 0.982991 s (after recv) for my work
+I'm rank 2 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 1.
+[2] sent res home
+Worker bee 2 took 0.984294 s (after recv) for my work
+I'm rank 3 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 2.
+[3] sent res home
+Worker bee 3 took 0.984633 s (after recv) for my work
+Run parallel!
+Computed reference results in 47.431430 s
+Hello from master! - I have 23 workers!
+rows per worker: 83
+first gets most: 91
+nr_worker - 0
+nr_worker - 1
+nr_worker - 2
+nr_worker - 3
+nr_worker - 4
+nr_worker - 5
+nr_worker - 6
+nr_worker - 7
+nr_worker - 8
+nr_worker - 9
+nr_worker - 10
+nr_worker - 11
+nr_worker - 12
+nr_worker - 13
+nr_worker - 14
+nr_worker - 15
+nr_worker - 16
+nr_worker - 17
+nr_worker - 18
+nr_worker - 19
+nr_worker - 20
+nr_worker - 21
+My c: 
+>>>Everything sent and recieved
+Matrices match (parallel [eps 0.0000000010])! - took: 2.540272 s
+I'm rank 21 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 20.
+[21] sent res home
+Worker bee 21 took 0.937594 s (after recv) for my work
+I'm rank 17 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 16.
+[17] sent res home
+Worker bee 17 took 0.936768 s (after recv) for my work
+I'm rank 13 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 12.
+[13] sent res home
+Worker bee 13 took 0.937516 s (after recv) for my work
+I'm rank 20 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 19.
+[20] sent res home
+Worker bee 20 took 0.936277 s (after recv) for my work
+I'm rank 15 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 14.
+[15] sent res home
+Worker bee 15 took 0.991737 s (after recv) for my work
+I'm rank 8 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 7.
+[8] sent res home
+Worker bee 8 took 0.930399 s (after recv) for my work
+I'm rank 18 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 17.
+[18] sent res home
+Worker bee 18 took 0.935604 s (after recv) for my work
+I'm rank 5 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 4.
+[5] sent res home
+Worker bee 5 took 0.930386 s (after recv) for my work
+I'm rank 14 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 13.
+[14] sent res home
+Worker bee 14 took 0.933391 s (after recv) for my work
+I'm rank 12 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 11.
+[12] sent res home
+Worker bee 12 took 0.932447 s (after recv) for my work
+I'm rank 4 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 3.
+[4] sent res home
+Worker bee 4 took 0.928910 s (after recv) for my work
+I'm rank 6 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 5.
+[6] sent res home
+Worker bee 6 took 0.929892 s (after recv) for my work
+I'm rank 10 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 9.
+[10] sent res home
+Worker bee 10 took 0.931695 s (after recv) for my work
+I'm rank 9 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 8.
+[9] sent res home
+Worker bee 9 took 0.933650 s (after recv) for my work
+I'm rank 23 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 22.
+[23] sent res home
+Worker bee 23 took 0.938034 s (after recv) for my work
+I'm rank 19 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 18.
+[19] sent res home
+Worker bee 19 took 0.941723 s (after recv) for my work
+I'm rank 22 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 21.
+[22] sent res home
+Worker bee 22 took 0.937120 s (after recv) for my work
+I'm rank 11 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 10.
+[11] sent res home
+Worker bee 11 took 0.933053 s (after recv) for my work
+I'm rank 7 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 6.
+[7] sent res home
+Worker bee 7 took 0.933794 s (after recv) for my work
+I'm rank 16 and I got 33328008 bytes (4166000 doubles) of data from 0 with tag 15.
+[16] sent res home
+Worker bee 16 took 0.935123 s (after recv) for my work

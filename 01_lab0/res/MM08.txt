@@ -1,0 +1,35 @@
+I'm rank 1 and I got 36000008 bytes (4500000 doubles) of data from 0 with tag 0.
+[1] sent res home
+Worker bee 1 took 2.547295 s (after recv) for my work
+I'm rank 3 and I got 36000008 bytes (4500000 doubles) of data from 0 with tag 2.
+[3] sent res home
+Worker bee 3 took 2.551079 s (after recv) for my work
+I'm rank 5 and I got 36000008 bytes (4500000 doubles) of data from 0 with tag 4.
+[5] sent res home
+Worker bee 5 took 2.553315 s (after recv) for my work
+I'm rank 7 and I got 36000008 bytes (4500000 doubles) of data from 0 with tag 6.
+[7] sent res home
+Worker bee 7 took 2.557000 s (after recv) for my work
+I'm rank 4 and I got 36000008 bytes (4500000 doubles) of data from 0 with tag 3.
+[4] sent res home
+Worker bee 4 took 2.552391 s (after recv) for my work
+I'm rank 6 and I got 36000008 bytes (4500000 doubles) of data from 0 with tag 5.
+[6] sent res home
+Worker bee 6 took 2.555359 s (after recv) for my work
+I'm rank 2 and I got 36000008 bytes (4500000 doubles) of data from 0 with tag 1.
+[2] sent res home
+Worker bee 2 took 2.549545 s (after recv) for my work
+Run parallel!
+Computed reference results in 39.333426 s
+Hello from master! - I have 7 workers!
+rows per worker: 250
+first gets most: 250
+nr_worker - 0
+nr_worker - 1
+nr_worker - 2
+nr_worker - 3
+nr_worker - 4
+nr_worker - 5
+My c: 
+>>>Everything sent and recieved
+Matrices match (parallel [eps 0.0000000010])! - took: 5.203356 s

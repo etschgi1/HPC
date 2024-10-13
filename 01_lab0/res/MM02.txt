@@ -1,0 +1,11 @@
+Run parallel!
+Computed reference results in 47.477256 s
+Hello from master! - I have 1 workers!
+rows per worker: 1000
+first gets most: 1000
+My c: 
+>>>Everything sent and recieved
+Matrices match (parallel [eps 0.0000000010])! - took: 10.258510 s
+I'm rank 1 and I got 48000008 bytes (6000000 doubles) of data from 0 with tag 0.
+[1] sent res home
+Worker bee 1 took 10.188632 s (after recv) for my work
