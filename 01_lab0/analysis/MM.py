@@ -45,9 +45,9 @@ y_vals = [item[1] for item in sorted_times]
 # Plot the data
 plt.figure(figsize=(10, 6))
 plt.plot(x_vals, y_vals, marker="o", linestyle="-")
-plt.xlabel("CPU Count")
+plt.xlabel("Core Count")
 plt.ylabel("Time (seconds)")
-plt.title("Execution Time vs CPU Count")
+plt.title("Execution Time vs Core Count")
 plt.grid(True)
 plt.xticks(x_vals)
 plt.savefig(f"{PLOT_PATH}MM_plot.png")
