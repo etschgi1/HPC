@@ -193,14 +193,15 @@ For this experiment, the execution time was measured and the speedup was calcula
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{../fig/lab0/MM\_plot.png}
-    \caption{Speedup vs CPU Count}
+    \caption{Speedup vs CPU Count\\
+    Black $\times$ marks the average of the rerun for $n=48$.}
     \label{fig:speedup}
 \end{figure}
 
 \Shining{Note:} The speedup is calculated as $S = \frac{T_1}{T_p}$, where $T_1$ is the execution time on 1 node and $T_p$ is the execution time on $p$ nodes.\\
 
 \textbf{Discussion:}\\
-As one can cleary discern from the data in \autoref{tab:execution_time} and \autoref{fig:speedup}, the speedup increases with the number of nodes (with the exception of $n=48$). This is expected as the more nodes we have, the more work can be done in parallel. However, the speedup is not linear. This is due to the overhead of communication between the nodes. The more nodes we have, the more communication is needed, and this overhead increases. This is especially visible in the data for $n=48$. Here the speedup is lower than for $n=32$. For this run the communication didn't went as smooth as for the other runs. This can potentially be attributed to the fact that one (or more) of the nodes or the network was under heavy load during this task.\\
+As one can cleary discern from the data in \autoref{tab:execution_time} and \autoref{fig:speedup}, the speedup increases with the number of nodes (with the exception of $n=48$). This is expected as the more nodes we have, the more work can be done in parallel. However, the speedup is not linear. This is due to the overhead of communication between the nodes. The more nodes we have, the more communication is needed, and this overhead increases. This is especially visible in the data for $n=48$. Here the speedup is lower than for $n=32$. For this run the communication didn't went as smooth as for the other runs. This can potentially be attributed to the fact that one (or more) of the nodes or the network was under heavy load during this task. \\\Shining{[Further investigation]} After observing this slower speed for the $n=48$, I reran the tests multiple times and got a runtime of around $1.9 s$ which was to be expected initially. Therefore, this one run is an odd one out, most likely due to the reasons mentioned above! I've also added the averaged data of the reruns as a datapoint in \autoref{fig:speedup}.\\
 Another interesting fact can be seen when comparing the time taken for $n=1$ and $n=2$. They don't at all scale with the expected factor of 2. This is could be due to the fact, that the resource management system prefers runs with multiple nodes instead of a single node (= sequential). \\
 
 Additional notes: The flag \texttt{--mem-per-cpu=<\#>GB} was set depending on the number of nodes used. For 1-24 nodes 8GB was used, for 32-48 nodes 4GB, and for 64 nodes 3GB. This had to be done to comply with QOS policy on the cluster. 

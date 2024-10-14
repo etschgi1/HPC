@@ -64,7 +64,8 @@ ax2.set_ylabel('Speedup', color=color)  # we already handled the x-label with ax
 ax2.plot(x_vals, speedup, marker="o", linestyle="-", color=color)
 ax2.tick_params(axis='y', labelcolor=color)
 ax2.grid(True)  # Enable grid on both x and y for ax2
-
+ax1.plot(48, 1.919, marker="x", linestyle="", color="black")
+ax2.plot(48, y_vals[0]/1.919, marker="x", linestyle="", color="black")
 plt.title("Execution Time vs Core Count")
 plt.xticks(x_vals)
 plt.savefig(f"{PLOT_PATH}MM_plot.png")
