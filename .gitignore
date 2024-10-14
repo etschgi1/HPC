@@ -24,3 +24,8 @@ core
 *.tmp
 *.swp
 *~
+
+*.aux
+*.fdb_latexmk
+*.fls
+*.synctex.gz

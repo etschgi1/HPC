@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import re
+import numpy as np
 
 import os
 import re
@@ -40,14 +41,30 @@ sorted_times.sort()
 # Extract x (CPU counts) and y (times) for plotting
 x_vals = [item[0] for item in sorted_times]
 y_vals = [item[1] for item in sorted_times]
-
+speedup = y_vals[0]/np.array(y_vals)
+print(f"X values: {x_vals}")
+print(f"Y values: {y_vals}")
+print(f"Speedup: {y_vals[0]/np.array(y_vals)}")
 
 # Plot the data
 plt.figure(figsize=(10, 6))
-plt.plot(x_vals, y_vals, marker="o", linestyle="-")
-plt.xlabel("Core Count")
-plt.ylabel("Time (seconds)")
+
+fig, ax1 = plt.subplots()
+
+color = 'tab:blue'
+ax1.set_xlabel('Core Count')
+ax1.set_ylabel('Time (seconds)', color=color)
+ax1.plot(x_vals, y_vals, marker="o", linestyle="-", color=color)
+ax1.tick_params(axis='y', labelcolor=color)
+ax1.grid(True)  # Enable grid on both x and y for ax1
+
+ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+color = 'tab:red'
+ax2.set_ylabel('Speedup', color=color)  # we already handled the x-label with ax1
+ax2.plot(x_vals, speedup, marker="o", linestyle="-", color=color)
+ax2.tick_params(axis='y', labelcolor=color)
+ax2.grid(True)  # Enable grid on both x and y for ax2
+
 plt.title("Execution Time vs Core Count")
-plt.grid(True)
 plt.xticks(x_vals)
 plt.savefig(f"{PLOT_PATH}MM_plot.png")

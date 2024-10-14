@@ -24,6 +24,7 @@
 \usepackage{listings}
 \usepackage{blindtext}
 \usepackage[square,sort,comma,numbers]{natbib}
+\usepackage{tcolorbox}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{xcolor}
 \definecolor{darkgreen}{rgb}{0.0, 0.4, 0.0}
@@ -45,6 +46,18 @@
     captionpos=b
 }
 
+% Define a gray example box
+\tcbset{
+    examplebox/.style={
+        colback=gray!10,  % Background color
+        colframe=gray,    % Border color
+        fonttitle=\bfseries,
+        title=Example,    % Default title for the box
+        sharp corners,
+        boxrule=0.5mm,    % Border thickness
+        coltitle=black,   % Title color
+    }
+}
 %%% Stuff for code
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -71,6 +84,9 @@
 %no indent after new line!
 \setlength{\parindent}{0pt}
 \lstset{style=mystyle}
+
+\newcommand{\TODO}[1]{\textcolor{red}{TODO: \textbf{#1\\}}}
+\newcommand{\Shining}[1]{\textcolor{blue}{\textbf{#1}}}
 %%%%
 \renewcommand\thesubsection{\thesection.\alph{subsection})}
 
@@ -99,6 +115,12 @@ Elias Wachmann (6300421) \\[1.5cm]
 \includegraphics[width=0.6\textwidth]{../fig/TU_delft_logo.jpg}\\[1cm] 	% University logo
 \vfill 
 \end{titlepage}
+\input{input/general\_remarks.tex}
 \input{input/intro.tex}
+\input{input/poisson.tex}
+\input{input/fe.tex}
+\input{input/ev.tex}
+
+\input{input/appendix.tex}
 
 \end{document}
