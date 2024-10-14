@@ -36,14 +36,6 @@ void print_flattened_matrix(double *matrix, size_t rows, size_t cols, int rank) 
     }
 }
 
-void doubleDump(double* ptr, size_t size){
-    for (size_t i = 0; i < size; i++)
-    {
-        printf("%.0f ", ptr[i]);
-    }
-    printf("\n");
-}
-
 int checkResult(double *truth, double *test, size_t Nr_col, size_t Nr_rows) {
     for (size_t i = 0; i < Nr_rows; ++i) {
         for (size_t j = 0; j < Nr_col; ++j) {
@@ -74,15 +66,6 @@ char* getbuffer(MM_input *in, size_t size_of_buffer){
     offset += sizeof(size_t);
     size_t matrix_size = in->rows * NCA * sizeof(double);
     memcpy(buffer + offset, in->a, matrix_size);
-    // printf("Rows %zu cols %zu mat size %zu\n", in->rows, in->cols, matrix_size);
-    // printf("%p\n", (void*)(buffer +  sizeof(size_t)));
-    // printf("Dump a from in: \n");
-    // doubleDump(in->a,NCA*NRA);
-
-    //a and b dump: 
-    // printf("Dump: \n");
-    // doubleDump((double*)&buffer[sizeof(size_t)], NCA*NRA);
-
     offset += matrix_size;
     memcpy(buffer + offset, in->b, NCA*NCB*sizeof(double));
     return buffer;
@@ -122,9 +105,6 @@ void setupMatrices(double (*a)[NCA], double (*b)[NCB], double (*c)[NCB]){
             c[i][j] = 0;
         }
     }
-
-  //print_flattened_matrix((double*)a, NRA, NCA,-1);
-  //print_flattened_matrix((double*)b, NCA, NCB,-2);
 }
 
 double multsum(double* a,double* b_transposed, size_t size){
@@ -163,11 +143,6 @@ double productSequential(double *res) {
        results by printing a few values of c[i][j] and compare with the
        sequential output.
     */
-    // for (size_t i = 0; i < NRA; i++) {
-    //     for (size_t j = 0; j < NCB; j++) {
-    //         res[i * NCB + j] = c[i][j];
-    //     }
-    // }
     double time = MPI_Wtime()-start;
     free(a);
     free(b);
@@ -228,11 +203,7 @@ double splitwork(double* res, double*truth, size_t num_workers){
         MPI_Isend(buffer, total_size, MPI_CHAR, i+2, i+1,MPI_COMM_WORLD, &requests[i+1]);
         free(data);
     }
-    // printf("me %zu\n", i);
-    //rest belongs to me!
     double* my_a = (double*)(a + (row_end_first + rows_per_worker*i));
-    // print_flattened_matrix(my_a,rows_per_worker, NCA, 0);
-    // print_flattened_matrix((double*)b, NCA, NCB, 0);
 
     //I multiply the rest
     size_t offset = 0;
@@ -245,8 +216,6 @@ double splitwork(double* res, double*truth, size_t num_workers){
         offset += NCA;
     }
     printf("My c: \n");
-    // print_flattened_matrix((double*)c, NRA, NCB, 0);
-    
     //wait for rest
     MPI_Status stats[num_workers];
     if(MPI_Waitall(num_workers, requests, stats) == MPI_ERR_IN_STATUS){
@@ -268,8 +237,6 @@ double splitwork(double* res, double*truth, size_t num_workers){
         buf_size = sizeof(double)*rows_per_worker*NCB; 
     }
     double time = MPI_Wtime()-start_time;
-  //print_flattened_matrix((double*)c, NRA, NCB, 0);
-    
     //free all pointers!
     free(a);
     free(b);
@@ -303,8 +270,6 @@ double work(int rank, size_t num_workers){
     mm->a = (double*)&buffer[size_of_meta];
     mm->b = (double*)&buffer[size_of_meta+size_of_a];
 
-    // print_flattened_matrix(mm->a, rows_per_worker, NCA,rank);
-    
     double *res =(double*)malloc(sizeof(double)*rows_per_worker*NCB);
 
     size_t offset = 0;
@@ -316,7 +281,6 @@ double work(int rank, size_t num_workers){
         }
         offset += NCA;
     }
-    // print_flattened_matrix((double*)res, NRA, NCB, rank);
     MPI_Send(res, rows_per_worker*NCB, MPI_DOUBLE, 0,rank-1, MPI_COMM_WORLD);
     printf("[%d] sent res home\n",rank);
     free(res);
@@ -361,7 +325,6 @@ int main(int argc, char *argv[]) {
         printf("Run sequantial!\n");
         double *res = malloc(sizeof(double) * NRA * NCB);
         double time = productSequential(res);
-      //print_flattened_matrix((double*)res, NRA, NCB, -10);
         if (checkResult(res, res, NCB, NRA)) {
             printf("Matrices do not match!!!\n");
             return 1;
