@@ -150,7 +150,7 @@ double productSequential(double *res) {
     return time;
 }
 
-double splitwork(double* res, double*truth, size_t num_workers){
+double splitwork(double* res, size_t num_workers){
     if (num_workers == 0) // sadly noone will help me :((
     {
         printf("Run sequential!\n");
@@ -307,8 +307,8 @@ int main(int argc, char *argv[]) {
             printf("Hello from master! - I have %d workers!\n", num_Workers);
             // send out work
             double *res = malloc(sizeof(double)*NRA*NCB);
-            time = splitwork(res, truth, num_Workers);
-            if (checkResult(res, res, NCB, NRA)) {
+            time = splitwork(res, num_Workers);
+            if (checkResult(res, truth, NCB, NRA)) {
                 printf("Matrices do not match!!!\n");
                 return 1;
             }
