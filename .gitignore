@@ -3,7 +3,7 @@
 *.out
 *.exe
 *.mpi
-
+*.dat
 # Ignore any core dumps or crash logs
 core
 *.core

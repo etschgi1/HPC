@@ -22,6 +22,8 @@ enum
 int gridsize[2];
 double precision_goal;		/* precision_goal of solution */
 int max_iter;			/* maximum number of iterations alowed */
+int proc_rank;
+double wtime;
 
 /* benchmark related variables */
 clock_t ticks;			/* number of systemticks */
@@ -46,7 +48,9 @@ void print_timer();
 void start_timer()
 {
     if (!timer_on){
+        MPI_Barrier(MPI_COMM_WORLD);
         ticks = clock();
+        wtime = MPI_Wtime(); 
         timer_on = 1;
     }
 }
@@ -54,7 +58,8 @@ void start_timer()
 void resume_timer()
 {
     if (!timer_on){
-        ticks = clock() - ticks;
+        ticks = clock()  -  ticks; 
+        wtime = MPI_Wtime() - wtime; 
         timer_on = 1;
     }
 }
@@ -62,7 +67,8 @@ void resume_timer()
 void stop_timer()
 {
     if (timer_on){
-        ticks = clock() - ticks;
+        ticks = clock()  -  ticks; 
+        wtime = MPI_Wtime() - wtime; 
         timer_on = 0;
     }
 }
@@ -71,11 +77,11 @@ void print_timer()
 {
     if (timer_on){
         stop_timer();
-        printf("Elapsed processortime: %14.6f s\n", ticks * (1.0 / CLOCKS_PER_SEC));
+        printf("(%i) Elapsed Wtime %14.6f s (%5.1f%% CPU)\n", proc_rank, wtime, 100.0 * ticks * (1.0 / CLOCKS_PER_SEC) / wtime); 
         resume_timer();
     }
     else{
-        printf("Elapsed processortime: %14.6f s\n", ticks * (1.0 / CLOCKS_PER_SEC));
+        printf("(%i) Elapsed Wtime %14.6f s (%5.1f%% CPU)\n", proc_rank, wtime, 100.0 * ticks * (1.0 / CLOCKS_PER_SEC) / wtime);
     }
 }
 
@@ -199,15 +205,16 @@ void Solve()
         count++;
     }
 
-    printf("Number of iterations : %i\n", count);
+    printf("(%i) Number of iterations : %i\n", proc_rank, count);
 }
 
 void Write_Grid()
 {
     int x, y;
     FILE *f;
-
-    if ((f = fopen("output.dat", "w")) == NULL){
+    char filename[40]; //seems danagerous to use a static buffer but let's go with the steps
+    sprintf(filename, "output%i.dat", proc_rank);
+    if ((f = fopen(filename, "w")) == NULL){
         Debug("Write_Grid : fopen failed", 1);
     }
 
@@ -234,6 +241,7 @@ void Clean_Up()
 int main(int argc, char **argv)
 {
     MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &proc_rank);
     start_timer();
 
     Setup_Grid();
