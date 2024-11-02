@@ -22,8 +22,16 @@ enum
 int gridsize[2];
 double precision_goal;		/* precision_goal of solution */
 int max_iter;			/* maximum number of iterations alowed */
+int P; //total number of processes
+int P_grid[2]; // process grid dimensions
+MPI_Comm grid_comm; //grid communicator
+MPI_Status status; 
+
+/* process specific globals*/
 int proc_rank;
 double wtime;
+int proc_coord[2]; // coords of current process in processgrid
+int proc_top, proc_right, proc_bottom, proc_left; // ranks of neighboring procs
 
 /* benchmark related variables */
 clock_t ticks;			/* number of systemticks */
@@ -48,7 +56,7 @@ void print_timer();
 void start_timer()
 {
     if (!timer_on){
-        MPI_Barrier(MPI_COMM_WORLD);
+        MPI_Barrier(grid_comm);
         ticks = clock();
         wtime = MPI_Wtime(); 
         timer_on = 1;
@@ -95,6 +103,47 @@ void Debug(char *mesg, int terminate)
     }
 }
 
+void Setup_Proc_Grid(int argc, char **argv){
+    int wrap_around[2];
+    int reorder;
+
+    Debug("My_MPI_Init",0);
+
+    // num of processes
+    MPI_Comm_size(MPI_COMM_WORLD, &P);
+
+    //calculate the number of processes per column and per row for the grid
+    if(argc>2){
+        P_grid[X_DIR] = atoi(argv[1]);
+        P_grid[Y_DIR] = atoi(argv[2]);
+        if(P_grid[X_DIR] * P_grid[Y_DIR] != P){
+            Debug("ERROR Proces grid dimensions do not match with P ", 1); 
+        }
+    }
+    else{
+        Debug("ERROR Wrong parameter input",1);
+    }
+
+    // Create process topology (2D grid)
+    wrap_around[X_DIR] = 0;
+    wrap_around[Y_DIR] = 0;
+    reorder = 1; //reorder process ranks
+
+    // create grid_comm
+    MPI_Cart_create(MPI_COMM_WORLD, 2, P_grid, wrap_around, reorder, &grid_comm);
+    //get new rank and cartesian coords of this proc
+    MPI_Comm_rank(grid_comm, &proc_rank);
+    MPI_Cart_coords(grid_comm, proc_rank, 2, proc_coord);
+    printf("(%i) (x,y)=(%i,%i)\n", proc_rank, proc_coord[X_DIR], proc_coord[Y_DIR]);
+
+    //calc neighbours
+    MPI_Cart_shift(grid_comm, Y_DIR, -1, NULL, &proc_top);
+    MPI_Cart_shift(grid_comm, Y_DIR, 1, NULL, &proc_bottom);
+    MPI_Cart_shift(grid_comm, X_DIR, -1, NULL, &proc_left);
+    MPI_Cart_shift(grid_comm, X_DIR, 1, NULL, &proc_right);
+    printf("(%i) top %i,  right  %i,  bottom  %i,  left  %i\n", proc_rank, proc_top, proc_right, proc_bottom, proc_left);
+}
+
 void Setup_Grid()
 {
     int x, y, s;
@@ -113,9 +162,9 @@ void Setup_Grid()
         fscanf(f, "precision goal: %lf\n", &precision_goal);
         fscanf(f, "max iterations: %i\n", &max_iter);
     }
-    MPI_Bcast(gridsize, 2, MPI_INT, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&precision_goal, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    MPI_Bcast(&max_iter, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(gridsize, 2, MPI_INT, 0, grid_comm);
+    MPI_Bcast(&precision_goal, 1, MPI_DOUBLE, 0, grid_comm);
+    MPI_Bcast(&max_iter, 1, MPI_INT, 0, grid_comm);
 
     /* Calculate dimensions of local subgrid */
     dim[X_DIR] = gridsize[X_DIR] + 2;
@@ -154,11 +203,11 @@ void Setup_Grid()
         {
             s = fscanf(f, "source: %lf %lf %lf\n", &source_x, &source_y, &source_val);
         }
-        MPI_Bcast(&s, 1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Bcast(&s, 1, MPI_INT, 0, grid_comm);
         if (s==3){
-            MPI_Bcast(&source_x, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            MPI_Bcast(&source_y, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            MPI_Bcast(&source_val, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+            MPI_Bcast(&source_x, 1, MPI_DOUBLE, 0, grid_comm);
+            MPI_Bcast(&source_y, 1, MPI_DOUBLE, 0, grid_comm);
+            MPI_Bcast(&source_val, 1, MPI_DOUBLE, 0, grid_comm);
             x = source_x * gridsize[X_DIR];
             y = source_y * gridsize[Y_DIR];
             x += 1;
@@ -255,7 +304,7 @@ void Clean_Up()
 int main(int argc, char **argv)
 {
     MPI_Init(&argc, &argv);
-    MPI_Comm_rank(MPI_COMM_WORLD, &proc_rank);
+    Setup_Proc_Grid(argc,argv); // was earlier MPI_Comm_rank(MPI_COMM_WORLD, &proc_rank);
     start_timer();
 
     Setup_Grid();
