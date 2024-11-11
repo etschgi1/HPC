@@ -32,6 +32,9 @@ int proc_rank;
 double wtime;
 int proc_coord[2]; // coords of current process in processgrid
 int proc_top, proc_right, proc_bottom, proc_left; // ranks of neighboring procs
+// step 7
+int offset[2] = {0,0};
+
 
 /* benchmark related variables */
 clock_t ticks;			/* number of systemticks */
@@ -170,6 +173,22 @@ void Setup_Grid()
     dim[X_DIR] = gridsize[X_DIR] + 2;
     dim[Y_DIR] = gridsize[Y_DIR] + 2;
 
+    //! Step 7
+    int upper_offset[2] = {0,0};
+    // Calculate top left corner cordinates of local grid
+    offset[X_DIR] = gridsize[X_DIR] * proc_coord[X_DIR] / P_grid[X_DIR];
+    offset[Y_DIR] = gridsize[Y_DIR] * proc_coord[Y_DIR] / P_grid[Y_DIR];
+    upper_offset[X_DIR] = gridsize[X_DIR] * (proc_coord[X_DIR] + 1) / P_grid[X_DIR];
+    upper_offset[Y_DIR] = gridsize[Y_DIR] * (proc_coord[Y_DIR] + 1) / P_grid[Y_DIR];
+
+    // dimensions of local grid
+    dim[X_DIR] = upper_offset[X_DIR] - offset[X_DIR];
+    dim[Y_DIR] = upper_offset[Y_DIR] - offset[Y_DIR];
+    // Add space for rows/columns of neighboring grid
+    dim[X_DIR] += 2;
+    dim[Y_DIR] += 2;
+    //! Step 7 end
+
     /* allocate memory */
     if ((phi = malloc(dim[X_DIR] * sizeof(*phi))) == NULL){
         Debug("Setup_Subgrid : malloc(phi) failed", 1);
@@ -210,10 +229,12 @@ void Setup_Grid()
             MPI_Bcast(&source_val, 1, MPI_DOUBLE, 0, grid_comm);
             x = source_x * gridsize[X_DIR];
             y = source_y * gridsize[Y_DIR];
-            x += 1;
-            y += 1;
-            phi[x][y] = source_val;
-            source[x][y] = 1;
+            x = x + 1 - offset[X_DIR]; // Step 7 --> local grid transform
+            y = y + 1 - offset[Y_DIR]; // Step 7 --> local grid transform
+            if(x > 0 && x < dim[X_DIR] -1 && y > 0 && y < dim[Y_DIR]-1){ // check if in local grid
+                phi[x][y] = source_val;
+                source[x][y] = 1;
+            }
         }
     }
     while (s==3);
