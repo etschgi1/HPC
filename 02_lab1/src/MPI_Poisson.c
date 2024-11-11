@@ -34,7 +34,8 @@ int proc_coord[2]; // coords of current process in processgrid
 int proc_top, proc_right, proc_bottom, proc_left; // ranks of neighboring procs
 // step 7
 int offset[2] = {0,0};
-
+// step 8
+MPI_Datatype border_type[2];
 
 /* benchmark related variables */
 clock_t ticks;			/* number of systemticks */
@@ -244,6 +245,33 @@ void Setup_Grid()
     }
 }
 
+void Setup_MPI_Datatypes()
+{
+    Debug("Setup_MPI_Datatypes",0);
+    
+    // vertical data exchange (Y_Dir)
+    MPI_Type_vector(dim[X_DIR] - 2, 1, dim[Y_DIR], MPI_DOUBLE, &border_type[Y_DIR]);
+    // horizontal data exchange (X_Dir)
+    MPI_Type_vector(dim[Y_DIR] - 2, 1, 1, MPI_DOUBLE, &border_type[X_DIR]);
+
+    MPI_Type_commit(&border_type[Y_DIR]);
+    MPI_Type_commit(&border_type[X_DIR]);
+}
+
+void Exchange_Borders()
+{
+    Debug("Exchange_Borders",0);
+
+    //traffic in top direction
+    MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_top, 0, &phi[1][dim[Y_DIR] - 1], 1, border_type[X_DIR], proc_bottom, 0, grid_comm, &status);
+    //traffic in bottom direction
+    MPI_Sendrecv(&phi[1][dim[X_DIR] - 2], 1, border_type[X_DIR], proc_bottom, 1, &phi[1][0], 1, border_type[X_DIR], proc_top, 1, grid_comm, &status);
+    //traffic in left direction
+    MPI_Sendrecv(&phi[dim[X_DIR] - 2][1], 1, border_type[Y_DIR], proc_right, 3, &phi[0][1], 1, border_type[Y_DIR], proc_left, 3, grid_comm, &status);
+    //traffic in right direction
+    MPI_Sendrecv(&phi[1][1], 1, border_type[Y_DIR], proc_left, 2, &phi[dim[X_DIR] - 1][1], 1, border_type[Y_DIR], proc_right, 2, grid_comm, &status);
+}
+
 double Do_Step(int parity)
 {
   int x, y;
@@ -281,10 +309,10 @@ void Solve()
     {
         Debug("Do_Step 0", 0);
         delta1 = Do_Step(0);
-
+        Exchange_Borders();
         Debug("Do_Step 1", 0);
         delta2 = Do_Step(1);
-
+        Exchange_Borders();
         delta = max(delta1, delta2);
         count++;
     }
@@ -329,6 +357,7 @@ int main(int argc, char **argv)
     start_timer();
 
     Setup_Grid();
+    Setup_MPI_Datatypes();
 
     Solve();
 
