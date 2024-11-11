@@ -130,17 +130,17 @@ void Setup_Proc_Grid(int argc, char **argv){
     reorder = 1; //reorder process ranks
 
     // create grid_comm
-    MPI_Cart_create(MPI_COMM_WORLD, 2, P_grid, wrap_around, reorder, &grid_comm);
+    int ret = MPI_Cart_create(MPI_COMM_WORLD, 2, P_grid, wrap_around, reorder, &grid_comm);
+    if (ret != MPI_SUCCESS){
+        Debug("ERROR: MPI_Cart_create failed",1);
+    }
     //get new rank and cartesian coords of this proc
     MPI_Comm_rank(grid_comm, &proc_rank);
     MPI_Cart_coords(grid_comm, proc_rank, 2, proc_coord);
-    printf("(%i) (x,y)=(%i,%i)\n", proc_rank, proc_coord[X_DIR], proc_coord[Y_DIR]);
-
+    printf("(%i) (x,y)=(%i,%i)\n", proc_rank, proc_coord[X_DIR], proc_coord[Y_DIR]); 
     //calc neighbours
-    MPI_Cart_shift(grid_comm, Y_DIR, -1, NULL, &proc_top);
-    MPI_Cart_shift(grid_comm, Y_DIR, 1, NULL, &proc_bottom);
-    MPI_Cart_shift(grid_comm, X_DIR, -1, NULL, &proc_left);
-    MPI_Cart_shift(grid_comm, X_DIR, 1, NULL, &proc_right);
+    MPI_Cart_shift(grid_comm, Y_DIR, 1, &proc_bottom, &proc_top);
+    MPI_Cart_shift(grid_comm, X_DIR, 1, &proc_right, &proc_left);
     printf("(%i) top %i,  right  %i,  bottom  %i,  left  %i\n", proc_rank, proc_top, proc_right, proc_bottom, proc_left);
 }
 
