@@ -8,6 +8,7 @@
 #include <math.h>
 #include <time.h>
 #include <mpi.h>
+#include <assert.h>
 
 #define DEBUG 0
 
@@ -321,10 +322,66 @@ void Solve()
     printf("(%i) Number of iterations : %i\n", proc_rank, count);
 }
 
+double* get_Global_Grid()
+{
+    Debug("get_Global_Grid", 0);
+    // Nur Prozess 0 benötigt Speicherplatz für das gesamte Gitter
+    double* global_phi = NULL;
+    if (proc_rank == 0) {
+        global_phi = malloc(gridsize[X_DIR] * gridsize[Y_DIR] * sizeof(double));
+        if (global_phi == NULL) {
+            Debug("get_Global_Grid : malloc(global_phi) failed", 1);
+        }
+    }
+
+    // Jeder Prozess muss seinen Teil in einen linearen Puffer kopieren
+    double* local_phi = malloc((dim[X_DIR] - 2) * (dim[Y_DIR] - 2) * sizeof(double));
+    int idx = 0;
+    for (int x = 1; x < dim[X_DIR] - 1; x++) {
+        for (int y = 1; y < dim[Y_DIR] - 1; y++) {
+            local_phi[idx++] = phi[x][y];
+        }
+    }
+
+    // Definiere die Sendcounts und Displacements nur auf Prozess 0
+    int* sendcounts = NULL;
+    int* displs = NULL;
+    if (proc_rank == 0) {
+        sendcounts = malloc(P * sizeof(int));
+        displs = malloc(P * sizeof(int));
+        
+        // Berechne die Größen und Offsets für jedes Subgitter
+        int subgrid_width = gridsize[X_DIR] / P_grid[X_DIR];
+        int subgrid_height = gridsize[Y_DIR] / P_grid[Y_DIR];
+        for (int px = 0; px < P_grid[X_DIR]; px++) {
+            for (int py = 0; py < P_grid[Y_DIR]; py++) {
+                int rank = px * P_grid[Y_DIR] + py;
+                sendcounts[rank] = subgrid_width * subgrid_height;
+                displs[rank] = (px * subgrid_width * gridsize[Y_DIR]) + (py * subgrid_height);
+            }
+        }
+    }
+    Debug("get_Global_Grid : MPI_Gatherv", 0);
+    // Sammle alle lokalen Gitter in das globale Gitter auf Prozess 0
+    MPI_Gatherv(local_phi, (dim[X_DIR] - 2) * (dim[Y_DIR] - 2), MPI_DOUBLE,
+                global_phi, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    free(local_phi);
+    if (proc_rank == 0) {
+        free(sendcounts);
+        free(displs);
+    }
+
+    return global_phi;
+}
+
 void Write_Grid()
 {
-    // only proc 0 writes the grid - but global grid is written
-    
+    double* global_phi = get_Global_Grid();
+    if(proc_rank != 0){
+        assert (global_phi == NULL);
+        return;
+    }
     int x, y;
     FILE *f;
     char filename[40]; //seems danagerous to use a static buffer but let's go with the steps
@@ -335,12 +392,13 @@ void Write_Grid()
 
     Debug("Write_Grid", 0);
 
-    for (x = 1; x < dim[X_DIR] - 1; x++){
-        for (y = 1; y < dim[Y_DIR] - 1; y++){
-            fprintf(f, "%i %i %f\n", x, y, phi[x][y]);
+    for (x = 0; x < gridsize[X_DIR]; x++){
+        for (y = 0; y < gridsize[Y_DIR]; y++){
+            fprintf(f, "%i %i %f\n", x+1, y+1, global_phi[x*gridsize[Y_DIR] + y]);
         }
     }
     fclose(f);
+    free(global_phi);
 }
 
 void Clean_Up()
