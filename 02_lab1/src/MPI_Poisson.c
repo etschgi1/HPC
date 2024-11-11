@@ -261,15 +261,14 @@ void Setup_MPI_Datatypes()
 void Exchange_Borders()
 {
     Debug("Exchange_Borders",0);
-
-    //traffic in top direction
-    MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_top, 0, &phi[1][dim[Y_DIR] - 1], 1, border_type[X_DIR], proc_bottom, 0, grid_comm, &status);
-    //traffic in bottom direction
-    MPI_Sendrecv(&phi[1][dim[X_DIR] - 2], 1, border_type[X_DIR], proc_bottom, 1, &phi[1][0], 1, border_type[X_DIR], proc_top, 1, grid_comm, &status);
-    //traffic in left direction
-    MPI_Sendrecv(&phi[dim[X_DIR] - 2][1], 1, border_type[Y_DIR], proc_right, 3, &phi[0][1], 1, border_type[Y_DIR], proc_left, 3, grid_comm, &status);
-    //traffic in right direction
-    MPI_Sendrecv(&phi[1][1], 1, border_type[Y_DIR], proc_left, 2, &phi[dim[X_DIR] - 1][1], 1, border_type[Y_DIR], proc_right, 2, grid_comm, &status);
+    // top direction
+    MPI_Sendrecv(&phi[1][1], 1, border_type[Y_DIR], proc_top, 0, &phi[1][dim[Y_DIR] - 1], 1, border_type[Y_DIR], proc_bottom, 0, grid_comm, &status);
+    // bottom direction
+    MPI_Sendrecv(&phi[1][dim[Y_DIR] - 2], 1, border_type[Y_DIR], proc_bottom, 0, &phi[1][0], 1, border_type[Y_DIR], proc_top, 0, grid_comm, &status);
+    // left direction
+    MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_left, 0, &phi[0][1], 1, border_type[X_DIR], proc_right, 0, grid_comm, &status);
+    // right direction
+    MPI_Sendrecv(&phi[1][dim[Y_DIR] - 2], 1, border_type[X_DIR], proc_right, 0, &phi[dim[X_DIR] - 1][1], 1, border_type[X_DIR], proc_left, 0, grid_comm, &status);
 }
 
 double Do_Step(int parity)
@@ -298,14 +297,15 @@ void Solve()
 {
     int count = 0;
     double delta;
+    double global_delta;
     double delta1, delta2;
 
     Debug("Solve", 0);
 
     /* give global_delta a higher value then precision_goal */
-    delta = 2 * precision_goal;
+    global_delta = 2 * precision_goal;
 
-    while (delta > precision_goal && count < max_iter)
+    while (global_delta > precision_goal && count < max_iter)
     {
         Debug("Do_Step 0", 0);
         delta1 = Do_Step(0);
@@ -314,6 +314,7 @@ void Solve()
         delta2 = Do_Step(1);
         Exchange_Borders();
         delta = max(delta1, delta2);
+        MPI_Allreduce(&delta, &global_delta, 1, MPI_DOUBLE, MPI_SUM, grid_comm);
         count++;
     }
 
@@ -322,6 +323,8 @@ void Solve()
 
 void Write_Grid()
 {
+    // only proc 0 writes the grid - but global grid is written
+    
     int x, y;
     FILE *f;
     char filename[40]; //seems danagerous to use a static buffer but let's go with the steps
