@@ -316,7 +316,7 @@ void Solve()
         delta2 = Do_Step(1);
         Exchange_Borders();
         delta = max(delta1, delta2);
-        MPI_Allreduce(&delta, &global_delta, 1, MPI_DOUBLE, MPI_SUM, grid_comm);
+        MPI_Allreduce(&delta, &global_delta, 1, MPI_DOUBLE, MPI_MAX, grid_comm);
         count++;
     }
 
