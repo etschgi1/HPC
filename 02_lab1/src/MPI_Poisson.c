@@ -382,7 +382,7 @@ double* get_Global_Grid()
         }
     }
     Debug("get_Global_Grid : MPI_Gatherv", 0);
-    // Sammle alle lokalen Gitter in das globale Gitter auf Prozess 0
+    //! TODO this Gatherv does something wrong - all local grids are alright!!!
     MPI_Gatherv(local_phi, (dim[X_DIR] - 2) * (dim[Y_DIR] - 2), MPI_DOUBLE, global_phi, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     free(local_phi);
