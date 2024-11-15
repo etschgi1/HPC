@@ -14,10 +14,23 @@
 
 #define max(a,b) ((a)>(b)?a:b)
 
+
+// defines for Exercises!
+
+// #define SOR 1
+
+#define DEFINES_ON (SOR || 0)
+//defines end
+
 enum
 {
     X_DIR, Y_DIR
 };
+
+// only needed for certain configs!
+#ifdef SOR
+double sor_omega = 1.9;
+#endif
 
 /* global variables */
 int gridsize[2];
@@ -283,8 +296,14 @@ double Do_Step(int parity)
     for (x = 1; x < dim[X_DIR] - 1; x++){
         for (y = 1; y < dim[Y_DIR] - 1; y++){
             if ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity && source[x][y] != 1){
+                #ifndef SOR
                 old_phi = phi[x][y];
                 phi[x][y] = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1]) * 0.25;
+                #endif
+                #ifdef SOR //! I'm not quite sure about the h^1 and S_i,j in the sor c
+                c_ij = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1] + h^2*S) * 0.25 - phi[x][y];
+                phi[x][y] += sor_omega*phi[x][y];
+                #endif 
                 if (max_err < fabs(old_phi - phi[x][y])){
                     max_err = fabs(old_phi - phi[x][y]);
                 }

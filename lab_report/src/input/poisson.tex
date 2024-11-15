@@ -65,5 +65,36 @@ For the first part of the exercise we follow the steps lined out in the assignme
         \label{fig:poisson_step9}
     \end{figure}
     Note that this run in \autoref{fig:poisson_step9} was done with another pc and another MPI implementation. Therefore, we see $-1$ for cells without a neighbor! However, other than that cosmetic difference it has no impact on the programm. 
-    \item \textbf{Step:} Now we only have to fix two remaining things. First we have to make sure that
+    \item \textbf{Step:} Now we only have to fix two remaining things. First we have to make sure that each process uses the right global coordinates for the output file in the end. Therefore, we change the function a bit to include the specific x-/y-offset for each processor. The second thing is the potential problem, that different processors might start with different (red/black) parities. In order to accomplish a global parity we simply have to change the calculation in the if in \texttt{Do\_Step} from 
+    \begin{lstlisting}[language=c, lastline=1]
+        if ((x + y) % 2 == parity && source[x][y] != 1)
+    \end{lstlisting}
+    to
+    \begin{lstlisting}[language=c, lastline=1]
+        if ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity && source[x][y] != 1)
+    \end{lstlisting}
+    this guarantees that during a given iteration all processors are using the same parity. 
 \end{enumerate}
+This just leaves one question open: Are the results acutally the same?\\
+Checking the output files of the MPI-implementation with the sequential reference indeed shows identical numerical values for the calculated points. Furthermore, the needed iterationcount is also identical which isn't a big surprise, given that the two programms perform the exact same calculation steps. 
+\subsection{Exercises, modifications, and performance aspects}
+For this subsection we'll define the following shorthand notation: \\
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|l|}
+        \hline
+        $n$:  &the number of iterations\\\hline
+        $g$:  &gridsize\\\hline
+        $t$:  &time needed in seconds\\\hline
+        $pt$: & processor topology in form $pxy$, where:\\
+        $p$:  &number of processors used\\
+        $x$:  &number of processors in x-direction\\
+        $y$:  &number of processors in y-direction\\\hline
+       \end{tabular}
+    \caption{Notation for this section}
+\end{table}
+$pt = 414$ means 4 processors in a $1\times 4$ topology. 
+
+\subsubsection{Over-relaxation (SOR)}
+We start of by rewriting the iterations 
