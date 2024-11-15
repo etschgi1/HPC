@@ -172,7 +172,7 @@ void Setup_Grid()
     MPI_Bcast(&precision_goal, 1, MPI_DOUBLE, 0, grid_comm);
     MPI_Bcast(&max_iter, 1, MPI_INT, 0, grid_comm);
 
-    /* Calculate dimensions of local subgrid */
+    /* Calculate dimensions of local subgrid */ //! We do that later now!
     // dim[X_DIR] = gridsize[X_DIR] + 2;
     // dim[Y_DIR] = gridsize[Y_DIR] + 2;
 
@@ -326,7 +326,7 @@ void Solve()
 double* get_Global_Grid()
 {
     Debug("get_Global_Grid", 0);
-    // Nur Prozess 0 benötigt Speicherplatz für das gesamte Gitter
+    // only process 0 needs to store all data!
     double* global_phi = NULL;
     if (proc_rank == 0) {
         global_phi = malloc(gridsize[X_DIR] * gridsize[Y_DIR] * sizeof(double));
@@ -335,7 +335,7 @@ double* get_Global_Grid()
         }
     }
 
-    // Jeder Prozess muss seinen Teil in einen linearen Puffer kopieren
+    // copy own part into buffer - flatten!
     double* local_phi = malloc((dim[X_DIR] - 2) * (dim[Y_DIR] - 2) * sizeof(double));
     int idx = 0;
     for (int x = 1; x < dim[X_DIR] - 1; x++) {
@@ -344,14 +344,20 @@ double* get_Global_Grid()
         }
     }
 
-    // Definiere die Sendcounts und Displacements nur auf Prozess 0
+    // only proc 0 needs sendcounts and displacements for the gatherv operation
     int* sendcounts = NULL;
     int* displs = NULL;
     if (proc_rank == 0) {
         sendcounts = malloc(P * sizeof(int));
         displs = malloc(P * sizeof(int));
         
-        // Berechne die Größen und Offsets für jedes Subgitter
+        // size and offset of different subgrids
+        //! Note that this only works if every process has the same subgrid
+        if (gridsize[X_DIR] % P_grid[X_DIR] != 0 || gridsize[Y_DIR] % P_grid[Y_DIR] != 0)
+        {
+            Debug("!!!A grid dimension is not a multiple of the P_grid in this direction!", 1);
+        }
+        
         int subgrid_width = gridsize[X_DIR] / P_grid[X_DIR];
         int subgrid_height = gridsize[Y_DIR] / P_grid[Y_DIR];
         for (int px = 0; px < P_grid[X_DIR]; px++) {
