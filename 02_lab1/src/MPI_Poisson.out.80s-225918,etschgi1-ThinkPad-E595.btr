@@ -1,0 +1,7 @@
+
+MPI_Poisson.out:225918 terminated with signal 11 at PC=5cff10dde9cb SP=7ffee7b605b0.  Backtrace:
+./MPI_Poisson.out(+0x29cb)[0x5cff10dde9cb]
+./MPI_Poisson.out(+0x2c87)[0x5cff10ddec87]
+/lib/x86_64-linux-gnu/libc.so.6(+0x29d90)[0x7dd0e6b4dd90]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80)[0x7dd0e6b4de40]
+./MPI_Poisson.out(+0x1405)[0x5cff10ddd405]

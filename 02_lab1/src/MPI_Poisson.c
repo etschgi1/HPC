@@ -394,11 +394,11 @@ double* get_Global_Grid()
     return global_phi;
 }
 
-void Write_Grid_local(){
+void Write_Grid_global(){
     int x, y;
     FILE *f;
     char filename[40]; //seems danagerous to use a static buffer but let's go with the steps
-    sprintf(filename, "output_MPI_local_%i.dat", proc_rank);
+    sprintf(filename, "output_MPI_global_%i.dat", proc_rank);
     if ((f = fopen(filename, "w")) == NULL){
         Debug("Write_Grid : fopen failed", 1);
     }
@@ -407,7 +407,9 @@ void Write_Grid_local(){
 
     for (x = 1; x < dim[X_DIR]-1; x++){
         for (y = 1; y < dim[Y_DIR]-1; y++){
-            fprintf(f, "%i %i %f\n", x, y, phi[x][y]);
+            int x_glob = x + offset[X_DIR];
+            int y_glob = y + offset[Y_DIR];
+            fprintf(f, "%i %i %f\n", x_glob, y_glob, phi[x][y]);
         }
     }
     fclose(f);
@@ -461,7 +463,7 @@ int main(int argc, char **argv)
     Solve();
 
     // Write_Grid();
-    Write_Grid_local();
+    Write_Grid_global();
     print_timer();
 
     Clean_Up();

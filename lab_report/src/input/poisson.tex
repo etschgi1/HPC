@@ -57,13 +57,13 @@ For the first part of the exercise we follow the steps lined out in the assignme
         \label{fig:poisson_step7}
     \end{figure}
     \item \textbf{Step:} After defining and commiting two special datatypes for vertical and horizontal communication, we setup the communication logic to exchange the boundary values between the processes. We call our \texttt{Exchange\_Borders} function after each iteration (for both red / black grid points). Now we face the problem in which some processes may stop instantly (no source in their local grid). They will not supply any data to their neighbors, which will cause the program to hang. We shall fix this in the next step.
-    \item \textbf{Step:} Finally we need to implement the logic to check for convergence (in a global sense). We do this by using a \texttt{MPI\_Allreduce} call with the \texttt{MPI\_SUM} operation. This way we aggregate all deltas into one global delta which we use in the while-loop-condition to check for convergence. We can see that the program now runs as expected in \autoref{fig:poisson_step9}.
+    \item \textbf{Step:} Finally we need to implement the logic to check for convergence (in a global sense). We do this by using a \texttt{MPI\_Allreduce} call with the \texttt{MPI\_MAX} operation. This way we aggregate all deltas and choose the biggest one for the global delta which we use in the while-loop-condition to check for convergence. We can see that the program now runs as expected in \autoref{fig:poisson_step9}.
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{../fig/lab1/step9.png}
         \caption{MPI\_Poisson after Step 9 - Running with 4 processes on a 2x2 grid}
         \label{fig:poisson_step9}
     \end{figure}
-    \TODO{Different iteration count between seq and parallel version?! - also change pic if fixed.}
-    \item \textbf{Step:} 
+    Note that this run in \autoref{fig:poisson_step9} was done with another pc and another MPI implementation. Therefore, we see $-1$ for cells without a neighbor! However, other than that cosmetic difference it has no impact on the programm. 
+    \item \textbf{Step:} Now we only have to fix two remaining things. First we have to make sure that
 \end{enumerate}
