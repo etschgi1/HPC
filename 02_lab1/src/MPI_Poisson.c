@@ -144,8 +144,9 @@ void Setup_Proc_Grid(int argc, char **argv){
     MPI_Cart_coords(grid_comm, proc_rank, 2, proc_coord);
     printf("(%i) (x,y)=(%i,%i)\n", proc_rank, proc_coord[X_DIR], proc_coord[Y_DIR]); 
     //calc neighbours
-    MPI_Cart_shift(grid_comm, Y_DIR, 1, &proc_bottom, &proc_top);
-    MPI_Cart_shift(grid_comm, X_DIR, 1, &proc_right, &proc_left);
+    // MPI_Cart_shift(grid_comm, Y_DIR, 1, &proc_bottom, &proc_top);
+    MPI_Cart_shift(grid_comm, Y_DIR, 1, &proc_top, &proc_bottom);
+    MPI_Cart_shift(grid_comm, X_DIR, 1, &proc_left, &proc_right);
     printf("(%i) top %i,  right  %i,  bottom  %i,  left  %i\n", proc_rank, proc_top, proc_right, proc_bottom, proc_left);
 }
 
@@ -167,13 +168,13 @@ void Setup_Grid()
         fscanf(f, "precision goal: %lf\n", &precision_goal);
         fscanf(f, "max iterations: %i\n", &max_iter);
     }
-    MPI_Bcast(gridsize, 2, MPI_INT, 0, grid_comm);
+    MPI_Bcast(&gridsize, 2, MPI_INT, 0, grid_comm);
     MPI_Bcast(&precision_goal, 1, MPI_DOUBLE, 0, grid_comm);
     MPI_Bcast(&max_iter, 1, MPI_INT, 0, grid_comm);
 
     /* Calculate dimensions of local subgrid */
-    dim[X_DIR] = gridsize[X_DIR] + 2;
-    dim[Y_DIR] = gridsize[Y_DIR] + 2;
+    // dim[X_DIR] = gridsize[X_DIR] + 2;
+    // dim[Y_DIR] = gridsize[Y_DIR] + 2;
 
     //! Step 7
     int upper_offset[2] = {0,0};
@@ -267,9 +268,9 @@ void Exchange_Borders()
     // bottom direction
     MPI_Sendrecv(&phi[1][dim[Y_DIR] - 2], 1, border_type[Y_DIR], proc_bottom, 0, &phi[1][0], 1, border_type[Y_DIR], proc_top, 0, grid_comm, &status);
     // left direction
-    MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_left, 0, &phi[0][1], 1, border_type[X_DIR], proc_right, 0, grid_comm, &status);
+    MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_left, 0, &phi[dim[X_DIR]-1][1], 1, border_type[X_DIR], proc_right, 0, grid_comm, &status);
     // right direction
-    MPI_Sendrecv(&phi[1][dim[Y_DIR] - 2], 1, border_type[X_DIR], proc_right, 0, &phi[dim[X_DIR] - 1][1], 1, border_type[X_DIR], proc_left, 0, grid_comm, &status);
+    MPI_Sendrecv(&phi[dim[X_DIR]-2][1], 1, border_type[X_DIR], proc_right, 0, &phi[0][1], 1, border_type[X_DIR], proc_left, 0, grid_comm, &status);
 }
 
 double Do_Step(int parity)
@@ -281,7 +282,7 @@ double Do_Step(int parity)
   /* calculate interior of grid */
     for (x = 1; x < dim[X_DIR] - 1; x++){
         for (y = 1; y < dim[Y_DIR] - 1; y++){
-            if ((x + y) % 2 == parity && source[x][y] != 1){
+            if ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity && source[x][y] != 1){
                 old_phi = phi[x][y];
                 phi[x][y] = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1]) * 0.25;
                 if (max_err < fabs(old_phi - phi[x][y])){
@@ -310,7 +311,7 @@ void Solve()
     {
         Debug("Do_Step 0", 0);
         delta1 = Do_Step(0);
-        Exchange_Borders();
+        // Exchange_Borders();
         Debug("Do_Step 1", 0);
         delta2 = Do_Step(1);
         Exchange_Borders();
@@ -385,7 +386,7 @@ void Write_Grid()
     int x, y;
     FILE *f;
     char filename[40]; //seems danagerous to use a static buffer but let's go with the steps
-    sprintf(filename, "output%i.dat", proc_rank);
+    sprintf(filename, "output_MPI%i.dat", proc_rank);
     if ((f = fopen(filename, "w")) == NULL){
         Debug("Write_Grid : fopen failed", 1);
     }
