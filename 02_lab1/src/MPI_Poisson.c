@@ -326,6 +326,16 @@ void Solve()
 double* get_Global_Grid()
 {
     Debug("get_Global_Grid", 0);
+    //!! DEBUG only
+    for (size_t i = 0; i < dim[X_DIR]; i++)
+    {
+        for (size_t j = 0; j < dim[Y_DIR]; j++)
+        {
+            phi[i][j] = proc_rank;
+        }
+        
+    }
+    
     // only process 0 needs to store all data!
     double* global_phi = NULL;
     if (proc_rank == 0) {
@@ -336,13 +346,16 @@ double* get_Global_Grid()
     }
 
     // copy own part into buffer - flatten!
-    double* local_phi = malloc((dim[X_DIR] - 2) * (dim[Y_DIR] - 2) * sizeof(double));
+    size_t buf_size = (dim[X_DIR] - 2) * (dim[Y_DIR] - 2) * sizeof(double);
+    double* local_phi = malloc(buf_size);
     int idx = 0;
     for (int x = 1; x < dim[X_DIR] - 1; x++) {
         for (int y = 1; y < dim[Y_DIR] - 1; y++) {
             local_phi[idx++] = phi[x][y];
         }
     }
+    printf("I'm proc %d and i have a buffer of size %zu\n", proc_rank, buf_size);
+
 
     // only proc 0 needs sendcounts and displacements for the gatherv operation
     int* sendcounts = NULL;
@@ -370,8 +383,7 @@ double* get_Global_Grid()
     }
     Debug("get_Global_Grid : MPI_Gatherv", 0);
     // Sammle alle lokalen Gitter in das globale Gitter auf Prozess 0
-    MPI_Gatherv(local_phi, (dim[X_DIR] - 2) * (dim[Y_DIR] - 2), MPI_DOUBLE,
-                global_phi, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Gatherv(local_phi, (dim[X_DIR] - 2) * (dim[Y_DIR] - 2), MPI_DOUBLE, global_phi, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     free(local_phi);
     if (proc_rank == 0) {
@@ -380,6 +392,25 @@ double* get_Global_Grid()
     }
 
     return global_phi;
+}
+
+void Write_Grid_local(){
+    int x, y;
+    FILE *f;
+    char filename[40]; //seems danagerous to use a static buffer but let's go with the steps
+    sprintf(filename, "output_MPI_local_%i.dat", proc_rank);
+    if ((f = fopen(filename, "w")) == NULL){
+        Debug("Write_Grid : fopen failed", 1);
+    }
+
+    Debug("Write_Grid", 0);
+
+    for (x = 1; x < dim[X_DIR]-1; x++){
+        for (y = 1; y < dim[Y_DIR]-1; y++){
+            fprintf(f, "%i %i %f\n", x, y, phi[x][y]);
+        }
+    }
+    fclose(f);
 }
 
 void Write_Grid()
@@ -429,8 +460,8 @@ int main(int argc, char **argv)
 
     Solve();
 
-    Write_Grid();
-
+    // Write_Grid();
+    Write_Grid_local();
     print_timer();
 
     Clean_Up();
