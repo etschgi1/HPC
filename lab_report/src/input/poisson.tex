@@ -99,14 +99,46 @@ $pt = 414$ means 4 processors in a $1\times 4$ topology.
 \subsubsection{Over-relaxation (SOR)}
 We start of by rewriting the \texttt{Do\_Step} routine to facilitate SOR updates. Furthermore, we need $h^2$, the grid spacing (which is 1 in our case) and the relaxation parameter $\omega$ to calculate the updated values. A quick test shows a speedup of roughly a factor of 10. More systematic tests will be done in the next section.
 \subsubsection{Optimal $\omega$ for 4 proc. on a 4x1 grid}
-With the power of a little python scripting we can easily test different values for $\omega$ and plot the results as seen in \autoref{fig:omega}. 
+With the power of a little python scripting we can easily test different values for $\omega$ and plot the results as seen in \autoref{fig:best_omega_122}. 
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{../fig/lab1/best_omega_122.png}
     \caption{\Shining{Optimal $\omega$ for 4 processors on a 4x1 grid}}
-    \label{fig:omega}
+    \label{fig:best_omega_122}
 \end{figure}
 We find that the optimal $\omega$ is at about $1.93$ for this setup with only 129 iterations. This constitutes a speedup of about 1825\% compared to the sequential implementation.
 
-\subsubsection{Performance analysis}
+\subsubsection{Scaling behavior with larger grids}
+This investigation is carried out twice: Once with a $4\times 1$ topology (as in the previous section) and once with a $2\times 2$ topology. We use grid sizes of $10\times 10$, $25\times 25$, $50\times 50$, $100\times 100$, $200\times 200$, $400\times 400$, $800\times 800$ and $1600\times 1600$ and set $\omega = 1.95$ for all runs. The results are shown in \autoref{fig:scaling_123}.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../fig/lab1/scaling_topology_4x1.png}
+    \end{minipage}%
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../fig/lab1/scaling_topology_2x2.png}
+    \end{minipage}
+    \caption{Scaling behavior of the Poisson solver with different grid sizes and processor topologies}
+    \label{fig:scaling_123}
+\end{figure}
+As seen by the high $R^2$ values in the plots, the scaling behavior is very close to linear. 
+We obtain the following scaling factors for the different grid sizes and topologies from the linear fits:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Topology & $\alpha$ & $\beta$ \\\hline
+        $4\times 1$ & $1.35+10^{-1}$ & $7.11+10^{-6}$ \\\hline
+        $2\times 2$ & $1.06+10^{-1}$ & $6.17+10^{-6}$ \\\hline
+    \end{tabular}
+    \caption{Scaling factors for different processor topologies for the Poisson solver\\Using: $t(n) = \alpha + \beta \cdot n$ as a model}
+\end{table}
+\Shining{What can you conclude from the scaling behavior?}\\
+We see that the scaling behavior is very close to linear for both topologies. This means that the parallel implementation scales as expected with the number of grid points.\\
+If we compare the scaling factors ($\beta$) for the two topologies we see that the $2\times 2$ topology scales slightly better than the $4\times 1$ topology. This is not surprising, as the $2\times 2$ topology has a more balanced communication workload balance. In the $2\times 2$ topology every processor has two neighbors, while in the $4\times 1$ topology the processors at the ends only have one neighbor. This is a general trend: A topology which divides the grid into square / square-like parts will scale better than a topology which divides the grid into long and thin parts.\\
+In essence: We want to keep the communication between processors as balanced as possible to achieve the best scaling behavior.
