@@ -97,4 +97,16 @@ For this subsection we'll define the following shorthand notation: \\
 $pt = 414$ means 4 processors in a $1\times 4$ topology. 
 
 \subsubsection{Over-relaxation (SOR)}
-We start of by rewriting the iterations 
+We start of by rewriting the \texttt{Do\_Step} routine to facilitate SOR updates. Furthermore, we need $h^2$, the grid spacing (which is 1 in our case) and the relaxation parameter $\omega$ to calculate the updated values. A quick test shows a speedup of roughly a factor of 10. More systematic tests will be done in the next section.
+\subsubsection{Optimal $\omega$ for 4 proc. on a 4x1 grid}
+With the power of a little python scripting we can easily test different values for $\omega$ and plot the results as seen in \autoref{fig:omega}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../fig/lab1/best_omega_122.png}
+    \caption{\Shining{Optimal $\omega$ for 4 processors on a 4x1 grid}}
+    \label{fig:omega}
+\end{figure}
+We find that the optimal $\omega$ is at about $1.93$ for this setup with only 129 iterations. This constitutes a speedup of about 1825\% compared to the sequential implementation.
+
+\subsubsection{Performance analysis}

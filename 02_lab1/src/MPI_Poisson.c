@@ -17,7 +17,7 @@
 
 // defines for Exercises!
 
-// #define SOR 1
+#define SOR 1
 
 #define DEFINES_ON (SOR || 0)
 //defines end
@@ -40,6 +40,7 @@ int P; //total number of processes
 int P_grid[2]; // process grid dimensions
 MPI_Comm grid_comm; //grid communicator
 MPI_Status status; 
+double h;
 
 /* process specific globals*/
 int proc_rank;
@@ -137,7 +138,13 @@ void Setup_Proc_Grid(int argc, char **argv){
         if(P_grid[X_DIR] * P_grid[Y_DIR] != P){
             Debug("ERROR Proces grid dimensions do not match with P ", 1); 
         }
-    }
+        if (argc>3)
+        {
+            // get sor from args
+            sor_omega = atof(argv[3]);
+            printf("Set sor_omega over argv to %5.f\n", sor_omega);
+        }
+    }    
     else{
         Debug("ERROR Wrong parameter input",1);
     }
@@ -184,7 +191,7 @@ void Setup_Grid()
     MPI_Bcast(&gridsize, 2, MPI_INT, 0, grid_comm);
     MPI_Bcast(&precision_goal, 1, MPI_DOUBLE, 0, grid_comm);
     MPI_Bcast(&max_iter, 1, MPI_INT, 0, grid_comm);
-
+    h = 1;
     /* Calculate dimensions of local subgrid */ //! We do that later now!
     // dim[X_DIR] = gridsize[X_DIR] + 2;
     // dim[Y_DIR] = gridsize[Y_DIR] + 2;
@@ -289,20 +296,20 @@ void Exchange_Borders()
 double Do_Step(int parity)
 {
   int x, y;
-  double old_phi;
+  double old_phi, c_ij;
   double max_err = 0.0;
 
   /* calculate interior of grid */
     for (x = 1; x < dim[X_DIR] - 1; x++){
         for (y = 1; y < dim[Y_DIR] - 1; y++){
             if ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity && source[x][y] != 1){
-                #ifndef SOR
                 old_phi = phi[x][y];
+                #ifndef SOR
                 phi[x][y] = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1]) * 0.25;
                 #endif
-                #ifdef SOR //! I'm not quite sure about the h^1 and S_i,j in the sor c
-                c_ij = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1] + h^2*S) * 0.25 - phi[x][y];
-                phi[x][y] += sor_omega*phi[x][y];
+                #ifdef SOR //! I'm not quite sure about the h and source parts here
+                c_ij = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1] + h*h*source[x][y]) * 0.25 - phi[x][y];
+                phi[x][y] += sor_omega*c_ij;
                 #endif 
                 if (max_err < fabs(old_phi - phi[x][y])){
                     max_err = fabs(old_phi - phi[x][y]);
@@ -478,6 +485,13 @@ int main(int argc, char **argv)
 
     Setup_Grid();
     Setup_MPI_Datatypes();
+
+    #ifdef SOR
+    if (proc_rank == 0)
+    {
+        printf("SOR using omega: %.5f\n", sor_omega);
+    }
+    #endif
 
     Solve();
 
