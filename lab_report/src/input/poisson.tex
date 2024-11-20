@@ -165,3 +165,33 @@ Our poisson problem is a discretized system in 2D space. The condition number of
 As can be seen in \autoref{fig:iterations_125} $\omega = 1.9$ beats the other two values for very small and the largest gridsize. For different gridsizes we get differnetly sized matrices we have to solve. SOR overrelaxes high-frequency errors and underrelaxes low-frequency errors (the later for stability). The optimal $\omega$ is therefore dependent on the gridsize and the error modes present in the system. In our current example, it might be that $\omega = 1.9$ is a good compromise for the grid sizes we are looking at.
 
 \subsubsection{Error as a function of the iteration number}
+With the same $4 \times 1$ topology and grid sizes of $800 \times 800$ the error for $15000$ iterations is tracked using $\omega = 1.93$. The results are shown in \autoref{fig:error_126}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../fig/lab1/errors_126.png}
+    \caption{Error as a function of the iteration number}
+    \label{fig:error_126}
+\end{figure}
+At first the error decreases rapidly in the first few iterations to about $10^{-3}$ (logarithmic scale!). After that the error decreases more slowly until it is below floating point precision. \Shining{Note:} All calculations are done using double precision floating point numbers and only the error recording was done using single precision which leaves the step-like artifacts in the plot. 
+
+\subsubsection{\Shining{Optional} - Gain performance by reducing \texttt{MPI\_Allreduce} calls}
+The last subsection showed us that the error reduces monotonically. We might be able to save some time by leaving out some checks and maybe check the global error every 10th or 100th iteration only.\\ First, we should benchmark if it is at all wise to optimize here, by measuring how long the \texttt{MPI\_Allreduce} call takes. We can do this by measuring the time needed for the \texttt{MPI\_Allreduce} call in the \texttt{Do\_Step} function and summing up to get the total time spent in \texttt{MPI\_Allreduce} calls.\\
+We again solve with a $4 \times 1$ topology, $\omega = 1.93$ and a $800 \times 800$ grid: It takes roughly $20$ seconds of which the processors spend around 1 - 2 seconds in the \texttt{MPI\_Allreduce} call. This is a significant amount of time ($(7.0 \pm 0.4)$\%). This means we would save some time by reducing the number of \texttt{MPI\_Allreduce} calls and calculating 9 (0.25\% of total) more iterations wouldn't hurt us too bad because it takes 3601 to converge!\\
+We run the program three times with \texttt{MPI\_Allreduce} calls every 1, 10 and 100 iterations and get the speedups in \texttt{MPI\_Allreduce} calls as shown in \autoref{tab:allreduce_speedup}.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Iterations & \texttt{MPI\_Allreduce} - speedup (factor) & calculated overall speedup (\%)\\\hline
+        1  & 1.00 & 0\\\hline
+        10 & $6.0 \pm 2.0$ & $ 5.9 \pm 0.5$\\\hline
+        100& $62 \pm 6$    & $ 6.9 \pm 0.4$\\\hline
+    \end{tabular}
+    \caption{Speedup in \texttt{MPI\_Allreduce} calls for different iteration counts and calculated overall speedup (\%)}
+    \label{tab:allreduce_speedup}
+\end{table}
+As can be clearly seen from the table we can gain around 6 \% using \texttt{MPI\_Allreduce} calls every 10 iterations and around 7 \% using \texttt{MPI\_Allreduce} calls every 100 iterations. This is a significant speedup for a very small change in the code.\\
+\textbf{Note:} The speedup is calculated to account for fluctuations in the runtime of the program, due to other processes running on the same machine / cluster. 
+
+\subsubsection{Reduce border communication}
+Another way to reduce communication overhead is to reduce the number of border exchanges. 

@@ -19,6 +19,8 @@
 
 #define SOR 1
 #define MONITOR_ERROR 1
+#define MONITOR_ALLREDUCE 1
+#define ALLREDUCE_COUNT 100
 
 #define DEFINES_ON (SOR || MONITOR_ERROR || 0)
 //defines end
@@ -34,6 +36,9 @@ double sor_omega = 1.9;
 #endif
 #ifdef MONITOR_ERROR
 double *errors=NULL;
+#endif
+#ifdef MONITOR_ALLREDUCE
+double all_reduce_time = 0;
 #endif
 
 /* global variables */
@@ -146,7 +151,7 @@ void Setup_Proc_Grid(int argc, char **argv){
         {
             // get sor from args
             sor_omega = atof(argv[3]);
-            printf("Set sor_omega over argv to %5.f\n", sor_omega);
+            printf("Set sor_omega over argv to %1.4f\n", sor_omega);
         }
     }    
     else{
@@ -346,7 +351,20 @@ void Solve()
         delta2 = Do_Step(1);
         Exchange_Borders();
         delta = max(delta1, delta2);
+        #ifdef MONITOR_ALLREDUCE
+        double time_ = MPI_Wtime();
+        #endif
+        #ifdef ALLREDUCE_COUNT
+        if(count % ALLREDUCE_COUNT == 0){
+            MPI_Allreduce(&delta, &global_delta, 1, MPI_DOUBLE, MPI_MAX, grid_comm);
+        }
+        #endif
+        #ifndef ALLREDUCE_COUNT
         MPI_Allreduce(&delta, &global_delta, 1, MPI_DOUBLE, MPI_MAX, grid_comm);
+        #endif
+        #ifdef MONITOR_ALLREDUCE
+        all_reduce_time += MPI_Wtime() - time_;
+        #endif
         #ifdef MONITOR_ERROR
         if (proc_rank == 0)
         {
@@ -357,6 +375,9 @@ void Solve()
     }
 
     printf("(%i) Number of iterations : %i\n", proc_rank, count);
+    #ifdef MONITOR_ALLREDUCE
+    printf("(%i) Allreduce time: %14.6f\n", proc_rank, all_reduce_time);
+    #endif
 }
 
 double* get_Global_Grid()

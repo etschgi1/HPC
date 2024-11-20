@@ -1,6 +1,7 @@
 import os, re
 import numpy as np
 from util import *
+from scipy.optimize import curve_fit
 
 
 
@@ -10,17 +11,22 @@ def visualise(res):
     plt.rc('text', usetex=True)
     plt.rc('font', family='serif', size=14)
     lab2_path = "../../lab_report/fig/lab1"
-    omegas = list(res.keys())
-    iterations = list(res.values())
-    min_ = min(iterations)
-    min_idx = iterations.index(min_)
-    plt.plot(omegas, iterations, marker="o")
-    plt.plot(omegas[min_idx], min_, marker="x", color="red", label="Min iterations")
-    plt.xlabel("Omega")
-    plt.ylabel("Number of iterations")
-    plt.title("Number of iterations vs Omega")
+    # exp fit
+    # def func(x, a, b):
+    #     return a * np.exp(b * x)
+    # popt, pcov = curve_fit(func, np.arange(len(res)), res)
+    # print(popt)
+    # print(pcov)
+    # fity = func(np.arange(len(res)), *popt)
+    # plt.plot(fity, label="Fit")
+    plt.plot(res)
+    # plt.legend()
     plt.grid()
-    plt.savefig(os.path.join(lab2_path, "best_omega_122.png"))
+    plt.xlabel("Iteration")
+    # plt.xscale("log")
+    plt.yscale("log")
+    plt.ylabel("Error")
+    plt.savefig(os.path.join(lab2_path, "errors_126.png"))
     # plt.show()
 
 
@@ -37,4 +43,3 @@ if __name__ == "__main__":
     path = os.path.join(path, src)
     os.chdir(path)
     visualise(readerr())
-    
