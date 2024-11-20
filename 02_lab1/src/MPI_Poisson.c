@@ -18,8 +18,9 @@
 // defines for Exercises!
 
 #define SOR 1
+#define MONITOR_ERROR 1
 
-#define DEFINES_ON (SOR || 0)
+#define DEFINES_ON (SOR || MONITOR_ERROR || 0)
 //defines end
 
 enum
@@ -30,6 +31,9 @@ enum
 // only needed for certain configs!
 #ifdef SOR
 double sor_omega = 1.9;
+#endif
+#ifdef MONITOR_ERROR
+double *errors=NULL;
 #endif
 
 /* global variables */
@@ -343,6 +347,12 @@ void Solve()
         Exchange_Borders();
         delta = max(delta1, delta2);
         MPI_Allreduce(&delta, &global_delta, 1, MPI_DOUBLE, MPI_MAX, grid_comm);
+        #ifdef MONITOR_ERROR
+        if (proc_rank == 0)
+        {
+            errors[count] = global_delta;
+        }
+        #endif
         count++;
     }
 
@@ -475,8 +485,37 @@ void Clean_Up()
     free(phi);
     free(source[0]);
     free(source);
+    #ifdef MONITOR_ERROR
+    free(errors);
+    #endif
 }
+void setup_error_monitor(){
+    if (proc_rank != 0)
+    {
+        return;
+    }
+    
+    errors = malloc(sizeof(double)*max_iter);
+}
+void write_errors(){
+    if(proc_rank != 0){
+        return;
+    }
+    FILE *f;
+    char filename[40]; //seems danagerous to use a static buffer but let's go with the steps
+    sprintf(filename, "errors_MPI.dat");
+    if ((f = fopen(filename, "w")) == NULL){
+        Debug("Write_Errors : fopen failed", 1);
+    }
 
+    Debug("Write_Errors", 0);
+
+    for (size_t i = 0; i < max_iter; ++i)
+    {
+        fprintf(f, "%f\n", errors[i]);
+    }
+    fclose(f);
+}
 int main(int argc, char **argv)
 {
     MPI_Init(&argc, &argv);
@@ -492,9 +531,14 @@ int main(int argc, char **argv)
         printf("SOR using omega: %.5f\n", sor_omega);
     }
     #endif
+    #ifdef MONITOR_ERROR
+    setup_error_monitor();
+    #endif
 
     Solve();
-
+    #ifdef MONITOR_ERROR
+    write_errors();
+    #endif
     // Write_Grid();
     Write_Grid_global();
     print_timer();

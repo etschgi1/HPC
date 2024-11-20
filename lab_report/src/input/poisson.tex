@@ -148,4 +148,20 @@ In essence: We want to keep the communication between processors as balanced as 
 If I could choose between a $16 \times 1$, $8 \times 2$, $4 \times4$, $2 \times 8$, $1 \times 16$ topology, I would choose the $4 \times 4$ topology. This is because the $4 \times 4$ topology has the most balanced communication workload balance, as detailed in the \Shining{Shining} in \autoref{subsec:scaling}.
 
 \subsubsection{Iterations needed for convergence scaling}
-- simply reuse analysis code from prev. 3 exercises.
+We investigate the number of iterations needed for convergence using the $4 \times 1$ topology square grids with sidelength: $10, 25, 50, 100, 200, 400, 800, 1600$. The results for different \Shining{$\omega$} are shown in \autoref{fig:iterations_125}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../fig/lab1/iteration_count_(4, 1)_125.png}
+    \caption{Iterations needed for convergence with different grid side lengths}
+    \label{fig:iterations_125}
+\end{figure}
+We can clearly see that the number of iterations till convergence increases with the problem size. At first, I expected linear growth proportional to the number of gridpoints. However, it turns out that the number of iterations actually grow slower and in a square root like fashion. This can be seen by the linear behavior in the plot of grid-side length against iterations. 
+
+\Shining{Why is the number of iterations needed for convergence $\propto \sqrt{g}$?}\\
+Our poisson problem is a discretized system in 2D space. The condition number of the matrix we have to solve is proportional to the number of gridpoints in our system. SOR uses the spectral properties of the matrix to solve in a way such that the dominant error mode takes time proportional to the diameter of the domain to converge. This means it is proportional to $\sqrt{g} = \sqrt{n_x \cdot n_y}$.\\
+
+\Shining{Why does omega with the best performance change with the grid size?}\\
+As can be seen in \autoref{fig:iterations_125} $\omega = 1.9$ beats the other two values for very small and the largest gridsize. For different gridsizes we get differnetly sized matrices we have to solve. SOR overrelaxes high-frequency errors and underrelaxes low-frequency errors (the later for stability). The optimal $\omega$ is therefore dependent on the gridsize and the error modes present in the system. In our current example, it might be that $\omega = 1.9$ is a good compromise for the grid sizes we are looking at.
+
+\subsubsection{Error as a function of the iteration number}
