@@ -29,6 +29,10 @@
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{xcolor}
 \definecolor{darkgreen}{rgb}{0.0, 0.4, 0.0}
+\sisetup{
+    separate-uncertainty = true,  % Display uncertainty with \pm
+    output-decimal-marker = {.},  % Ensure decimal point is a dot
+}
 
 \lstdefinestyle{CStyle}{
     language=C,

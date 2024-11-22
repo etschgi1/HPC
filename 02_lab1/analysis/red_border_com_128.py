@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from util import update_input_file, reset_input_file
 from uncertainties import ufloat
 
-def border_com(togologies, grids, skips, omega=1.95, max_iter=5000):
+def border_com(togologies, grids, skips, omega=1.95, max_iter=50000):
     input_file = "input.dat"
     results = {}  # Dictionary to store omega and corresponding number of iterations
     reset_input_file()
@@ -90,6 +90,8 @@ def visualise(res, tops, grids, skips):
         ax1.set_xlabel("Number of Skips Between Border Exchanges")
         ax1.set_ylabel("Iterations", color="blue")
         ax2.set_ylabel("Elapsed Time (s)", color="orange")
+        # ax1.set_yscale("log")
+        ax2.set_yscale("log")
 
         # Add a title and a combined legend
         plt.title(f"Performance vs Skips for Topology {top}")
@@ -100,7 +102,7 @@ def visualise(res, tops, grids, skips):
 
         # Save the figure for the current topology
         plt.tight_layout()
-        plt.savefig(os.path.join(lab2_path, f"performance_skips_topology_{top[0]}x{top[1]}.png"))
+        plt.savefig(os.path.join(lab2_path, f"skips_topology_{top[0]}x{top[1]}.png"))
         plt.close()
 
 
@@ -110,7 +112,7 @@ if __name__ == "__main__":
     path = os.path.join(path, src)
     os.chdir(path)
     tops = [(4, 1)]
-    grids = [(10,10),(25,25),(50,50),(100,100)]#, (200,200), (800,800)]#, (200,200), (800, 800)]#, (3200, 3200)]
-    skips = [1,2,3,4,5,7,10]#,15,25,50,100]
+    grids = [(100,100), (200,200),(400,400)]# (800,800)]#, (200,200), (800, 800)]#, (3200, 3200)]
+    skips = [1,2,3,4,5,7,10,25,50]#,100]
     res = border_com(tops, grids, skips)
     visualise(res, tops, grids, skips)
