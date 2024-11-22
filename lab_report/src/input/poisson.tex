@@ -255,3 +255,28 @@ One would expect larger grid sizes to be more computationally expensive and we h
 
 \Shining{When is the time spent in \texttt{Exchange\_Borders} significant / comparable to computation?}\\
 As can be seen in \autoref{fig:exchange_time} the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes from the start (between 5 and 25\%). Thereafter it grows to around 30\% to 45\% for 9 processors. This means that the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes and processor counts, but especially as the processor count grows.
+
+\subsubsection{Latency and bandwith in \texttt{Exchange\_Borders}}
+We use the configurations from \autoref{subsec:scaling}: $4 \times 1$, $2 \times 2$ and \Shining{$3 \times 3$} topologies with grid sizes of $200 \times 200$, $400 \times 400$ and $800 \times 800$ and $\omega = 1.95$. We obtain the results in \autoref{tab:latency_bandwith}.
+\begin{table}[H]
+    \centering
+    \caption{Metrics for \texttt{Exchange\_Borders} latency and bandwith}
+    \label{tab:latency_bandwith}
+    \begin{tabular}{|l|l|S[table-format=3(3)]|S[table-format=1.1]|S[table-format=9]|S[table-format=9]|}
+    \hline
+    Topology & Grid Size & {Latency (ms)} & {Latency (\%)} & {Bandwidth (\si{\byte\per\second})} & {Total Data (\si{\byte})} \\\hline
+    4x1 & 200x200 & 370(44) & 6.6 & 447314206 & 135548032 \\\hline
+    4x1 & 400x400 & 328(39) & 6.0 & 511267773 & 135548032 \\\hline
+    4x1 & 800x800 & 401(38) & 7.1 & 390446955 & 135548032 \\\hline
+    2x2 & 200x200 & 346(83) & 6.2 & 426689734 & 108546432 \\\hline
+    2x2 & 400x400 & 281(74) & 5.2 & 576865986 & 108546432 \\\hline
+    2x2 & 800x800 & 288(71) & 5.3 & 558562482 & 108546432 \\\hline
+    3x3 & 200x200 & 1054(204) & 25.2 & 78386044 & 72364288 \\\hline
+    3x3 & 400x400 & 1147(229) & 27.6 & 81623075 & 72364288 \\\hline
+    3x3 & 800x800 & 1082(148) & 26.7 & 60819112 & 72499296 \\\hline
+    \end{tabular}
+\end{table}
+\Shining{Interpretation:}\\
+As can be seen the latency is more or less comparable between the $4 \times 1$ and $2 \times 2$ topologies. The $3 \times 3$ topology has a significantly higher latency. This is due to the fact that the $3 \times 3$ topology has more neighbors to communicate with. 
+    
+    

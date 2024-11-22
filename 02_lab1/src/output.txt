@@ -1,0 +1,127 @@
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+Set skip_exchange to default value 1
+(7) (x,y)=(2,1)
+(7) top 6,  right  -2,  bottom  8,  left  4
+(5) (x,y)=(1,2)
+(5) top 4,  right  8,  bottom  -2,  left  2
+(8) (x,y)=(2,2)
+(8) top 7,  right  -2,  bottom  -2,  left  5
+(1) (x,y)=(0,1)
+(1) top 0,  right  4,  bottom  2,  left  -2
+(2) (x,y)=(0,2)
+(2) top 1,  right  5,  bottom  -2,  left  -2
+(3) (x,y)=(1,0)
+(3) top -2,  right  6,  bottom  4,  left  0
+(0) (x,y)=(0,0)
+(0) top -2,  right  3,  bottom  1,  left  -2
+SOR using omega: 1.90000
+(4) (x,y)=(1,1)
+(4) top 3,  right  7,  bottom  5,  left  1
+(6) (x,y)=(2,0)
+(6) top -2,  right  -2,  bottom  7,  left  3
+(0) Number of iterations : 4219
+(0) Exchange time:       1.050308
+(4) Number of iterations : 4219
+(4) Exchange time:       0.974521
+(7) Number of iterations : 4219
+(7) Exchange time:       0.960443
+(6) Number of iterations : 4219
+(6) Exchange time:       0.977630
+(5) Number of iterations : 4219
+(5) Exchange time:       1.310679
+(8) Number of iterations : 4219
+(8) Exchange time:       1.335269
+(1) Number of iterations : 4219
+(1) Exchange time:       0.907125
+(2) Number of iterations : 4219
+(2) Exchange time:       1.192048
+(3) Number of iterations : 4219
+(3) Exchange time:       1.032618
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72634304.00 bytes
+Total Exchange Time: 1.310679091 s
+Average Exchange Time per Call: 0.000155331 s
+Average Latency per Call: 0.000000391 s
+Average Bandwidth: 55417305.81 bytes/s
+(5) Elapsed Wtime       4.053232 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72634304.00 bytes
+Total Exchange Time: 1.335268891 s
+Average Exchange Time per Call: 0.000158245 s
+Average Latency per Call: 0.000000371 s
+Average Bandwidth: 54396761.95 bytes/s
+(8) Elapsed Wtime       4.050140 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72634304.00 bytes
+Total Exchange Time: 0.974521217 s
+Average Exchange Time per Call: 0.000115492 s
+Average Latency per Call: 0.000054887 s
+Average Bandwidth: 74533322.35 bytes/s
+(4) Elapsed Wtime       4.048579 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72499296.00 bytes
+Total Exchange Time: 0.977630074 s
+Average Exchange Time per Call: 0.000115860 s
+Average Latency per Call: 0.000047660 s
+Average Bandwidth: 74158209.66 bytes/s
+(6) Elapsed Wtime       4.051300 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72499296.00 bytes
+Total Exchange Time: 1.032617843 s
+Average Exchange Time per Call: 0.000122377 s
+Average Latency per Call: 0.000039918 s
+Average Bandwidth: 70209222.60 bytes/s
+(3) Elapsed Wtime       4.055014 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72634304.00 bytes
+Total Exchange Time: 0.960442968 s
+Average Exchange Time per Call: 0.000113824 s
+Average Latency per Call: 0.000046376 s
+Average Bandwidth: 75625837.68 bytes/s
+(7) Elapsed Wtime       4.056567 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72499296.00 bytes
+Total Exchange Time: 0.907124829 s
+Average Exchange Time per Call: 0.000107505 s
+Average Latency per Call: 0.000054255 s
+Average Bandwidth: 79922072.11 bytes/s
+(1) Elapsed Wtime       4.057687 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72364288.00 bytes
+Total Exchange Time: 1.050308161 s
+Average Exchange Time per Call: 0.000124474 s
+Average Latency per Call: 0.000041823 s
+Average Bandwidth: 68898148.84 bytes/s
+(0) Elapsed Wtime       4.054320 s ( 90.9% CPU)
+
+--- Aggregated Metrics ---
+Total Exchanges: 8438
+Total Data Transferred: 72499296.00 bytes
+Total Exchange Time: 1.192047909 s
+Average Exchange Time per Call: 0.000141271 s
+Average Latency per Call: 0.000000414 s
+Average Bandwidth: 60819112.60 bytes/s
+(2) Elapsed Wtime       4.056469 s ( 90.9% CPU)
