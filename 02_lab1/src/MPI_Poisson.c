@@ -19,8 +19,9 @@
 
 #define SOR 1
 #define MONITOR_ERROR 1
-#define MONITOR_ALLREDUCE 1
-#define ALLREDUCE_COUNT 100
+// #define MONITOR_ALLREDUCE 1
+// #define ALLREDUCE_COUNT 100
+#define SKIP_EXCHANGE
 
 #define DEFINES_ON (SOR || MONITOR_ERROR || 0)
 //defines end
@@ -39,6 +40,9 @@ double *errors=NULL;
 #endif
 #ifdef MONITOR_ALLREDUCE
 double all_reduce_time = 0;
+#endif
+#ifdef SKIP_EXCHANGE
+size_t skip_exchange;
 #endif
 
 /* global variables */
@@ -153,6 +157,17 @@ void Setup_Proc_Grid(int argc, char **argv){
             sor_omega = atof(argv[3]);
             printf("Set sor_omega over argv to %1.4f\n", sor_omega);
         }
+        #ifdef SKIP_EXCHANGE
+        if (argc > 4)
+        {
+            skip_exchange = atoi(argv[4]);
+            printf("Set skip_exchange over argv to %zu\n", skip_exchange);
+        }
+        else{
+            skip_exchange = 1;
+            printf("Set skip_exchange to default value 1\n");
+        }
+        #endif
     }    
     else{
         Debug("ERROR Wrong parameter input",1);
@@ -289,7 +304,7 @@ void Setup_MPI_Datatypes()
     MPI_Type_commit(&border_type[X_DIR]);
 }
 
-void Exchange_Borders()
+int Exchange_Borders()
 {
     Debug("Exchange_Borders",0);
     // top direction
@@ -300,6 +315,7 @@ void Exchange_Borders()
     MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_left, 0, &phi[dim[X_DIR]-1][1], 1, border_type[X_DIR], proc_right, 0, grid_comm, &status);
     // right direction
     MPI_Sendrecv(&phi[dim[X_DIR]-2][1], 1, border_type[X_DIR], proc_right, 0, &phi[0][1], 1, border_type[X_DIR], proc_left, 0, grid_comm, &status);
+    return 1;
 }
 
 double Do_Step(int parity)
@@ -346,10 +362,14 @@ void Solve()
     {
         Debug("Do_Step 0", 0);
         delta1 = Do_Step(0);
-        Exchange_Borders();
+        #ifdef SKIP_EXCHANGE
+        if (count % skip_exchange == 0 && Exchange_Borders()) // use short circuit evaluation
+        #endif
         Debug("Do_Step 1", 0);
         delta2 = Do_Step(1);
-        Exchange_Borders();
+        #ifdef SKIP_EXCHANGE
+        if (count % skip_exchange == 0 && Exchange_Borders())
+        #endif
         delta = max(delta1, delta2);
         #ifdef MONITOR_ALLREDUCE
         double time_ = MPI_Wtime();
