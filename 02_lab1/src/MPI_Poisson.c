@@ -22,6 +22,7 @@
 #define FAST_DO_STEP_LOOP
 // #define MONITOR_ALLREDUCE 1
 // #define ALLREDUCE_COUNT 100
+// #define MONITOR_EXCHANGE_BORDERS
 #define SKIP_EXCHANGE
 
 #define DEFINES_ON (SOR || MONITOR_ERROR || 0)
@@ -41,6 +42,9 @@ double *errors=NULL;
 #endif
 #ifdef MONITOR_ALLREDUCE
 double all_reduce_time = 0;
+#endif
+#ifdef MONITOR_EXCHANGE_BORDERS
+double exchange_time = 0;
 #endif
 #ifdef SKIP_EXCHANGE
 size_t skip_exchange;
@@ -311,6 +315,9 @@ void Setup_MPI_Datatypes()
 
 int Exchange_Borders()
 {
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    double time_ = MPI_Wtime();
+    #endif
     Debug("Exchange_Borders",0);
     // top direction
     MPI_Sendrecv(&phi[1][1], 1, border_type[Y_DIR], proc_top, 0, &phi[1][dim[Y_DIR] - 1], 1, border_type[Y_DIR], proc_bottom, 0, grid_comm, &status);
@@ -320,6 +327,9 @@ int Exchange_Borders()
     MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_left, 0, &phi[dim[X_DIR]-1][1], 1, border_type[X_DIR], proc_right, 0, grid_comm, &status);
     // right direction
     MPI_Sendrecv(&phi[dim[X_DIR]-2][1], 1, border_type[X_DIR], proc_right, 0, &phi[0][1], 1, border_type[X_DIR], proc_left, 0, grid_comm, &status);
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    exchange_time += MPI_Wtime() - time_;
+    #endif
     return 1;
 }
 
@@ -330,9 +340,10 @@ double Do_Step(int parity)
     double max_err = 0.0;
   
     #ifdef FAST_DO_STEP_LOOP
+    int start_y;
     for (x = 1; x < dim[X_DIR] - 1; x++){
-        for (y = (x + offset[X_DIR]) % 2 == 0 ? 1 : 2; y < dim[Y_DIR] - 1; y += 2){
-            //assert ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity);
+        start_y = ((1 + x + offset[X_DIR] + offset[Y_DIR]) % 2 == parity) ? 1 : 2;
+        for (y = start_y; y < dim[Y_DIR] - 1; y += 2){
             if (source[x][y] != 1){
                 old_phi = phi[x][y];
                 #ifndef SOR
@@ -431,6 +442,9 @@ void Solve()
     printf("(%i) Number of iterations : %i\n", proc_rank, count);
     #ifdef MONITOR_ALLREDUCE
     printf("(%i) Allreduce time: %14.6f\n", proc_rank, all_reduce_time);
+    #endif
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    printf("(%i) Exchange time: %14.6f\n", proc_rank, exchange_time);
     #endif
 }
 

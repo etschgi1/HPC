@@ -225,21 +225,20 @@ In \texttt{Do\_Step} we iterate over the whole grid but only update one of the t
 \end{lstlisting}
 and we change it to:
 \begin{lstlisting}[language=c]
+    int start_y;
     for (x = 1; x < dim[X_DIR] - 1; x++){
-        for (y = (x + offset[X_DIR]) % 2 == 0 ? 1 : 2; y < dim[Y_DIR] - 1; y += 2){
+        start_y = ((1 + x + offset[X_DIR] + offset[Y_DIR]) % 2 == parity) ? 1 : 2;
+        for (y = start_y; y < dim[Y_DIR] - 1; y += 2){
             if (source[x][y] != 1){
                 ...
 \end{lstlisting}
 The basic idea is to avoid y-coordinates which are not in the parity we are currently updating. 
 We measure 10 runs for a $800 \times 800$ grid and a $4 \times 1$ topology with $\omega = 1.93$ and get the following times: 
-\[t_{\text{no\_improvements}} = \SI{5.66(9)}{\second}\hspace{1cm}\text{and}\hspace{1cm}t_{\text{loop\_improvements}} = \SI{5.63(8)}{\second}\]
-So we get a minimal speedup of about 0.5\% by optimizing the loop.\\
+\[t_{\text{no\_improvements}} = \SI{5.59(5)}{\second}\hspace{1cm}\text{and}\hspace{1cm}t_{\text{loop\_improvements}} = \SI{4.64(7)}{\second}\]
+So we get a minimal speedup of about 17\% by optimizing the loop which is a enormous speedup for such a small change.
 
-\Shining{Why is the speedup relatively small?}\\
-We witness the sheer speed of c-loops here. There are certainly multiple factors at play here. Manual optimization of the loops is often not as effective as one might think, because the compiler is already very good at optimizing loops and has probably more tricks up its sleeve than we do. We could test that hypothesis by comparing against versions without any optimization flags (\texttt{-O0}): 
-We perform 5 runs with the same setup and \texttt{-O0} and get the following times:
-\[t_{\text{no\_improvements}} = \SI{5.664(20)}{\second}\hspace{1cm}\text{and}\hspace{1cm}t_{\text{loop\_improvements}} = \SI{5.69(6)}{\second}\]
-Funily enough, now the optimized loop is actually slower than the unoptimized one. Did we do something wrong? No, but probably the compiler doesn't optimize the loop as well as we thought and we were just lucky with the first run. Notice that the two times are actually within the errorbars of each other!\\
-\Shining{What else could it be?}\\ Well maybe we have to think hardware and branch prediction. The loop is very simple and the branch prediction of the CPU might be very good at predicting the next iteration. This means that the CPU can already start fetching the next instruction before the branch is resolved. In our case the CPU's branch predictor will learn that only every second iteration is actually executed and will be able to predict the next iteration with high accuracy. This means that the speedup we get from optimizing the loop is very small to non existent.
+\Shining{Why does this make such a difference}\\
+The reason for this is that we avoid unnecessary looping and if statements. This means that we have less overhead in the loop and can therefore calculate faster by skipping the unnecessary loop entries. 
 
 \subsubsection{\Shining{Optional} - Time spent within \texttt{Exchange\_Borders}}
+We can measure the time spent in \texttt{Exchange\_Borders} by adding a timer to the function. We run the program with a $4 \times 1$ topology, $\omega = 1.93$ and a $800 \times 800$ grid and get the following times:
