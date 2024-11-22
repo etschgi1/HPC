@@ -278,5 +278,14 @@ We use the configurations from \autoref{subsec:scaling}: $4 \times 1$, $2 \times
 \end{table}
 \Shining{Interpretation:}\\
 As can be seen the latency is more or less comparable between the $4 \times 1$ and $2 \times 2$ topologies. The $3 \times 3$ topology has a significantly higher latency. This is due to the fact that the $3 \times 3$ topology has more neighbors to communicate with. 
-    
-    
+
+\subsubsection{Exchange Border potential improvements}
+Indeed we communicate twice as much as we need after each \texttt{Do\_Step} call. We shall analyze this considering the following points: 
+\begin{itemize}
+    \item address of the first point to exchange: This depends on the parity of the processor. It is simply the first or second point in the grid depending on the parity (leaving out the edge case where the processor only has one data-point).
+    \item the number of points to exchange: This normally is the number of points in the grid minus ghost cells divided by two. However, this may change if there is an odd number of points in the grid (then we have to exchange one more or one less point).
+    \item the number of points in between grid points that have to be exchanged: The stride of the data will change. Currently we exchange every point for one direction and every \texttt{dim[Y\_DIR]}-th point for the other direction. This can be optimized to exchange every second point in one direction and every second \texttt{dim[Y\_DIR]}-th point in the other direction. 
+\end{itemize}
+
+\textbf{Is it worth it?}\\
+For smaller gridsizes it is not worth it to optimize the border exchange. The time spent in the border exchange might be significant in relative terms, but the absolute time is still small. For larger gridsizes it might be worth it to optimize the border exchange. As we have seen, this becomes more significant as the processor count and gridsizes grow. For our current problem and similarly sized problems the effort put into optimizing the border exchange is certainly not worth it.
