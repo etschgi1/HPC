@@ -241,4 +241,17 @@ So we get a minimal speedup of about 17\% by optimizing the loop which is a enor
 The reason for this is that we avoid unnecessary looping and if statements. This means that we have less overhead in the loop and can therefore calculate faster by skipping the unnecessary loop entries. 
 
 \subsubsection{\Shining{Optional} - Time spent within \texttt{Exchange\_Borders}}
-We can measure the time spent in \texttt{Exchange\_Borders} by adding a timer to the function. We run the program with a $4 \times 1$ topology, $\omega = 1.93$ and a $800 \times 800$ grid and get the following times:
+We can measure the time spent in \texttt{Exchange\_Borders} by adding a timer to the function. We run the program with $\omega = 1.93$ and different topologies and grid sizes and get the results shown in \autoref{fig:exchange_time}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../fig/lab1/fraction_exchange_comparison_connected.png}
+    \caption{Fraction of total time spent in \texttt{Exchange\_Borders}}
+    \label{fig:exchange_time}
+\end{figure}
+As we can clearly see, the time spent in \texttt{Exchange\_Borders} is initially smaller and grows with processor count. The curves are generally shifted downward for larger gridssizes. \\
+
+\Shining{Interpretation:}\\
+One would expect larger grid sizes to be more computationally expensive and we have already established that iterations take longer the bigger the grid. Communication obviously also takes longer for a larger grid because we have more data to sent. However, the circumference of a square grows linearly, while the area grows quadratically. The quadratic growth of the area is the reason for the downward shift in the curves for larger grid sizes because the communication overhead grows slower than the computational overhead for larger grids.\\
+
+\Shining{When is the time spent in \texttt{Exchange\_Borders} significant / comparable to computation?}\\
+As can be seen in \autoref{fig:exchange_time} the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes from the start (between 5 and 25\%). Thereafter it grows to around 30\% to 45\% for 9 processors. This means that the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes and processor counts, but especially as the processor count grows.
