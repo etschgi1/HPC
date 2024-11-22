@@ -90,6 +90,7 @@ def visualise(res, tops, grids, skips):
         ax1.set_xlabel("Number of Skips Between Border Exchanges")
         ax1.set_ylabel("Iterations", color="blue")
         ax2.set_ylabel("Elapsed Time (s)", color="orange")
+        ax2.set_yscale("log")
 
         # Add a title and a combined legend
         plt.title(f"Performance vs Skips for Topology {top}")
@@ -97,6 +98,7 @@ def visualise(res, tops, grids, skips):
         lines_2, labels_2 = ax2.get_legend_handles_labels()
         ax1.legend(lines_1 + lines_2, labels_1 + labels_2, loc="upper left")
         plt.grid()
+        
 
         # Save the figure for the current topology
         plt.tight_layout()
@@ -110,7 +112,7 @@ if __name__ == "__main__":
     path = os.path.join(path, src)
     os.chdir(path)
     tops = [(4, 1)]
-    grids = [(10,10),(25,25),(50,50),(100,100)]#, (200,200), (800,800)]#, (200,200), (800, 800)]#, (3200, 3200)]
+    grids = [(10,10),(25,25)]#,(50,50),(100,100)]#, (200,200), (800,800)]#, (200,200), (800, 800)]#, (3200, 3200)]
     skips = [1,2,3,4,5,7,10]#,15,25,50,100]
     res = border_com(tops, grids, skips)
     visualise(res, tops, grids, skips)
