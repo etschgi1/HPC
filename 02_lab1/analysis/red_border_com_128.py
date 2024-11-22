@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from util import update_input_file, reset_input_file
 from uncertainties import ufloat
 
-def border_com(togologies, grids, skips, omega=1.95, max_iter=15000):
+def border_com(togologies, grids, skips, omega=1.95, max_iter=5000):
     input_file = "input.dat"
     results = {}  # Dictionary to store omega and corresponding number of iterations
     reset_input_file()
