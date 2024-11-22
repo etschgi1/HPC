@@ -53,7 +53,7 @@ int P; //total number of processes
 int P_grid[2]; // process grid dimensions
 MPI_Comm grid_comm; //grid communicator
 MPI_Status status; 
-double h;
+double hx, hy;
 
 /* process specific globals*/
 int proc_rank;
@@ -151,12 +151,14 @@ void Setup_Proc_Grid(int argc, char **argv){
         if(P_grid[X_DIR] * P_grid[Y_DIR] != P){
             Debug("ERROR Proces grid dimensions do not match with P ", 1); 
         }
+        #ifdef SOR
         if (argc>3)
         {
             // get sor from args
             sor_omega = atof(argv[3]);
             printf("Set sor_omega over argv to %1.4f\n", sor_omega);
         }
+        #endif
         #ifdef SKIP_EXCHANGE
         if (argc > 4)
         {
@@ -215,7 +217,9 @@ void Setup_Grid()
     MPI_Bcast(&gridsize, 2, MPI_INT, 0, grid_comm);
     MPI_Bcast(&precision_goal, 1, MPI_DOUBLE, 0, grid_comm);
     MPI_Bcast(&max_iter, 1, MPI_INT, 0, grid_comm);
-    h = 1;
+    hx = 1 / (double)gridsize[X_DIR];
+    hy = 1 / (double)gridsize[Y_DIR];
+
     /* Calculate dimensions of local subgrid */ //! We do that later now!
     // dim[X_DIR] = gridsize[X_DIR] + 2;
     // dim[Y_DIR] = gridsize[Y_DIR] + 2;
@@ -333,7 +337,7 @@ double Do_Step(int parity)
                 phi[x][y] = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1]) * 0.25;
                 #endif
                 #ifdef SOR //! I'm not quite sure about the h and source parts here
-                c_ij = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1] + h*h*source[x][y]) * 0.25 - phi[x][y];
+                c_ij = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1] + hx*hy*source[x][y]) * 0.25 - phi[x][y];
                 phi[x][y] += sor_omega*c_ij;
                 #endif 
                 if (max_err < fabs(old_phi - phi[x][y])){
@@ -365,11 +369,17 @@ void Solve()
         #ifdef SKIP_EXCHANGE
         if (count % skip_exchange == 0 && Exchange_Borders()) // use short circuit evaluation
         #endif
+        #ifndef SKIP_EXCHANGE
+        Exchange_Borders();
+        #endif  
         Debug("Do_Step 1", 0);
         delta2 = Do_Step(1);
         #ifdef SKIP_EXCHANGE
         if (count % skip_exchange == 0 && Exchange_Borders())
         #endif
+        #ifndef SKIP_EXCHANGE
+        Exchange_Borders();
+        #endif  
         delta = max(delta1, delta2);
         #ifdef MONITOR_ALLREDUCE
         double time_ = MPI_Wtime();
