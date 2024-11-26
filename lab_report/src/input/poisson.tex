@@ -77,6 +77,7 @@ For the first part of the exercise we follow the steps lined out in the assignme
 \end{enumerate}
 This just leaves one question open: Are the results acutally the same?\\
 Checking the output files of the MPI-implementation with the sequential reference indeed shows identical numerical values for the calculated points. Furthermore, the needed iterationcount is also identical which isn't a big surprise, given that the two programms perform the exact same calculation steps. 
+
 \subsection{Exercises, modifications, and performance aspects}
 For this subsection we'll define the following shorthand notation: \\
 
@@ -94,7 +95,10 @@ For this subsection we'll define the following shorthand notation: \\
        \end{tabular}
     \caption{Notation for this section}
 \end{table}
-$pt = 414$ means 4 processors in a $1\times 4$ topology. 
+$pt = 414$ means 4 processors in a $1\times 4$ topology. \\
+
+\textbf{Note on different Versions:}\\
+For the following exercises the implementation will be slightly adapted to measure different performance aspects. To facilitate this, we will use defines to switch between different versions of the code at compile time. The final version of the poissonsolver can be found in the appendix for this section.
 
 \subsubsection{Over-relaxation (SOR)}
 We start of by rewriting the \texttt{Do\_Step} routine to facilitate SOR updates. Furthermore, we need $h^2$, the grid spacing (which is 1 in our case) and the relaxation parameter $\omega$ to calculate the updated values. A quick test shows a speedup of roughly a factor of 10. More systematic tests will be done in the next section.
@@ -107,7 +111,9 @@ With the power of a little python scripting we can easily test different values 
     \caption{\Shining{Optimal $\omega$ for 4 processors on a 4x1 grid}}
     \label{fig:best_omega_122}
 \end{figure}
-We find that the optimal $\omega$ is at about $1.93$ for this setup with only 129 iterations. This constitutes a speedup of about 1825\% compared to the sequential implementation.
+We find that the optimal $\omega$ is at about $1.93$ for this setup with only 129 iterations. This constitutes a speedup of about 1825\% compared to the sequential implementation. \\
+
+\textbf{N.B.:} If not stated otherwise, we will use $\omega = 1.93$ for the following exercises. 
 
 \subsubsection{Scaling behavior with larger grids}
 \label{subsec:scaling}
@@ -194,4 +200,92 @@ As can be clearly seen from the table we can gain around 6 \% using \texttt{MPI\
 \textbf{Note:} The speedup is calculated to account for fluctuations in the runtime of the program, due to other processes running on the same machine / cluster. 
 
 \subsubsection{Reduce border communication}
-Another way to reduce communication overhead is to reduce the number of border exchanges. 
+Another way to reduce communication overhead is to reduce the number of border exchanges. To investigate if this yields a speedup  we run the program on a $4 \times 1$ topology, $\omega = 1.93$ and different grid sizes and track the iterations and time as seen in \autoref{fig:border_speedup}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../fig/lab1/skips_topology_4x1.png}
+    \caption{Speedup by reducing border exchanges}
+    \label{fig:border_speedup}
+\end{figure}
+
+Running the with different numbers of skipped border exchanges naturally slows down convergence, meaning we need more iterations to reach the same error. For all tested grid sizes the initial SOR version without skipping border exchanges has the fewest iterations needed to convergence and also the fastes runtime. \\
+
+\Shining{What can you conclude from the results?}\\
+We can conclude that reducing the number of border exchanges does not yield a speedup. The reason for this is that we have to calculate more iterations to converge to the solution which outweighs the gains from reduced communication overhead. Interestingly, for the $100 \times 100$ grid there exists a local minimum in time at 4 skipped border exchanges compared to 3 skipped. This is likely due to our source field distribution and thus specific to our problem.
+
+\subsubsection{Optimize \texttt{Do\_Step} loop}
+
+In \texttt{Do\_Step} we iterate over the whole grid but only update one of the two parities at a time. This means we can split the loop into two loops, one for each parity. We start out with something like this:
+\begin{lstlisting}[language=c]
+    for (x = 1; x < dim[X_DIR] - 1; x++){
+        for (y = 1; y < dim[Y_DIR] - 1; y++){
+            if ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity && source[x][y] != 1){
+                ...
+\end{lstlisting}
+and we change it to:
+\begin{lstlisting}[language=c]
+    int start_y;
+    for (x = 1; x < dim[X_DIR] - 1; x++){
+        start_y = ((1 + x + offset[X_DIR] + offset[Y_DIR]) % 2 == parity) ? 1 : 2;
+        for (y = start_y; y < dim[Y_DIR] - 1; y += 2){
+            if (source[x][y] != 1){
+                ...
+\end{lstlisting}
+The basic idea is to avoid y-coordinates which are not in the parity we are currently updating. 
+We measure 10 runs for a $800 \times 800$ grid and a $4 \times 1$ topology with $\omega = 1.93$ and get the following times: 
+\[t_{\text{no\_improvements}} = \SI{5.59(5)}{\second}\hspace{1cm}\text{and}\hspace{1cm}t_{\text{loop\_improvements}} = \SI{4.64(7)}{\second}\]
+So we get a minimal speedup of about 17\% by optimizing the loop which is a enormous speedup for such a small change.
+
+\Shining{Why does this make such a difference}\\
+The reason for this is that we avoid unnecessary looping and if statements. This means that we have less overhead in the loop and can therefore calculate faster by skipping the unnecessary loop entries. 
+
+\subsubsection{\Shining{Optional} - Time spent within \texttt{Exchange\_Borders}}
+We can measure the time spent in \texttt{Exchange\_Borders} by adding a timer to the function. We run the program with $\omega = 1.93$ and different topologies and grid sizes and get the results shown in \autoref{fig:exchange_time}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../fig/lab1/fraction_exchange_comparison_connected.png}
+    \caption{Fraction of total time spent in \texttt{Exchange\_Borders}}
+    \label{fig:exchange_time}
+\end{figure}
+As we can clearly see, the time spent in \texttt{Exchange\_Borders} is initially smaller and grows with processor count. The curves are generally shifted downward for larger gridssizes. \\
+
+\Shining{Interpretation:}\\
+One would expect larger grid sizes to be more computationally expensive and we have already established that iterations take longer the bigger the grid. Communication obviously also takes longer for a larger grid because we have more data to sent. However, the circumference of a square grows linearly, while the area grows quadratically. The quadratic growth of the area is the reason for the downward shift in the curves for larger grid sizes because the communication overhead grows slower than the computational overhead for larger grids.\\
+
+\Shining{When is the time spent in \texttt{Exchange\_Borders} significant / comparable to computation?}\\
+As can be seen in \autoref{fig:exchange_time} the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes from the start (between 5 and 25\%). Thereafter it grows to around 30\% to 45\% for 9 processors. This means that the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes and processor counts, but especially as the processor count grows.
+
+\subsubsection{Latency and bandwith in \texttt{Exchange\_Borders}}
+We use the configurations from \autoref{subsec:scaling}: $4 \times 1$, $2 \times 2$ and \Shining{$3 \times 3$} topologies with grid sizes of $200 \times 200$, $400 \times 400$ and $800 \times 800$ and $\omega = 1.95$. We obtain the results in \autoref{tab:latency_bandwith}.
+\begin{table}[H]
+    \centering
+    \caption{Metrics for \texttt{Exchange\_Borders} latency and bandwith}
+    \label{tab:latency_bandwith}
+    \begin{tabular}{|l|l|S[table-format=3(3)]|S[table-format=1.1]|S[table-format=9]|S[table-format=9]|}
+    \hline
+    Topology & Grid Size & {Latency (ms)} & {Latency (\%)} & {Bandwidth (\si{\byte\per\second})} & {Total Data (\si{\byte})} \\\hline
+    4x1 & 200x200 & 370(44) & 6.6 & 447314206 & 135548032 \\\hline
+    4x1 & 400x400 & 328(39) & 6.0 & 511267773 & 135548032 \\\hline
+    4x1 & 800x800 & 401(38) & 7.1 & 390446955 & 135548032 \\\hline
+    2x2 & 200x200 & 346(83) & 6.2 & 426689734 & 108546432 \\\hline
+    2x2 & 400x400 & 281(74) & 5.2 & 576865986 & 108546432 \\\hline
+    2x2 & 800x800 & 288(71) & 5.3 & 558562482 & 108546432 \\\hline
+    3x3 & 200x200 & 1054(204) & 25.2 & 78386044 & 72364288 \\\hline
+    3x3 & 400x400 & 1147(229) & 27.6 & 81623075 & 72364288 \\\hline
+    3x3 & 800x800 & 1082(148) & 26.7 & 60819112 & 72499296 \\\hline
+    \end{tabular}
+\end{table}
+\Shining{Interpretation:}\\
+As can be seen the latency is more or less comparable between the $4 \times 1$ and $2 \times 2$ topologies. The $3 \times 3$ topology has a significantly higher latency. This is due to the fact that the $3 \times 3$ topology has more neighbors to communicate with. 
+
+\subsubsection{Exchange Border potential improvements}
+Indeed we communicate twice as much as we need after each \texttt{Do\_Step} call. We shall analyze this considering the following points: 
+\begin{itemize}
+    \item address of the first point to exchange: This depends on the parity of the processor. It is simply the first or second point in the grid depending on the parity (leaving out the edge case where the processor only has one data-point).
+    \item the number of points to exchange: This normally is the number of points in the grid minus ghost cells divided by two. However, this may change if there is an odd number of points in the grid (then we have to exchange one more or one less point).
+    \item the number of points in between grid points that have to be exchanged: The stride of the data will change. Currently we exchange every point for one direction and every \texttt{dim[Y\_DIR]}-th point for the other direction. This can be optimized to exchange every second point in one direction and every second \texttt{dim[Y\_DIR]}-th point in the other direction. 
+\end{itemize}
+
+\textbf{Is it worth it?}\\
+For smaller gridsizes it is not worth it to optimize the border exchange. The time spent in the border exchange might be significant in relative terms, but the absolute time is still small. For larger gridsizes it might be worth it to optimize the border exchange. As we have seen, this becomes more significant as the processor count and gridsizes grow. For our current problem and similarly sized problems the effort put into optimizing the border exchange is certainly not worth it.

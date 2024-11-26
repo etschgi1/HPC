@@ -19,8 +19,10 @@
 
 #define SOR 1
 #define MONITOR_ERROR 1
+#define FAST_DO_STEP_LOOP
 // #define MONITOR_ALLREDUCE 1
 // #define ALLREDUCE_COUNT 100
+#define MONITOR_EXCHANGE_BORDERS
 #define SKIP_EXCHANGE
 
 #define DEFINES_ON (SOR || MONITOR_ERROR || 0)
@@ -40,6 +42,12 @@ double *errors=NULL;
 #endif
 #ifdef MONITOR_ALLREDUCE
 double all_reduce_time = 0;
+#endif
+#ifdef MONITOR_EXCHANGE_BORDERS
+double total_exchange_time = 0.0;   // Total time spent in exchanges
+double total_latency = 0.0;         // Total latency
+double total_data_transferred = 0.0; // Total data transferred
+int num_exchanges = 0;              // Number of exchanges
 #endif
 #ifdef SKIP_EXCHANGE
 size_t skip_exchange;
@@ -310,7 +318,29 @@ void Setup_MPI_Datatypes()
 
 int Exchange_Borders()
 {
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    double start_time, latency_start, latency;
+    double data_size_top, data_size_left;
+    double exchange_time;
+
+    // Measure latency with a small dummy message
+    latency_start = MPI_Wtime();
+    double dummy;
+    MPI_Sendrecv(&dummy, 1, MPI_DOUBLE, proc_top, 0, &dummy, 1, MPI_DOUBLE, proc_bottom, 0, grid_comm, &status);
+    latency = MPI_Wtime() - latency_start;
+    total_latency += latency;
+
+    // Calculate data sizes
+    data_size_top = dim[X_DIR] * sizeof(double);  // Top and bottom rows
+    data_size_left = dim[Y_DIR] * sizeof(double); // Left and right columns
+    double data_transferred = 2 * (data_size_top + data_size_left); // Total data for this exchange
+    total_data_transferred += data_transferred;
+    #endif
+
     Debug("Exchange_Borders",0);
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    start_time = MPI_Wtime();
+    #endif
     // top direction
     MPI_Sendrecv(&phi[1][1], 1, border_type[Y_DIR], proc_top, 0, &phi[1][dim[Y_DIR] - 1], 1, border_type[Y_DIR], proc_bottom, 0, grid_comm, &status);
     // bottom direction
@@ -319,24 +349,32 @@ int Exchange_Borders()
     MPI_Sendrecv(&phi[1][1], 1, border_type[X_DIR], proc_left, 0, &phi[dim[X_DIR]-1][1], 1, border_type[X_DIR], proc_right, 0, grid_comm, &status);
     // right direction
     MPI_Sendrecv(&phi[dim[X_DIR]-2][1], 1, border_type[X_DIR], proc_right, 0, &phi[0][1], 1, border_type[X_DIR], proc_left, 0, grid_comm, &status);
+
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    exchange_time = MPI_Wtime() - start_time;
+    total_exchange_time += exchange_time;
+    num_exchanges++;
+    #endif
     return 1;
 }
 
 double Do_Step(int parity)
 {
-  int x, y;
-  double old_phi, c_ij;
-  double max_err = 0.0;
-
-  /* calculate interior of grid */
+    int x, y;
+    double old_phi, c_ij;
+    double max_err = 0.0;
+  
+    #ifdef FAST_DO_STEP_LOOP
+    int start_y;
     for (x = 1; x < dim[X_DIR] - 1; x++){
-        for (y = 1; y < dim[Y_DIR] - 1; y++){
-            if ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity && source[x][y] != 1){
+        start_y = ((1 + x + offset[X_DIR] + offset[Y_DIR]) % 2 == parity) ? 1 : 2;
+        for (y = start_y; y < dim[Y_DIR] - 1; y += 2){
+            if (source[x][y] != 1){
                 old_phi = phi[x][y];
                 #ifndef SOR
                 phi[x][y] = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1]) * 0.25;
                 #endif
-                #ifdef SOR //! I'm not quite sure about the h and source parts here
+                #ifdef SOR 
                 c_ij = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1] + hx*hy*source[x][y]) * 0.25 - phi[x][y];
                 phi[x][y] += sor_omega*c_ij;
                 #endif 
@@ -346,8 +384,30 @@ double Do_Step(int parity)
             }
         }
     }
+    return max_err;
+    #endif
 
+    #ifndef FAST_DO_STEP_LOOP
+    /* calculate interior of grid */
+    for (x = 1; x < dim[X_DIR] - 1; x++){
+        for (y = 1; y < dim[Y_DIR] - 1; y++){
+            if ((x + offset[X_DIR] + y + offset[Y_DIR]) % 2 == parity && source[x][y] != 1){
+                old_phi = phi[x][y];
+                #ifndef SOR
+                phi[x][y] = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1]) * 0.25;
+                #endif
+                #ifdef SOR 
+                c_ij = (phi[x + 1][y] + phi[x - 1][y] + phi[x][y + 1] + phi[x][y - 1] + hx*hy*source[x][y]) * 0.25 - phi[x][y];
+                phi[x][y] += sor_omega*c_ij;
+                #endif 
+                if (max_err < fabs(old_phi - phi[x][y])){
+                    max_err = fabs(old_phi - phi[x][y]);
+                }
+            }
+        }
+    }
   return max_err;
+  #endif
 }
 
 void Solve()
@@ -407,6 +467,9 @@ void Solve()
     printf("(%i) Number of iterations : %i\n", proc_rank, count);
     #ifdef MONITOR_ALLREDUCE
     printf("(%i) Allreduce time: %14.6f\n", proc_rank, all_reduce_time);
+    #endif
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    printf("(%i) Exchange time: %14.6f\n", proc_rank, total_exchange_time);
     #endif
 }
 
@@ -567,6 +630,28 @@ void write_errors(){
     }
     fclose(f);
 }
+
+void Print_Aggregated_Metrics()
+{
+    #ifdef MONITOR_EXCHANGE_BORDERS
+    if (num_exchanges > 0) {
+        double avg_exchange_time = total_exchange_time / num_exchanges;
+        double avg_latency = total_latency / num_exchanges;
+        double avg_bandwidth = total_data_transferred / total_exchange_time;
+
+        printf("\n--- Aggregated Metrics ---\n");
+        printf("Total Exchanges: %d\n", num_exchanges);
+        printf("Total Data Transferred: %.2f bytes\n", total_data_transferred);
+        printf("Total Exchange Time: %.9f s\n", total_exchange_time);
+        printf("Average Exchange Time per Call: %.9f s\n", avg_exchange_time);
+        printf("Average Latency per Call: %.9f s\n", avg_latency);
+        printf("Average Bandwidth: %.2f bytes/s\n", avg_bandwidth);
+    } else {
+        printf("No exchanges recorded.\n");
+    }
+    #endif
+}
+
 int main(int argc, char **argv)
 {
     MPI_Init(&argc, &argv);
@@ -592,6 +677,7 @@ int main(int argc, char **argv)
     #endif
     // Write_Grid();
     Write_Grid_global();
+    Print_Aggregated_Metrics();
     print_timer();
 
     Clean_Up();
