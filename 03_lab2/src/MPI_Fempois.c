@@ -429,9 +429,13 @@ void Setup_MPI_Datatypes(FILE * f)
 
 void Exchange_Borders(double *vect)
 {
-
-    
     // Please finsih this part to realize the purpose of data communication among neighboring processors. (Tip: the function "MPI_Sendrecv" needs to be used here.)
+    for (size_t i = 0; i < N_neighb; ++i)
+    {
+        MPI_Sendrecv(vect, 1, send_type[i], proc_neighb[i], 0, //send
+                     vect, 1, recv_type[i], proc_neighb[i], 0, //recv
+                     grid_comm, &status);
+    }
 }
 
 
@@ -441,6 +445,7 @@ void Exchange_Borders(double *vect)
 
 void Solve()
 {
+    // Formating is a mess here - but the most striking thing is that there are no curly braces for the if / for statements. 
   int count = 0;
   int i, j;
   double *r, *p, *q;

@@ -1,4 +1,6 @@
 \section{Finite elements simulation}
-Notes: 
-- pdf ill-formatting
-- string.h missing in GridDist.c
+We will now shift our focus to a more general grid which is based on triangulation. In this section we will compare our parallel implementation from the previous section and disect the differences and similarities. For that reason we shall use the same sources in our grid as given in \texttt{sources.dat}. \\
+Note that the sections for the exercises will be labeled as (2.1, 2.2, 2.3, ...) corresponding to exercises (4.1, 4.2, 4.3, ...) in the lab manual.\\
+\subsection{Reading}
+The first step is to read through the code in \textbf{MPI\_Fempois.c} and to understand it. Furthermore, we have to implement the \texttt{Exchange\_Borders} function for which only a skeleton is given. The function should exchange the border values of the local grid with the neighboring processes.\\ 
+
