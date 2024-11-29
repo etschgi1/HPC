@@ -33,6 +33,12 @@ typedef struct
 }
 Matrixrow;
 
+/* globals related to timing*/
+double total_time = 0.0;
+double exchange_time_neighbors = 0.0;
+double exchange_time_global = 0.0;
+double compute_time = 0.0;
+
 /* global variables */
 double precision_goal;		/* precision_goal of solution */
 int max_iter;			/* maximum number of iterations alowed */
@@ -271,7 +277,7 @@ void Setup_Grid()
     }
     fscanf(f, "\n");
     Build_ElMatrix(element);
-  }
+  }  
 
   Setup_MPI_Datatypes(f);
 
@@ -430,18 +436,15 @@ void Setup_MPI_Datatypes(FILE * f)
 void Exchange_Borders(double *vect)
 {
     // Please finsih this part to realize the purpose of data communication among neighboring processors. (Tip: the function "MPI_Sendrecv" needs to be used here.)
+    double temp = MPI_Wtime();
     for (size_t i = 0; i < N_neighb; ++i)
     {
         MPI_Sendrecv(vect, 1, send_type[i], proc_neighb[i], 0, //send
                      vect, 1, recv_type[i], proc_neighb[i], 0, //recv
                      grid_comm, &status);
     }
+    exchange_time_neighbors += MPI_Wtime() - temp;
 }
-
-
-
-
-
 
 void Solve()
 {
@@ -482,7 +485,10 @@ void Solve()
     for (i = 0; i < N_vert; i++)
       if (!(vert[i].type & TYPE_GHOST))
 	sub += r[i] * r[i];
+    // measure gloabl com
+    double temp = MPI_Wtime();
     MPI_Allreduce(&sub, &r1, 1, MPI_DOUBLE, MPI_SUM, grid_comm);
+    exchange_time_global += MPI_Wtime() - temp;
 
     if (count == 0)
     {
@@ -513,7 +519,9 @@ void Solve()
     for (i = 0; i < N_vert; i++)
       if (!(vert[i].type & TYPE_GHOST))
 	sub += p[i] * q[i];
+    temp = MPI_Wtime();
     MPI_Allreduce(&sub, &a, 1, MPI_DOUBLE, MPI_SUM, grid_comm);
+    exchange_time_global += MPI_Wtime() - temp;
     a = r1 / a;
 
     /* x = x + a*p */
@@ -576,18 +584,28 @@ void Clean_Up()
   free(vert);
   free(phi);
 }
+void report_times()
+{
+  printf("(%i) - Compute time: %f\n", proc_rank, compute_time);
+  printf("(%i) - Exchange time (neighbors): %f\n", proc_rank, exchange_time_neighbors);
+  printf("(%i) - Exchange time (global): %f\n", proc_rank, exchange_time_global);
+  printf("(%i) - Sum of times (compute + exchange (global & local)): %f\n", proc_rank, compute_time + exchange_time_neighbors + exchange_time_global);
+  printf("(%i) - Total time: %f\n", proc_rank, total_time);
+}
 
 int main(int argc, char **argv)
 {
   MPI_Init(&argc, &argv);
+  total_time = MPI_Wtime();
 
   start_timer();
 
   Setup_Proc_Grid();
 
   Setup_Grid();
-
+  double temp = MPI_Wtime();
   Solve();
+  compute_time = MPI_Wtime() - temp - exchange_time_global;
 
   Write_Grid();
 
@@ -597,7 +615,8 @@ int main(int argc, char **argv)
 
   Debug("MPI_Finalize", 0);
 
+  total_time = MPI_Wtime() - total_time;
   MPI_Finalize();
-
+  report_times();
   return 0;
 }

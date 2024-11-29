@@ -1,5 +1,7 @@
+# Add -g for debug symbols
 CC = mpicc
 
+FP_CFLAGS = -g
 FP_LIBS = -lm
 GD_LIBS = -lm
 
@@ -13,7 +15,7 @@ run: all
 	mpirun -np 4 ./MPI_Fempois.out
 
 sequential: 
-	gcc -o SEQ_Poisson.out SEQ_Poisson.c 
+	gcc -g -o SEQ_Poisson.out SEQ_Poisson.c 
 	./SEQ_Poisson.out
 
 clean:
@@ -24,13 +26,13 @@ clean:
 	rm -f mapping*.dat
 
 MPI_Fempois.out: $(FP_OBJS)
-	mpicc -o $@ $(FP_OBJS) $(FP_LIBS)
+	mpicc $(FP_CFLAGS) -o $@ $(FP_OBJS) $(FP_LIBS)
 
 GridDist.out: $(GD_OBJS)
-	gcc -o $@ $(GD_OBJS) $(GD_LIBS)
+	gcc -g -o $@ $(GD_OBJS) $(GD_LIBS)
 
 MPI_Fempois.o:
-	mpicc -c MPI_Fempois.c
+	mpicc $(FP_CFLAGS) -c MPI_Fempois.c
 
 GridDist.o:
-	gcc -c GridDist.c
+	gcc -g -c GridDist.c
