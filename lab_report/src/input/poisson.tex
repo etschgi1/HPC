@@ -133,6 +133,7 @@ This investigation is carried out twice: Once with a $4\times 1$ topology (as in
     \caption{Scaling behavior of the Poisson solver with different grid sizes and processor topologies}
     \label{fig:scaling_123}
 \end{figure}
+\TODO{FALSCH GEMACHT - PLOT X AXIS is wrong plot iterations not gird size!!!}
 As seen by the high $R^2$ values in the plots, the scaling behavior is very close to linear. 
 We obtain the following scaling factors for the different grid sizes and topologies from the linear fits:
 \begin{table}[H]
@@ -140,8 +141,8 @@ We obtain the following scaling factors for the different grid sizes and topolog
     \begin{tabular}{|c|c|c|}
         \hline
         Topology & $\alpha$ & $\beta$ \\\hline
-        $4\times 1$ & $1.35+10^{-1}$ & $7.11+10^{-6}$ \\\hline
-        $2\times 2$ & $1.06+10^{-1}$ & $6.17+10^{-6}$ \\\hline
+        $4\times 1$ & $1.35 \cdot 10^{-1}$ & $7.11 \cdot 10^{-6}$ \\\hline
+        $2\times 2$ & $1.06 \cdot 10^{-1}$ & $6.17 \cdot 10^{-6}$ \\\hline
     \end{tabular}
     \caption{Scaling factors for different processor topologies for the Poisson solver\\Using: $t(n) = \alpha + \beta \cdot n$ as a model}
 \end{table}
