@@ -1,3 +1,5 @@
+
+
 \section{Finite elements simulation}
 We will now shift our focus to a more general grid which is based on triangulation. In this section we will compare our parallel implementation from the previous section and disect the differences and similarities. For that reason we shall use the same sources in our grid as given in \texttt{sources.dat}. \\
 Note that the sections for the exercises will be labeled as (2.1, 2.2, 2.3, ...) corresponding to exercises (4.1, 4.2, 4.3, ...) in the lab manual.\\
@@ -41,8 +43,81 @@ The commandline output for runs is as shown in \autoref{fig:timing2} for an exam
     \includegraphics[width=0.7\textwidth]{../fig/lab2/ex2.png}
     \caption{Timing for the different sections.\\
     (x) \dots denotes the process rank\\
-    Exchange time (neighbors) \dots time spent in \texttt{} \TODO{....}}
+    Compute time \dots time spent in the \texttt{solve} function \underline{only on computing}\\
+    Exchange time (neighbors) \dots time spent in \texttt{Exchange\_Borders} \\
+    Exchange time (neighbors) \dots time spent in \texttt{MPI\_Allreduce} calls \\
+    Sum of times \dots total time spent in compute and communication (excluding setup / idle time)\\
+    Total time \dots total time spent in the program\\
+    }
     \label{fig:timing2}
 \end{figure}
 
-\TODO{Run script on Delft blue}
+The \underline{idle time} is calculated as denoted above and therefore not shown in the output in \autoref{fig:timing2}. We get the following results in \autoref{tab:timing}:
+
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|c|c|c|c|c|c|c|c|}
+        \hline
+        Top. & Grid Size & Total (avg) & Comp. (avg) & Ex. Neighb. (avg) & Ex. Global (avg) & Idle (avg) \\\hline
+        1x4 & 100x100 & 12.5 & 1.1 & 3.9 & 0.7 \\\hline
+        1x4 & 200x200 & 85.1 & 1.6 & 12.7 & 0.0 \\\hline
+        1x4 & 400x400 & 1192.5 & 7.2 & 118.3 & 1.3 \\\hline
+        2x2 & 100x100 & 11.6 & 0.9 & 1.8 & 2.9 \\\hline
+        2x2 & 200x200 & 85.0 & 2.9 & 11.2 & 0.6 \\\hline
+        2x2 & 400x400 & 1173.7 & 8.9 & 110.0 & 0.9 \\\hline
+    \end{tabular}
+    \caption{Rank averaged time benchmark for different grid sizes and topologies.\\ All times are in milliseconds.}
+    \label{tab:timing}
+\end{table}
+We see that the total time is comparable between the two topologies for all grid sizes. Furthermore, the total runtime also increases non-surprisingly with the gridsize. \\
+\Shining{Why does it increase faster than linearly?}\\
+One could expect, that the grid with $200\times200$ elements would take 4 times as long as the grid with $100\times100$ elements. However, the runtime is 6.8 times longer. This happens because additionally to the higher number of grid points the algorithm also takes longer (more iterations) to converge. \\
+\Shining{Analysis of the different times}\\
+To get a better grasp on the data a stacked bar plot, as shown in \autoref{fig:timingbar}, is created. We immediately see that the bulk of the time is spent on computing the solution. The second biggest contributor is the global exchange time, followed by local exchange time and idle time (except for $2\times2$ on the $100\times100$ grid).\\
+That computation takes up the biggest part of the time is of non surprise especially on the bigger grids this is to be expected. Rather surprisingly the global excahnge time comes in second. This begs the question why two lines of the form:
+\begin{lstlisting}[language=c]
+MPI_Allreduce(... , ... , 1, MPI_DOUBLE, MPI_SUM, grid_comm);
+\end{lstlisting}
+take up this much time. This actually comes down to masked idle time. While the operation itself only sums up the values of 4 double, the operation is blocking and therefore the other cores have to wait for the slowest core to finish. If we look back at the definition of idle time, we defined it as the difference of the total time of the slowest core and the total time of the current core. However, as stated above, this does not take waiting time in MPI calls (like \texttt{MPI\_Allreduce}) into account. Certainly, this explains now that the global exchange time is high, because every core has to wait for the others to synchronize to compute the \texttt{MPI\_Allreduce}.\\
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../fig/lab2/average_times_stacked_bar_22.png}
+    \end{minipage}%
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../fig/lab2/average_times_stacked_bar_no_comp_22.png}
+    \end{minipage}
+    \caption{Scaling behavior of the Poisson solver with different grid sizes and processor topologies}
+    \label{fig:timingbar}
+\end{figure}
+\subsection{Data exchange amount}
+This section is about the amount of data exchanged each iteration among one process with all its neighbors.\\
+We assume a uniformly triangulated grid which is partitioned stripe-wise and distribution over $P$ processes. Furthermore, we assume that each process has to send the same amount of data. Indeed, this is not generally the case but for examples with periodic boundary conditions this is for example a valid assumption.\\
+Now we see that every process has to communicate with $2d$ neighbors, where $d$ is the dimension of the grid, under our assumptions there are $2$ neighboring processes. With the assumption of a $n^2$ grid, our process communicates $n$ values with each of these neighbors. For striped partitioning we get: 
+\begin{equation*}
+    \text{Data exchanged per Process} = 2n 
+\end{equation*}
+or in total: 
+\begin{equation*}
+    \text{Data exchanged} = 2n \cdot P 
+\end{equation*}
+Let's check for the extreme case $1000\times1000$ grid and $P=500$ processes. We get:
+\begin{equation*}
+    \text{Data exchanged} = 2\cdot1000\cdot500 = 1000000
+\end{equation*}
+Which is the same amount of data as there are datapoints. This makes sense because every process has to communicate the top row upwards and the bottom row downwards.\\
+for a box partitioning a process has to communicate $\nicefrac{n}{P}$ (again assuming divisibility) with all neighbors. We get:
+\begin{equation*}
+    \text{Data exchanged per Process} = 4 \cdot \nicefrac{n}{P}
+\end{equation*}
+or in total: \TODO{SKETCHY too low here if i have insane amount of P this doesnt work}
+\begin{equation*}
+    \text{Data exchanged} = 4 \cdot n
+\end{equation*}
+
+
+\TODO{Run shell-script on DB}

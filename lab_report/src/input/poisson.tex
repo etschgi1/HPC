@@ -80,7 +80,7 @@ Checking the output files of the MPI-implementation with the sequential referenc
 
 \subsection{Exercises, modifications, and performance aspects}
 For this subsection we'll define the following shorthand notation: \\
-
+\TODO{RUN ON DELFT BLUE!!!}\\
 \begin{table}[h!]
     \centering
     \begin{tabular}{|l|l|}
@@ -128,28 +128,46 @@ This investigation is carried out twice: Once with a $4\times 1$ topology (as in
     \hspace{0.02\textwidth}
     \begin{minipage}{0.48\textwidth}
         \centering
+        \includegraphics[width=\linewidth]{../fig/lab1/scaling_topology_1x4.png}
+    \end{minipage}
+    
+    \vspace{0.02\textwidth} % Add vertical space between rows
+
+    \begin{minipage}{0.48\textwidth}
+        \centering
         \includegraphics[width=\linewidth]{../fig/lab1/scaling_topology_2x2.png}
     \end{minipage}
+    
     \caption{Scaling behavior of the Poisson solver with different grid sizes and processor topologies}
     \label{fig:scaling_123}
 \end{figure}
-\TODO{FALSCH GEMACHT - PLOT X AXIS is wrong plot iterations not gird size!!!}
+
 As seen by the high $R^2$ values in the plots, the scaling behavior is very close to linear. 
 We obtain the following scaling factors for the different grid sizes and topologies from the linear fits:
 \begin{table}[H]
     \centering
-    \begin{tabular}{|c|c|c|}
+    \begin{tabular}{|c|c|c|c|}
         \hline
-        Topology & $\alpha$ & $\beta$ \\\hline
-        $4\times 1$ & $1.35 \cdot 10^{-1}$ & $7.11 \cdot 10^{-6}$ \\\hline
-        $2\times 2$ & $1.06 \cdot 10^{-1}$ & $6.17 \cdot 10^{-6}$ \\\hline
+        Topology & Gridsize & $\alpha$ & $\beta$ \\\hline
+        $4\times 1$ & $200\times 200$ & $7.39\cdot 10^5$ & $1.15 \cdot 10^2$ \\ \hline
+        $4\times 1$ & $400\times 400$ & $3.47\cdot 10^4$ & $-2.86\cdot 10^2$ \\ \hline
+        $4\times 1$ & $800\times 800$ & $1.18\cdot 10^3$ & $1.05 \cdot 10^1$ \\ \hline
+        $1\times 4$ & $200\times 200$ & $7.94\cdot 10^5$ & $6.56 \cdot 10^3$ \\ \hline
+        $1\times 4$ & $400\times 400$ & $3.17\cdot 10^4$ & $-6.52\cdot 10^3$ \\ \hline
+        $1\times 4$ & $800\times 800$ & $1.21\cdot 10^3$ & $6.09 \cdot 10^2$ \\ \hline
+        $2\times 2$ & $200\times 200$ & $8.49\cdot 10^5$ & $-9.90\cdot 10^4$ \\ \hline
+        $2\times 2$ & $400\times 400$ & $3.01\cdot 10^4$ & $5.78 \cdot 10^3$ \\ \hline
+        $2\times 2$ & $800\times 800$ & $1.17\cdot 10^3$ & $8.26 \cdot 10^2$ \\ \hline
     \end{tabular}
     \caption{Scaling factors for different processor topologies for the Poisson solver\\Using: $t(n) = \alpha + \beta \cdot n$ as a model}
 \end{table}
 \Shining{What can you conclude from the scaling behavior?}\\
 We see that the scaling behavior is very close to linear for both topologies. This means that the parallel implementation scales as expected with the number of grid points.\\
-If we compare the scaling factors ($\beta$) for the two topologies we see that the $2\times 2$ topology scales slightly better than the $4\times 1$ topology. This is not surprising, as the $2\times 2$ topology has a more balanced communication workload balance. In the $2\times 2$ topology every processor has two neighbors, while in the $4\times 1$ topology the processors at the ends only have one neighbor. This is a general trend: A topology which divides the grid into square / square-like parts will scale better than a topology which divides the grid into long and thin parts.\\
+If we compare the scaling factors ($\beta$) for the two topologies we see that the $2\times 2$ topology scales slightly better than the $4\times 1$ and $1\times 4$ topologies. This is not surprising, as the $2\times 2$ topology has a more balanced communication workload balance. In the $2\times 2$ topology every processor has two neighbors, while in the $4\times 1$ and $1\times 4$ topologies the processors at the ends only have one neighbor. This is a general trend: A topology which divides the grid into square / square-like parts will scale better than a topology which divides the grid into long and thin parts.\\
 In essence: We want to keep the communication between processors as balanced as possible to achieve the best scaling behavior.
+\Shining{Scaling of different grid sizes:}\\
+We see that larger grids take longer for the same amount of iterations. This is also to be expected, as the number of grid points grows quadratically with the grid size. a $400 \times 400$ grid has 4 times as many grid points as a $200 \times 200$ grid and therefore takes roughly 4 times as long to calculate. 
+
 
 \subsubsection{Scaling behavior [Theory - no measurements]}
 If I could choose between a $16 \times 1$, $8 \times 2$, $4 \times4$, $2 \times 8$, $1 \times 16$ topology, I would choose the $4 \times 4$ topology. This is because the $4 \times 4$ topology has the most balanced communication workload balance, as detailed in the \Shining{Shining} in \autoref{subsec:scaling}.

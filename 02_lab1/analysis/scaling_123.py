@@ -65,10 +65,12 @@ def visualise(res, tops, grids, maxIters):
     plt.rc('text', usetex=True)
     plt.rc('font', family='serif', size=14)
     lab2_path = "../../lab_report/fig/lab1"
-
+    fit_params = {}
+    colors = ["blue", "red", "green", "orange", "purple", "brown", "pink", "gray", "olive", "cyan"]
     for top in tops:
+        top_res = {}
         plt.figure(figsize=(8, 6))
-        for grid in grids: 
+        for i, grid in enumerate(grids): 
         # Extract iterations and average times from the results for the given topology
             time = [res[top][grid][iter]["time"] for iter in maxIters]
             stderr_times = [res[top][grid][iter]["std_time"] for iter in maxIters]
@@ -78,23 +80,24 @@ def visualise(res, tops, grids, maxIters):
 
             # # Generate linear fit values for plotting
             fit_times = [slope * size + intercept for size in maxIters]
-
+            top_res[grid] = {"slope": slope, "intercept": intercept, "r_value": r_value, "std_err": std_err}
             # Plot the data and the linear fit
-            plt.errorbar(maxIters, time, yerr=stderr_times, fmt="o", label=f"Grid size {grid[0]}x{grid[1]}")
-            plt.plot(maxIters, fit_times, label=f"Fit: $y = {slope:.2e}x + {intercept:.2e}$, R$^2$ = {r_value**2:.3f}")
+            color = colors[i%len(colors)]
+            plt.errorbar(maxIters, time, color=color, yerr=stderr_times, fmt="o", label=f"Grid size {grid[0]}x{grid[1]}")
+            plt.plot(maxIters, fit_times, color=color, label=f"Fit: $y = {slope:.2e}x + {intercept:.2e}$, R$^2$ = {r_value**2:.3f}")
+        fit_params[top] = top_res
+        print(fit_params)
 
-        # Add the equation and stderr as text on the plot
-        # plt.text(
-        #     0.05 * max(grid_sizes), 
-        #     0.8 * max(avg_times), 
-        #     f"Slope: {slope:.2f} $\pm$ {std_err:.2f}\nIntercept: {intercept:.2f}",
-        #     fontsize=12,
-        #     bbox=dict(facecolor="white", alpha=0.8)
-        # )
-
+        table = ""
+        for topology, grids in fit_params.items():
+            for grid, params in grids.items():
+                alpha = params["slope"]
+                beta = params["intercept"]
+                table += f"        ${topology[0]}\\times {topology[1]}$ & ${grid[0]}\\times {grid[1]}$ & ${alpha:.2e}$ & ${beta:.2e}$ \\\\ \\hline\n"
+        print(table)
         # Labels and title
         plt.xlabel("Number of iterations n / \\#")
-        plt.ylabel("t(n) / ms")
+        plt.ylabel("t(n) / s")
         plt.title(f"Scaling for Topology {top}")
         plt.legend()
         plt.grid()

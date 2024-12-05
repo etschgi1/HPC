@@ -1,7 +1,6 @@
 # Add -g for debug symbols
 CC = mpicc
-
-FP_CFLAGS = -g
+CFLAGS = -g
 FP_LIBS = -lm
 GD_LIBS = -lm
 
@@ -14,8 +13,21 @@ run: all
 	./GridDist.out 2 2 100 100
 	mpirun -np 4 ./MPI_Fempois.out
 
+# Score-P targets
+MPI_Fempois_score.out: $(FP_OBJS)
+	scorep $(CC) $(CFLAGS) -o $@ $(FP_OBJS) $(FP_LIBS)
+
+GridDist_score.out: $(GD_OBJS)
+	gcc $(CFLAGS) -o $@ $(GD_OBJS) $(GD_LIBS)
+
+allscore: clean GridDist_score.out MPI_Fempois_score.out
+
+runscore: allscore
+	./GridDist_score.out 2 2 100 100
+	SCOREP_ENABLE_TRACING=true scorep mpirun -np 4 ./MPI_Fempois_score.out
+
 sequential: 
-	gcc -g -o SEQ_Poisson.out SEQ_Poisson.c 
+	gcc $(CFLAGS) -o SEQ_Poisson.out SEQ_Poisson.c 
 	./SEQ_Poisson.out
 
 clean:
@@ -24,15 +36,16 @@ clean:
 	rm -f input[0-9]-[0-9].dat
 	rm -f output[0-9]-[0-9].dat
 	rm -f mapping*.dat
+	rm -rf scorep-*
 
 MPI_Fempois.out: $(FP_OBJS)
-	mpicc $(FP_CFLAGS) -o $@ $(FP_OBJS) $(FP_LIBS)
+	$(CC) $(CFLAGS) -o $@ $(FP_OBJS) $(FP_LIBS)
 
 GridDist.out: $(GD_OBJS)
-	gcc -g -o $@ $(GD_OBJS) $(GD_LIBS)
+	gcc $(CFLAGS) -o $@ $(GD_OBJS) $(GD_LIBS)
 
 MPI_Fempois.o:
-	mpicc $(FP_CFLAGS) -c MPI_Fempois.c
+	$(CC) $(CFLAGS) -c MPI_Fempois.c
 
 GridDist.o:
-	gcc -g -c GridDist.c
+	gcc $(CFLAGS) -c GridDist.c
