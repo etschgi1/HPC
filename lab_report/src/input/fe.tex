@@ -110,14 +110,47 @@ Let's check for the extreme case $1000\times1000$ grid and $P=500$ processes. We
     \text{Data exchanged} = 2\cdot1000\cdot500 = 1000000
 \end{equation*}
 Which is the same amount of data as there are datapoints. This makes sense because every process has to communicate the top row upwards and the bottom row downwards.\\
-for a box partitioning a process has to communicate $\nicefrac{n}{P}$ (again assuming divisibility) with all neighbors. We get:
+Note, that we could even do worse if we assigned every process a single row. In this case every process would have to communicate the same data upward and downward. This would result in a data exchange of $2\cdot1000\cdot1000 = 2000000$ which is double the amount of data as there are datapoints.\\
+For a box partitioning a process has to communicate $\nicefrac{n}{\sqrt{P}}$ (assuming divisibility with all neighbors) with each of its 4 neighbors. We get:
 \begin{equation*}
-    \text{Data exchanged per Process} = 4 \cdot \nicefrac{n}{P}
+    \text{Data exchanged per Process} = 4 \cdot \nicefrac{n}{\sqrt{P}}
 \end{equation*}
-or in total: \TODO{SKETCHY too low here if i have insane amount of P this doesnt work}
+or in total: 
 \begin{equation*}
-    \text{Data exchanged} = 4 \cdot n
+    \text{Data exchanged} = 4 \cdot n \cdot \sqrt{P}
 \end{equation*}
+This means that a striped partitioning is less efficient compared to a boxed partitioning starting from $P=4$, as can be seen in \autoref{fig:dataexchange}.\\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../fig/lab2/scale23.png}
+    \caption{Striped vs. Boxed partitioning on a $100\times100$ grid using $P$ processors.}
+    \label{fig:dataexchange}
+\end{figure}
+\subsection{Unbalanced communication}
+In the last section we assumed that every process has to communicate with the same amount of neighbors in our given scenario. That is actually not entierly true. There is an imbalance, even if just a small one.\\ 
+\Shining{But where does this imbalance come from?}\\
+Let's take a look at a \Shining{uniformly triangulated grid} with $P=4$ processes. We assume that the grid is box-partitioned as given in \autoref{fig:boxpart24}.\\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../fig/lab2/grid24.png}
+    \caption{Box partitioning of a uniformly triangulated grid with $P=4$ processes.\\
+    One point (big-blue) in $1$ (and similarly in $3$) has to communicate its value to 3 neighbors (small-blue).\\
+    Another point (big-orange circle) in $2$ (and similarly in $4$) has to communicate its value to 2 neighbors (small-orange circles).}
+    \label{fig:boxpart24}
+\end{figure}
+We see that the geometry of a given uniform triangulated grid leads to an imbalance in communication. This imbalance is usually not a big problem, especially for bigger grids with comparably small amounts of processors because only 2 points have to communicate with 3 neighbors. However, for smaller grids or proportionally high processor counts the imbalance is more significant.\\ 
 
-
+Looking at a $3\times3$ grid with $P=9$ processors, we see that the imbalance is more significant as shown in \autoref{fig:boxpart243}.\\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../fig/lab2/grid_3x3_partition.png}
+    \caption{Box partitioning of a uniformly triangulated grid with $P=9$ processes.\\
+    Corner (0/8 - blue/red) processes have to communicate their values to 2 or 3 neighbors respectively (1 and 3 - blue or 4, 5 and 7 - red).\\
+    Central (4 - orange) processes have to communicate their value to 6 neighbors (1, 3, 5, 6, 7 and 8).}
+    \label{fig:boxpart243}
+\end{figure}
+As we can see the imbalance comes from the partitioning geometry on the uniform triangulated grid. Because our processor grid is rectangular the results will always, in one way or another come out as shown in the schematic above.\\
+For $3\times3$ grid we have 4 corner processes which have to communicate with 2 or 3 neighbors and 1 central process which has to communicate with 6 neighbors. This is a significant imbalance and compared to the $2\times2$ grid it is not negligible, because the central process has to communicate more than 2 extra points (whole edges of datapoints) to its neighbors.\\
+\subsection{4.5}
+\subsection{4.6}
 \TODO{Run shell-script on DB}
