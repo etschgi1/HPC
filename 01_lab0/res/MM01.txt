@@ -1,2 +1,5 @@
-Run sequantial!
-Matrices match (sequantial-trivial)! - took: 47.108471 s
+Run parallel!
+Computed reference results in 42.327173 s
+Hello from master! - I have 0 workers!
+Run sequential!
+Matrices match (parallel [eps 0.0000000010])! - took: 43.831918 s
