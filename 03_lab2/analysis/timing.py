@@ -178,4 +178,4 @@ if __name__ == "__main__":
     path = os.path.join(path, src)
     os.chdir(path)
     res = run_scenarios([(1,4),(2,2)], [(100,100), (200,200), (400,400)])
-    latex(res)
+    # latex(res)
