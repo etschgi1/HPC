@@ -151,6 +151,7 @@ Looking at a $3\times3$ grid with $P=9$ processors, we see that the imbalance is
 \end{figure}
 As we can see the imbalance comes from the partitioning geometry on the uniform triangulated grid. Because our processor grid is rectangular the results will always, in one way or another come out as shown in the schematic above.\\
 For $3\times3$ grid we have 4 corner processes which have to communicate with 2 or 3 neighbors and 1 central process which has to communicate with 6 neighbors. This is a significant imbalance and compared to the $2\times2$ grid it is not negligible, because the central process has to communicate more than 2 extra points (whole edges of datapoints) to its neighbors.\\
-\subsection{4.5}
+\subsection{Estimations: communication time $\equiv$ computation time}
+
 \subsection{4.6}
-\TODO{Run shell-script on DB}
+\TODO{Run shell-script on DB} 
