@@ -7,17 +7,18 @@
 #SBATCH --mem=1GB
 #SBATCH --account=Education-EEMCS-Courses-WI4049TU
 
-cd ..
+cd ../src
+
+omegas=$(python3 -c "import numpy as np; print(' '.join(map(str, np.linspace(1.75, 2, 25))))")
+
+mkdir -p ../scripts/output/122
+
 # Loop over omegas and run the program for each value
 for omega in $omegas; do
     echo "Running with omega=$omega"
-    srun ../MPI_Poisson.out 4 1 $omega > output/omega_${omega}.txt
+    srun ./MPI_Poisson.out 4 1 $omega > ../scripts/output/122/omega_${omega}.txt
     echo "Finished omega=$omega"
 done
-# for omega in $omegas; do
-#     echo "Running with omega=$omega" >> debug.log
-#     srun ../MPI_Poisson.out 4 1 $omega >> debug.log 2>&1
-#     echo "Finished omega=$omega" >> debug.log
-# done
+
 # Notify job completion
 echo "Job completed successfully."
