@@ -152,8 +152,39 @@ Looking at a $3\times3$ grid with $P=9$ processors, we see that the imbalance is
 As we can see the imbalance comes from the partitioning geometry on the uniform triangulated grid. Because our processor grid is rectangular the results will always, in one way or another come out as shown in the schematic above.\\
 For $3\times3$ grid we have 4 corner processes which have to communicate with 2 or 3 neighbors and 1 central process which has to communicate with 6 neighbors. This is a significant imbalance and compared to the $2\times2$ grid it is not negligible, because the central process has to communicate more than 2 extra points (whole edges of datapoints) to its neighbors.\\
 \subsection{Estimates for computation $\equiv$ communication time}
-Let's assume that we have 4 processes and want to estimate for which grid size the computation time is equal to communication time. \\
-We've already got 
+\Shining{N.B.} This section will use two different ways to estimate the equilibrium point.\\
+
+Let's assume that we have 4 processes and want to estimate for which grid size the computation time is equal to the communication time. \\
+One way to estimate this is by extrapolating from our measurements in \autoref{tab:timing} and find the point where the times are equal.
+Thereafter we can use this information to fit the side length of the grid to the computation time for the given time to find the grid size where the computation time is equal to the communication time. This process gives us a value of $n\approx79$ for the grid size as shown in \autoref{fig:comp_eq_comm}\\
+
+We'll also estimate this equilibrium point for a $1000\times1000$ grid. However, this time around we'll actually use a different way of calculating the number of Processes. We use the definitions from the lecture for stencil type computation: 
+\begin{itemize}
+    \item Computation time: $T_{\text{S}} = \text{number\_ops} \cdot t_\text{op} \sim  4 t_\text{op} \cdot n^2 \hspace{5mm} \text{(for stencil type - overall)}$
+    \item Communication time: $T_{\text{comm}} = \text{number\_comm} \cdot t_\text{comm} \sim 2 n \cdot t_\text{data}\hspace{5mm} \text{(for stencil type - overall)}$
+\end{itemize}
+Note that the definitions above \underline{apply for a single iteration and \textbf{one} processor!}\\
+We can calculate the time for communication from the data in \autoref{tab:timing} as follows: 
+\[t_\text{data}(P) = \frac{t_\text{global\_comm}+t_\text{neighbor\_comm}}{2\cdot n \cdot P \cdot \#_\text{{iterations}}}\]
+Similarly we can calculate the time for computation as follows:
+\[t_\text{op} = \frac{t_\text{comp.}}{4 \cdot n^2 \cdot \#_\text{{iterations}}}\]
+Note that the later doesn't depend on the number of processes.\\
+If we rearange for $t_{\text{comp.}}$ and solve for $n=1000$ we get an approximate value of $t_{\text{comp.}}\approx 29$ s. From this we want to solve for $P$ in the $t_\text{data}(P)$ using $t_\text{data}(P) = 29$ s. 
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../fig/lab2/estimate25.png}
+    \end{minipage}%
+    \hspace{0.02\textwidth}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../fig/lab2/grid_to_time_fit.png}
+    \end{minipage}
+    \caption{Fitting expected computation time $\equiv$ communication time for 4 processes.}
+    \label{fig:comp_eq_comm}
+\end{figure}
 \TODO{Test on DB}
 \subsection{4.6}
 \TODO{Run shell-script on DB} 
