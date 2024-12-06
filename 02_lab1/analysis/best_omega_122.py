@@ -3,7 +3,7 @@ import numpy as np
 
 
 def best_omega_122(omegas):
-    exec_line_base = "mpirun -np=4 ./MPI_Poisson.out 4 1 "
+    exec_line_base = "mpirun -np 4 ./MPI_Poisson.out 4 1 "
     results = {}  # Dictionary to store omega and corresponding number of iterations
     
     for omega in omegas:
