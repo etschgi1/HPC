@@ -112,6 +112,7 @@ def latex(res):
             row = {
                 "Topology": f"{topology[0]}x{topology[1]}",
                 "Grid Size": f"{grid_size[0]}x{grid_size[1]}",
+                "Elapsed Time": 1000 * average_metrics["elapsed_time"],
                 "Compute Time": 1000 * average_metrics["compute_time"],
                 "Exchange Neighbors Time": 1000 * average_metrics["exchange_neighbors_time"],
                 "Exchange Global Time": 1000 * average_metrics["exchange_global_time"],

@@ -60,19 +60,19 @@ The \underline{idle time} is calculated as denoted above and therefore not shown
     \begin{tabular}{|l|l|c|c|c|c|c|c|c|c|}
         \hline
         Top. & Grid Size & Total (avg) & Comp. (avg) & Ex. Neighb. (avg) & Ex. Global (avg) & Idle (avg) \\\hline
-        1x4 & 100x100 & 12.5 & 1.1 & 3.9 & 0.7 \\\hline
-        1x4 & 200x200 & 85.1 & 1.6 & 12.7 & 0.0 \\\hline
-        1x4 & 400x400 & 1192.5 & 7.2 & 118.3 & 1.3 \\\hline
-        2x2 & 100x100 & 11.6 & 0.9 & 1.8 & 2.9 \\\hline
-        2x2 & 200x200 & 85.0 & 2.9 & 11.2 & 0.6 \\\hline
-        2x2 & 400x400 & 1173.7 & 8.9 & 110.0 & 0.9 \\\hline
+        1x4 & 100x100 & 57.0 & 32.5 & 5.6 & 13.3 & 0.6 \\\hline
+        1x4 & 200x200 & 383.6 & 289.1 & 13.3 & 48.8 & 1.7 \\\hline
+        1x4 & 400x400 & 2239.5 & 1886.9 & 22.2 & 206.1 & 11.6 \\\hline
+        2x2 & 100x100 & 57.4 & 33.6 & 4.7 & 8.7 & 4.5 \\\hline
+        2x2 & 200x200 & 348.3 & 266.6 & 15.5 & 35.0 & 4.0 \\\hline
+        2x2 & 400x400 & 2313.2 & 1959.8 & 26.4 & 204.0 & 11.5 \\\hline
     \end{tabular}
     \caption{Rank averaged time benchmark for different grid sizes and topologies.\\ All times are in milliseconds.}
     \label{tab:timing}
 \end{table}
 We see that the total time is comparable between the two topologies for all grid sizes. Furthermore, the total runtime also increases non-surprisingly with the gridsize. \\
 \Shining{Why does it increase faster than linearly?}\\
-One could expect, that the grid with $200\times200$ elements would take 4 times as long as the grid with $100\times100$ elements. However, the runtime is 6.8 times longer. This happens because additionally to the higher number of grid points the algorithm also takes longer (more iterations) to converge. \\
+One could expect, that the grid with $200\times200$ elements would take 4 times as long as the grid with $100\times100$ elements. However, the runtime roughly 7 times longer. This happens because additionally to the higher number of grid points the algorithm also takes longer (more iterations) to converge. \\
 \Shining{Analysis of the different times}\\
 To get a better grasp on the data a stacked bar plot, as shown in \autoref{fig:timingbar}, is created. We immediately see that the bulk of the time is spent on computing the solution. The second biggest contributor is the global exchange time, followed by local exchange time and idle time (except for $2\times2$ on the $100\times100$ grid).\\
 That computation takes up the biggest part of the time is of non surprise especially on the bigger grids this is to be expected. Rather surprisingly the global excahnge time comes in second. This begs the question why two lines of the form:
@@ -122,7 +122,7 @@ or in total:
 This means that a striped partitioning is less efficient compared to a boxed partitioning starting from $P=4$, as can be seen in \autoref{fig:dataexchange}.\\
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{../fig/lab2/scale23.png}
+    \includegraphics[width=0.5\textwidth]{../fig/lab2/scale23.png}
     \caption{Striped vs. Boxed partitioning on a $100\times100$ grid using $P$ processors.}
     \label{fig:dataexchange}
 \end{figure}
@@ -151,6 +151,9 @@ Looking at a $3\times3$ grid with $P=9$ processors, we see that the imbalance is
 \end{figure}
 As we can see the imbalance comes from the partitioning geometry on the uniform triangulated grid. Because our processor grid is rectangular the results will always, in one way or another come out as shown in the schematic above.\\
 For $3\times3$ grid we have 4 corner processes which have to communicate with 2 or 3 neighbors and 1 central process which has to communicate with 6 neighbors. This is a significant imbalance and compared to the $2\times2$ grid it is not negligible, because the central process has to communicate more than 2 extra points (whole edges of datapoints) to its neighbors.\\
-\subsection{4.5}
+\subsection{Estimates for computation $\equiv$ communication time}
+Let's assume that we have 4 processes and want to estimate for which grid size the computation time is equal to communication time. \\
+We've already got 
+\TODO{Test on DB}
 \subsection{4.6}
 \TODO{Run shell-script on DB}
