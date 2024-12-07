@@ -100,10 +100,13 @@ $pt = 414$ means 4 processors in a $1\times 4$ topology. \\
 \textbf{Note on different Versions:}\\
 For the following exercises the implementation will be slightly adapted to measure different performance aspects. To facilitate this, we will use defines to switch between different versions of the code at compile time. The final version of the poissonsolver can be found in the appendix for this section.
 
+\textbf{Note on long scheduling times and work-arounds:}\\
+Delft Blue is especially bussy and wait times for jobs can be well over 30 minutes regularly. As we make use of these resources extensively in this lab, I've created \texttt{sbatch} scripts which run mutliple configurations at once. For development of the tests and postprocessing I'll make use of my local machine. As discussed with the tutor of this lab, for some exercises a local run is sufficient to get the desiered insights (e.g. \autoref{subsec:optimal_omega} to find the optimal omega). I'll also note this in the respective subsections.
 \subsubsection{Over-relaxation (SOR)}
-We start of by rewriting the \texttt{Do\_Step} routine to facilitate SOR updates. Furthermore, we need $h^2$, the grid spacing (which is 1 in our case) and the relaxation parameter $\omega$ to calculate the updated values. A quick test shows a speedup of roughly a factor of 10. More systematic tests will be done in the next section.
+We start of by rewriting the \texttt{Do\_Step} routine to facilitate SOR updates. Furthermore, we need $h^2$, the grid spacing (which is 1 in our case) and the relaxation parameter $\omega$ to calculate the updated values. A quick local test shows a speedup of roughly a factor of 10. More systematic tests will be done in the next section.
 \subsubsection{Optimal $\omega$ for 4 proc. on a 4x1 grid}
-With the power of a little python scripting we can easily test different values for $\omega$ and plot the results as seen in \autoref{fig:best_omega_122}. 
+\label{subsec:optimal_omega}
+With the power of a little python scripting we can easily test different values for $\omega$ and plot the results as seen in \autoref{fig:best_omega_122}. This test was performed locally as the results are not dependent on processors because the number of iterations needed for convergence is the same for different configurations and only depends on the algorithm and the specific problem.
 
 \begin{figure}[H]
     \centering
