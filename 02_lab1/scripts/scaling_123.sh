@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name="scaling_123"
-#SBATCH --time=00:03:00
+#SBATCH --time=00:03:00  
 #SBATCH --ntasks=4
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=compute
-#SBATCH --mem=1GB
+#SBATCH --mem=2GB  # Increased memory
 #SBATCH --account=Education-EEMCS-Courses-WI4049TU
 
 if [ -z "$1" ] || [ -z "$2" ]; then
@@ -12,46 +12,38 @@ if [ -z "$1" ] || [ -z "$2" ]; then
     exit 1
 fi
 
-
 # Move to the src directory
-cd ../src
-basefolder="${1}_${2}"
-# Ensure output directory exists
-mkdir -p ../scripts/output/$basefolder
+cd ../src || { echo "Error: ../src directory not found"; exit 1; }
+basefolder="123/${1}_${2}"
+mkdir -p ../scripts/output/$basefolder || { echo "Error creating output directory"; exit 1; }
 
-# Generate omega values using Python
+# Define maximum iterations and grid sizes
 maxiters=("500" "1000" "2000")
-
-# Define grid sizes for testing
 grids=("50 50" "100 100" "200 200")
 
-# Loop over grids
 for grid in "${grids[@]}"; do
     nx=$(echo $grid | cut -d' ' -f1)
     ny=$(echo $grid | cut -d' ' -f2)
 
-    # Create subdirectory for this grid size
-    mkdir -p ../scripts/output/$basefolder/${nx}x${ny}
+    mkdir -p ../scripts/output/$basefolder/${nx}x${ny} || { echo "Error creating grid directory"; exit 1; }
 
+    for maxiter in "${maxiters[@]}"; do
+        python3 -c "
+import util
+util.update_input_file(nx=$nx, ny=$ny, precision_goal=0.000000000000001, max_iter=$maxiter)
+" || { echo "Python script failed for nx=$nx, ny=$ny, max_iter=$maxiter"; exit 1; }
 
-    # Loop over omegas
-    for maxiter in $maxiters; do
-    # Update input.dat using util.py
-            python3 -c "
-        import util
-        util.update_input_file(nx=$nx, ny=$ny, precision_goal=0.000000000000001, max_iter=$maxiter)
-        "
         echo "Running with nx=$nx, ny=$ny, maxiter=$maxiter"
-        srun ./MPI_Poisson.out $1 $2 1.95 > ../scripts/output/$basefolder/${nx}x${ny}/maxiter_${maxiter}.txt
+        srun ./MPI_Poisson.out $1 $2 1.95 > ../scripts/output/$basefolder/${nx}x${ny}/maxiter_${maxiter}.txt || {
+            echo "srun failed for nx=$nx, ny=$ny, max_iter=$maxiter"; exit 1; 
+        }
         echo "Finished maxiter=$maxiter for grid ${nx}x${ny}"
     done
 done
 
-    # Reset input.dat using util.py
-    python3 -c "
+python3 -c "
 import util
 util.reset_input_file()
-"
+" || { echo "Error resetting input file"; exit 1; }
 
-# Notify job completion
 echo "Job completed successfully."

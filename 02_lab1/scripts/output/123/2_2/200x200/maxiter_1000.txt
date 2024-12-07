@@ -1,0 +1,61 @@
+Set sor_omega over argv to 1.9500
+Set skip_exchange to default value 1
+(0) (x,y)=(0,0)
+(0) top -2,  right  2,  bottom  1,  left  -2
+SOR using omega: 1.95000
+(0) Number of iterations : 1000
+(0) Exchange time:       0.004739
+
+--- Aggregated Metrics ---
+Total Exchanges: 2000
+Total Data Transferred: 6528000.00 bytes
+Total Exchange Time: 0.004739093 s
+Average Exchange Time per Call: 0.000002370 s
+Average Latency per Call: 0.000000535 s
+Average Bandwidth: 1377478770.73 bytes/s
+(0) Elapsed Wtime       0.165140 s ( 96.7% CPU)
+Set sor_omega over argv to 1.9500
+Set skip_exchange to default value 1
+(1) (x,y)=(0,1)
+(1) top 0,  right  3,  bottom  -2,  left  -2
+(1) Number of iterations : 1000
+(1) Exchange time:       0.012565
+
+--- Aggregated Metrics ---
+Total Exchanges: 2000
+Total Data Transferred: 6528000.00 bytes
+Total Exchange Time: 0.012565192 s
+Average Exchange Time per Call: 0.000006283 s
+Average Latency per Call: 0.000000215 s
+Average Bandwidth: 519530461.61 bytes/s
+(1) Elapsed Wtime       0.164586 s ( 99.2% CPU)
+Set sor_omega over argv to 1.9500
+Set skip_exchange to default value 1
+(2) (x,y)=(1,0)
+(2) top -2,  right  -2,  bottom  3,  left  0
+(2) Number of iterations : 1000
+(2) Exchange time:       0.012327
+
+--- Aggregated Metrics ---
+Total Exchanges: 2000
+Total Data Transferred: 6528000.00 bytes
+Total Exchange Time: 0.012327292 s
+Average Exchange Time per Call: 0.000006164 s
+Average Latency per Call: 0.000000663 s
+Average Bandwidth: 529556694.20 bytes/s
+(2) Elapsed Wtime       0.164789 s ( 99.3% CPU)
+Set sor_omega over argv to 1.9500
+Set skip_exchange to default value 1
+(3) (x,y)=(1,1)
+(3) top 2,  right  -2,  bottom  -2,  left  1
+(3) Number of iterations : 1000
+(3) Exchange time:       0.014143
+
+--- Aggregated Metrics ---
+Total Exchanges: 2000
+Total Data Transferred: 6528000.00 bytes
+Total Exchange Time: 0.014142945 s
+Average Exchange Time per Call: 0.000007071 s
+Average Latency per Call: 0.000000180 s
+Average Bandwidth: 461572890.23 bytes/s
+(3) Elapsed Wtime       0.164849 s ( 99.3% CPU)
