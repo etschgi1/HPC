@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH --job-name="grid_analysis"
 #SBATCH --time=00:02:00  
-#SBATCH --ntasks=12
+#SBATCH --ntasks=36
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=compute
-#SBATCH --mem=2GB
+#SBATCH --mem=4GB
 #SBATCH --account=Education-EEMCS-Courses-WI4049TU
 
 if [ -z "$1" ] || [ -z "$2" ]; then
