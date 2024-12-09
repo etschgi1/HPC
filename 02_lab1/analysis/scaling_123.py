@@ -167,8 +167,8 @@ def visualise(res, tops, grids, maxIters):
         table = ""
         for topology, grids in fit_params.items():
             for grid, params in grids.items():
-                alpha = params["slope"]
-                beta = params["intercept"]
+                beta = params["slope"]
+                alpha = params["intercept"]
                 table += f"        ${topology[0]}\\times {topology[1]}$ & ${grid[0]}\\times {grid[1]}$ & ${alpha:.2e}$ & ${beta:.2e}$ \\\\ \\hline\n"
         print(table)
         # Labels and title
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     path = os.path.join(path, src)
     os.chdir(path)
     tops = [(4, 1), (1, 4), (2, 2)]
-    grids = [(50, 50), (100, 100), (200, 200)]#, (1600, 1600)]
+    grids = [(200, 200), (400, 400), (800, 800), (1600, 1600)]#, (1600, 1600)]
     maxIters = [500, 1000, 2000]
     # res = scaling(tops, grids, maxIters)
     res = scaling_from_files("/home/etschgi1/REPOS/HPC/02_lab1/scripts/output/123", tops, grids, maxIters)
