@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name="grid_analysis"
 #SBATCH --time=00:02:00  
-#SBATCH --ntasks=36
+#SBATCH --ntasks=64
 #SBATCH --cpus-per-task=1
 #SBATCH --partition=compute
 #SBATCH --mem=4GB
