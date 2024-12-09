@@ -1,0 +1,151 @@
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(7) (x,y)=(1,2)
+(7) top 6,  right  -2,  bottom  8,  left  2
+(7) Number of iterations : 532
+(7) Exchange time:       0.007958
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.007957524 s
+Average Exchange Time per Call: 0.000007479 s
+Average Latency per Call: 0.000000445 s
+Average Bandwidth: 308067685.38 bytes/s
+(7) Elapsed Wtime       0.261929 s ( 87.9% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(6) (x,y)=(1,1)
+(6) top 5,  right  -2,  bottom  7,  left  1
+(6) Number of iterations : 532
+(6) Exchange time:       0.117225
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.117224844 s
+Average Exchange Time per Call: 0.000110174 s
+Average Latency per Call: 0.000000466 s
+Average Bandwidth: 20912427.06 bytes/s
+(6) Elapsed Wtime       0.251469 s ( 91.6% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(4) (x,y)=(0,4)
+(4) top 3,  right  9,  bottom  -2,  left  -2
+(4) Number of iterations : 532
+(4) Exchange time:       0.005900
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.005899681 s
+Average Exchange Time per Call: 0.000005545 s
+Average Latency per Call: 0.000000211 s
+Average Bandwidth: 415523483.39 bytes/s
+(4) Elapsed Wtime       0.231613 s ( 99.4% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(5) (x,y)=(1,0)
+(5) top -2,  right  -2,  bottom  6,  left  0
+(5) Number of iterations : 532
+(5) Exchange time:       0.115870
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.115869742 s
+Average Exchange Time per Call: 0.000108900 s
+Average Latency per Call: 0.000001094 s
+Average Bandwidth: 21156998.87 bytes/s
+(5) Elapsed Wtime       0.231832 s ( 95.0% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(1) (x,y)=(0,1)
+(1) top 0,  right  6,  bottom  2,  left  -2
+(1) Number of iterations : 532
+(1) Exchange time:       0.115457
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.115456570 s
+Average Exchange Time per Call: 0.000108512 s
+Average Latency per Call: 0.000001125 s
+Average Bandwidth: 21232711.14 bytes/s
+(1) Elapsed Wtime       0.246102 s ( 93.5% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(2) (x,y)=(0,2)
+(2) top 1,  right  7,  bottom  3,  left  -2
+(2) Number of iterations : 532
+(2) Exchange time:       0.005935
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.005934882 s
+Average Exchange Time per Call: 0.000005578 s
+Average Latency per Call: 0.000000508 s
+Average Bandwidth: 413058928.55 bytes/s
+(2) Elapsed Wtime       0.242476 s ( 94.9% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(3) (x,y)=(0,3)
+(3) top 2,  right  8,  bottom  4,  left  -2
+(3) Number of iterations : 532
+(3) Exchange time:       0.006238
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.006238393 s
+Average Exchange Time per Call: 0.000005863 s
+Average Latency per Call: 0.000000387 s
+Average Bandwidth: 392962738.96 bytes/s
+(3) Elapsed Wtime       0.231728 s ( 83.3% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(9) (x,y)=(1,4)
+(9) top 8,  right  -2,  bottom  -2,  left  4
+(9) Number of iterations : 532
+(9) Exchange time:       0.006364
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.006364085 s
+Average Exchange Time per Call: 0.000005981 s
+Average Latency per Call: 0.000000205 s
+Average Bandwidth: 385201643.28 bytes/s
+(9) Elapsed Wtime       0.258444 s ( 89.1% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(8) (x,y)=(1,3)
+(8) top 7,  right  -2,  bottom  9,  left  3
+(8) Number of iterations : 532
+(8) Exchange time:       0.006761
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.006761427 s
+Average Exchange Time per Call: 0.000006355 s
+Average Latency per Call: 0.000000465 s
+Average Bandwidth: 362564884.60 bytes/s
+(8) Elapsed Wtime       0.245462 s ( 92.9% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(0) (x,y)=(0,0)
+(0) top -2,  right  5,  bottom  1,  left  -2
+SOR using omega: 1.93000
+(0) Number of iterations : 532
+(0) Exchange time:       0.112090
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2451456.00 bytes
+Total Exchange Time: 0.112090159 s
+Average Exchange Time per Call: 0.000105348 s
+Average Latency per Call: 0.000002495 s
+Average Bandwidth: 21870394.53 bytes/s
+(0) Elapsed Wtime       0.259730 s ( 85.8% CPU)

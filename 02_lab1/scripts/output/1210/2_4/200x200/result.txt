@@ -1,0 +1,121 @@
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(6) (x,y)=(1,2)
+(6) top 5,  right  -2,  bottom  7,  left  2
+(6) Number of iterations : 532
+(6) Exchange time:       0.008643
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.008642880 s
+Average Exchange Time per Call: 0.000008123 s
+Average Latency per Call: 0.000000724 s
+Average Bandwidth: 303335925.06 bytes/s
+(6) Elapsed Wtime       0.052565 s ( 98.4% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(2) (x,y)=(0,2)
+(2) top 1,  right  6,  bottom  3,  left  -2
+(2) Number of iterations : 532
+(2) Exchange time:       0.007789
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.007788504 s
+Average Exchange Time per Call: 0.000007320 s
+Average Latency per Call: 0.000000660 s
+Average Bandwidth: 336610984.60 bytes/s
+(2) Elapsed Wtime       0.065482 s ( 79.0% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(4) (x,y)=(1,0)
+(4) top -2,  right  -2,  bottom  5,  left  0
+(4) Number of iterations : 532
+(4) Exchange time:       0.006977
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.006976975 s
+Average Exchange Time per Call: 0.000006557 s
+Average Latency per Call: 0.000000871 s
+Average Bandwidth: 375763995.14 bytes/s
+(4) Elapsed Wtime       0.138895 s ( 36.5% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(7) (x,y)=(1,3)
+(7) top 6,  right  -2,  bottom  -2,  left  3
+(7) Number of iterations : 532
+(7) Exchange time:       0.007336
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.007335587 s
+Average Exchange Time per Call: 0.000006894 s
+Average Latency per Call: 0.000000254 s
+Average Bandwidth: 357394166.27 bytes/s
+(7) Elapsed Wtime       0.099922 s ( 51.8% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(0) (x,y)=(0,0)
+(0) top -2,  right  4,  bottom  1,  left  -2
+SOR using omega: 1.93000
+(0) Number of iterations : 532
+(0) Exchange time:       0.005515
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.005515004 s
+Average Exchange Time per Call: 0.000005183 s
+Average Latency per Call: 0.000002107 s
+Average Bandwidth: 475375176.52 bytes/s
+(0) Elapsed Wtime       0.147397 s ( 40.6% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(3) (x,y)=(0,3)
+(3) top 2,  right  7,  bottom  -2,  left  -2
+(3) Number of iterations : 532
+(3) Exchange time:       0.006616
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.006615738 s
+Average Exchange Time per Call: 0.000006218 s
+Average Latency per Call: 0.000000244 s
+Average Bandwidth: 396281714.90 bytes/s
+(3) Elapsed Wtime       0.138983 s ( 37.1% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(5) (x,y)=(1,1)
+(5) top 4,  right  -2,  bottom  6,  left  1
+(5) Number of iterations : 532
+(5) Exchange time:       0.008856
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.008855786 s
+Average Exchange Time per Call: 0.000008323 s
+Average Latency per Call: 0.000000628 s
+Average Bandwidth: 296043287.41 bytes/s
+(5) Elapsed Wtime       0.052541 s ( 98.6% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(1) (x,y)=(0,1)
+(1) top 0,  right  5,  bottom  2,  left  -2
+(1) Number of iterations : 532
+(1) Exchange time:       0.006659
+
+--- Aggregated Metrics ---
+Total Exchanges: 1064
+Total Data Transferred: 2621696.00 bytes
+Total Exchange Time: 0.006658974 s
+Average Exchange Time per Call: 0.000006258 s
+Average Latency per Call: 0.000000689 s
+Average Bandwidth: 393708700.47 bytes/s
+(1) Elapsed Wtime       0.065517 s ( 79.0% CPU)
