@@ -1,7 +1,0 @@
-#!/bin/bash
-hostname=$(hostname)
-if [[ "$hostname" == "pop-os" ]]; then
-    mpirun -np $1 build/$2 "${@:3}"
-else
-    srun --ntasks=$1 --cpus-per-task=1 --mem-per-cpu=1GB --time=00:03:00 --account=Education-EEMCS-Courses-WI4049TU build/$2 "${@:3}"
-fi

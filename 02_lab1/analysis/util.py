@@ -11,6 +11,17 @@ DEFAULT_MAX_ITER = 5000
 DEFAULT_PRECISION_GOAL = 0.0001
 DEFAULT_SOURCES = [(0.35, 0.70, 4.0), (0.625, 0.75, 4.0), (0.375, 0.25, 4.0)]
 
+class bcolors: 
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    ENDC = '\033[0m'
 
 def update_input_file(nx=DEFAULT_NX, ny=DEFAULT_NY, max_iter=DEFAULT_MAX_ITER, precision_goal=DEFAULT_PRECISION_GOAL, sources=DEFAULT_SOURCES):
     """

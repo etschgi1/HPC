@@ -80,7 +80,6 @@ Checking the output files of the MPI-implementation with the sequential referenc
 
 \subsection{Exercises, modifications, and performance aspects}
 For this subsection we'll define the following shorthand notation: \\
-\TODO{RUN ON DELFT BLUE!!!}\\
 \begin{table}[h!]
     \centering
     \begin{tabular}{|l|l|}
@@ -120,7 +119,7 @@ We find that the optimal $\omega$ is at about $1.93$ for this setup with only 12
 
 \subsubsection{Scaling behavior with larger grids}
 \label{subsec:scaling}
-This investigation is carried out twice: Once with a $4\times 1$ topology (as in the previous section) and once with a $2\times 2$ topology. We use grid sizes of $10\times 10$, $25\times 25$, $50\times 50$, $100\times 100$, $200\times 200$, $400\times 400$, $800\times 800$ and $1600\times 1600$ and set $\omega = 1.95$ for all runs. The results are shown in \autoref{fig:scaling_123}.
+This investigation is carried out three times: Once with a $4\times 1$ topology (as in the previous section), followed by a $1\times 4$ and a $2\times 2$ topology. We use grid sizes of $50\times 50$, $100\times 100$ and $200\times 200$ and set $\omega = 1.95$ for all runs. All nine simulations are ran using a \texttt{sbatch} script to change the appropriate input parameters and run the program subseqeuntly (details can be found in the Appendix and online in the \href{https://github.com/etschgi1/HPC}{repository}). The results are shown in \autoref{fig:scaling_123}.
 
 \begin{figure}[H]
     \centering
@@ -145,28 +144,30 @@ This investigation is carried out twice: Once with a $4\times 1$ topology (as in
     \label{fig:scaling_123}
 \end{figure}
 
-As seen by the high $R^2$ values in the plots, the scaling behavior is very close to linear. 
+As seen by the high $R^2$ values in the plots, the scaling behavior is very close to linear for the larger grids ($100\times 100$ and $200\times 200$). The smaller grid ($50\times 50$) shows a bit more variance which is likely due to influences from other processes on the same node and the general short execution time for the such a small grid. 
 We obtain the following scaling factors for the different grid sizes and topologies from the linear fits:
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|c|c|c|}
         \hline
         Topology & Gridsize & $\alpha$ & $\beta$ \\\hline
-        $4\times 1$ & $200\times 200$  & $1.15 \cdot 10^{-2}$& $7.39\cdot 10^{-5}$ \\ \hline
-        $4\times 1$ & $400\times 400$  & $-2.86\cdot 10^{-2}$& $3.47\cdot 10^{-4}$ \\ \hline
-        $4\times 1$ & $800\times 800$  & $1.05 \cdot 10^{-1}$& $1.18\cdot 10^{-3}$ \\ \hline
-        $1\times 4$ & $200\times 200$  & $6.56 \cdot 10^{-3}$& $7.94\cdot 10^{-5}$ \\ \hline
-        $1\times 4$ & $400\times 400$  & $-6.52\cdot 10^{-3}$& $3.17\cdot 10^{-4}$ \\ \hline
-        $1\times 4$ & $800\times 800$  & $6.09 \cdot 10^{-2}$& $1.21\cdot 10^{-3}$ \\ \hline
-        $2\times 2$ & $200\times 200$  & $-9.90\cdot 10^{-4}$& $8.49\cdot 10^{-5}$ \\ \hline
-        $2\times 2$ & $400\times 400$  & $5.78 \cdot 10^{-3}$& $3.01\cdot 10^{-4}$ \\ \hline
-        $2\times 2$ & $800\times 800$  & $8.26 \cdot 10^{-2}$& $1.17\cdot 10^{-3}$ \\ \hline
+        $4\times 1$ & $50\times 50$   & $4.73e-02$ & $-3.46e-06$  \\ \hline
+        $4\times 1$ & $100\times 100$ & $1.29e-02$ & $3.76e-05$   \\ \hline
+        $4\times 1$ & $200\times 200$ & $1.24e-02$ & $1.55e-04$   \\ \hline
+        $1\times 4$ & $50\times 50$   & $4.76e-02$ & $-3.07e-06$  \\ \hline
+        $1\times 4$ & $100\times 100$ & $3.51e-02$ & $2.93e-05$   \\ \hline
+        $1\times 4$ & $200\times 200$ & $3.28e-03$ & $1.61e-04$   \\ \hline
+        $2\times 2$ & $50\times 50$   & $6.26e-02$ & $-1.37e-05$  \\ \hline
+        $2\times 2$ & $100\times 100$ & $1.34e-02$ & $3.94e-05$   \\ \hline
+        $2\times 2$ & $200\times 200$ & $1.45e-02$ & $1.52e-04$   \\ \hline
     \end{tabular}
     \caption{Scaling factors for different processor topologies for the Poisson solver\\Using: $t(n) = \alpha + \beta \cdot n$ as a model}
 \end{table}
+\Shining{Why is the scaling factor negative for the $50\times 50$ grid?}\\
+The negative scaling factor for the $50\times 50$ grid is likely due to the short execution time of the program. The execution time is so short that the overhead of starting the program and the communication between the processes is significant compared to the actual calculation time. This means the Elapsed Wtime which is shown by the program more or less only depends on the overhead of setup and communication. The way the \texttt{sbatch}-script is setup also might play a role: Every topology has their own script running which always starts out with the $50\times 50$ grid. Therefore some additional setup overhead due to the jobs setup on the node may influence the results of these runs.\\
 \Shining{What can you conclude from the scaling behavior?}\\
-We see that the scaling behavior is very close to linear for both topologies. This means that the parallel implementation scales as expected with the number of grid points.\\
-If we compare the scaling factors ($\beta$) for the two topologies we see that the $2\times 2$ topology scales slightly better than the $4\times 1$ and $1\times 4$ topologies. This is not surprising, as the $2\times 2$ topology has a more balanced communication workload balance. In the $2\times 2$ topology every processor has two neighbors, while in the $4\times 1$ and $1\times 4$ topologies the processors at the ends only have one neighbor. This is a general trend: A topology which divides the grid into square / square-like parts will scale better than a topology which divides the grid into long and thin parts.\\
+We see that the scaling behavior is very close to linear for all topologies (except the small $50\times50$ grid). This means that the parallel implementation scales as expected with the number of grid points.\\
+If we compare the scaling factors ($\beta$) for the topologies we see that the $2\times 2$ topology scales slightly better than the $4\times 1$ and $1\times 4$ topologies. This is not surprising, as the $2\times 2$ topology has a more balanced communication workload balance. In the $2\times 2$ topology every processor has two neighbors, while in the $4\times 1$ and $1\times 4$ topologies the processors at the ends only have one neighbor. This is a general trend: A topology which divides the grid into square / square-like parts will scale better than a topology which divides the grid into long and thin parts.\\
 In essence: We want to keep the communication between processors as balanced as possible to achieve the best scaling behavior.
 \Shining{Scaling of different grid sizes:}\\
 We see that larger grids take longer for the same amount of iterations. This is also to be expected, as the number of grid points grows quadratically with the grid size. a $400 \times 400$ grid has 4 times as many grid points as a $200 \times 200$ grid and therefore takes roughly 4 times as long to calculate. 
