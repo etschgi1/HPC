@@ -19,8 +19,7 @@ mkdir -p ../scripts/output/$basefolder || { echo "Error creating output director
 
 # Define maximum iterations and grid sizes
 maxiters=("500" "1000" "2000")
-#grids=("50 50" "100 100" "200 200")
-grids=("1600 1600" "3200 3200")
+grids=("50 50" "100 100" "200 200")
 
 for grid in "${grids[@]}"; do
     nx=$(echo $grid | cut -d' ' -f1)
