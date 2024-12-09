@@ -1,0 +1,61 @@
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(2) (x,y)=(1,0)
+(2) top -2,  right  -2,  bottom  3,  left  0
+(2) Number of iterations : 131
+(2) Exchange time:       0.001858
+
+--- Aggregated Metrics ---
+Total Exchanges: 262
+Total Data Transferred: 435968.00 bytes
+Total Exchange Time: 0.001858106 s
+Average Exchange Time per Call: 0.000007092 s
+Average Latency per Call: 0.000001870 s
+Average Bandwidth: 234630317.11 bytes/s
+(2) Elapsed Wtime       0.016932 s ( 53.6% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(1) (x,y)=(0,1)
+(1) top 0,  right  3,  bottom  -2,  left  -2
+(1) Number of iterations : 131
+(1) Exchange time:       0.002442
+
+--- Aggregated Metrics ---
+Total Exchanges: 262
+Total Data Transferred: 435968.00 bytes
+Total Exchange Time: 0.002442205 s
+Average Exchange Time per Call: 0.000009321 s
+Average Latency per Call: 0.000000363 s
+Average Bandwidth: 178514088.70 bytes/s
+(1) Elapsed Wtime       0.016862 s ( 54.2% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(3) (x,y)=(1,1)
+(3) top 2,  right  -2,  bottom  -2,  left  1
+(3) Number of iterations : 131
+(3) Exchange time:       0.002587
+
+--- Aggregated Metrics ---
+Total Exchanges: 262
+Total Data Transferred: 435968.00 bytes
+Total Exchange Time: 0.002587441 s
+Average Exchange Time per Call: 0.000009876 s
+Average Latency per Call: 0.000000371 s
+Average Bandwidth: 168493890.30 bytes/s
+(3) Elapsed Wtime       0.034535 s ( 26.1% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange to default value 1
+(0) (x,y)=(0,0)
+(0) top -2,  right  2,  bottom  1,  left  -2
+SOR using omega: 1.93000
+(0) Number of iterations : 131
+(0) Exchange time:       0.001661
+
+--- Aggregated Metrics ---
+Total Exchanges: 262
+Total Data Transferred: 435968.00 bytes
+Total Exchange Time: 0.001660521 s
+Average Exchange Time per Call: 0.000006338 s
+Average Latency per Call: 0.000001695 s
+Average Bandwidth: 262548922.90 bytes/s
+(0) Elapsed Wtime       0.061971 s ( 27.1% CPU)
