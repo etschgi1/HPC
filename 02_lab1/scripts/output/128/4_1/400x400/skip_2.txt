@@ -1,0 +1,61 @@
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 2
+(0) (x,y)=(0,0)
+(0) top -2,  right  1,  bottom  -2,  left  -2
+SOR using omega: 1.93000
+(0) Number of iterations : 2167
+(0) Exchange time:       0.004602
+
+--- Aggregated Metrics ---
+Total Exchanges: 2168
+Total Data Transferred: 17482752.00 bytes
+Total Exchange Time: 0.004601744 s
+Average Exchange Time per Call: 0.000002123 s
+Average Latency per Call: 0.000000078 s
+Average Bandwidth: 3799157884.49 bytes/s
+(0) Elapsed Wtime       1.359589 s ( 97.5% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 2
+(3) (x,y)=(3,0)
+(3) top -2,  right  -2,  bottom  -2,  left  2
+(3) Number of iterations : 2167
+(3) Exchange time:       0.010080
+
+--- Aggregated Metrics ---
+Total Exchanges: 2168
+Total Data Transferred: 17482752.00 bytes
+Total Exchange Time: 0.010079880 s
+Average Exchange Time per Call: 0.000004649 s
+Average Latency per Call: 0.000000097 s
+Average Bandwidth: 1734420647.86 bytes/s
+(3) Elapsed Wtime       1.326777 s ( 99.5% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 2
+(1) (x,y)=(1,0)
+(1) top -2,  right  2,  bottom  -2,  left  0
+(1) Number of iterations : 2167
+(1) Exchange time:       0.019150
+
+--- Aggregated Metrics ---
+Total Exchanges: 2168
+Total Data Transferred: 17482752.00 bytes
+Total Exchange Time: 0.019150369 s
+Average Exchange Time per Call: 0.000008833 s
+Average Latency per Call: 0.000000089 s
+Average Bandwidth: 912919850.27 bytes/s
+(1) Elapsed Wtime       1.331962 s ( 99.0% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 2
+(2) (x,y)=(2,0)
+(2) top -2,  right  3,  bottom  -2,  left  1
+(2) Number of iterations : 2167
+(2) Exchange time:       0.017388
+
+--- Aggregated Metrics ---
+Total Exchanges: 2168
+Total Data Transferred: 17482752.00 bytes
+Total Exchange Time: 0.017388410 s
+Average Exchange Time per Call: 0.000008020 s
+Average Latency per Call: 0.000000094 s
+Average Bandwidth: 1005425567.95 bytes/s
+(2) Elapsed Wtime       1.377679 s ( 95.8% CPU)
