@@ -230,15 +230,24 @@ Another way to reduce communication overhead is to reduce the number of border e
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{../fig/lab1/skips_topology_4x1.png}
-    \caption{Speedup by reducing border exchanges}
+    \caption{Speedup by reducing border exchanges (4x1 topology)}
     \label{fig:border_speedup}
 \end{figure}
 
 Running the with different numbers of skipped border exchanges naturally slows down convergence, meaning we need more iterations to reach the same error. For all tested grid sizes the initial SOR version without skipping border exchanges has the fewest iterations needed to convergence and also the fastes runtime. \\
-
 \Shining{What can you conclude from the results?}\\
-We can conclude that reducing the number of border exchanges does not yield a speedup. The reason for this is that we have to calculate more iterations to converge to the solution which outweighs the gains from reduced communication overhead. Interestingly, for the $100 \times 100$ grid there exists a local minimum in time at 4 skipped border exchanges compared to 3 skipped. This is likely due to our source field distribution and thus specific to our problem.
+We can conclude that reducing the number of border exchanges does not yield a speedup. The reason for this is that we have to calculate more iterations to converge to the solution which outweighs the gains from reduced communication overhead. Interestingly, for the $100 \times 100$ grid there exists a local minimum in time at 4 skipped border exchanges compared to 3 skipped. This is likely due to our source field distribution and thus specific to our problem.\\
 
+Running the problem again with another ($2\times 2$ topology specifically) on our Delft Blue node we get the same qualitative result as seen in \autoref{fig:border_speedup2}. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../fig/lab1/skips_topology_2x2.png}
+    \caption{Speedup by reducing border exchanges (2x2 topology)}
+    \label{fig:border_speedup2}
+\end{figure}
+\Shining{Taking a closer look at $2\times 2$ vs. $4\times 1$ topology:}\\
+While both have qualitatively the same behavior with the fastest time and lowest iterations recorded for the SOR version without skipping border exchanges, the $2\times 2$ topology has a worse convergence behavior in terms of iterations. This is likely due to the fact that the borders of the local grids for the processors in the $2\times 2$ topology are possitioned in closer proximity to the source coordinates compared to the $4\times 1$ topology. This could explain the observed higher iteration count for convergence in all grid sizes in the $2\times 2$ topology.
 \subsubsection{Optimize \texttt{Do\_Step} loop}
 
 In \texttt{Do\_Step} we iterate over the whole grid but only update one of the two parities at a time. This means we can split the loop into two loops, one for each parity. We start out with something like this:

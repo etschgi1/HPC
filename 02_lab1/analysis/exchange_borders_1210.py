@@ -98,6 +98,104 @@ def measure_exchange_time(topologies, grids, omega=1.95, max_iter=50000, num_rep
     reset_input_file()
     return results
 
+def measure_exchange_time_from_files(basefolder, topologies, grids, omega=1.95, max_iter=50000):
+    """
+    Measure exchange times and compute mean from pre-existing files.
+
+    Args:
+        basefolder: Path to the folder containing the output files.
+        topologies: List of topologies (e.g., [(2, 2), (3, 3)]).
+        grids: List of grid sizes (e.g., [(100, 100), (200, 200)]).
+        omega: Relaxation factor for the solver.
+        max_iter: Maximum iterations for the solver.
+
+    Returns:
+        Dictionary containing measured results.
+    """
+    results = {}  # Dictionary to store results
+
+    for topology in topologies:
+        gridres = {}
+        processors = topology[0] * topology[1]  # Calculate the number of processors
+        topology_folder = os.path.join(basefolder, f"{topology[0]}_{topology[1]}")
+
+        for grid in grids:
+            grid_folder = os.path.join(topology_folder, f"{grid[0]}x{grid[1]}")
+            if not os.path.exists(grid_folder):
+                print(f"Warning: Grid folder {grid_folder} does not exist. Skipping.")
+                continue
+
+            print(f"Processing grid={grid}, topology={topology}, processes={processors}")
+            all_exchange_times = []
+            all_elapsed_times = []
+            all_iterations = []
+
+            for file in os.listdir(grid_folder):
+                if not file.endswith(".txt"):
+                    continue
+
+                filepath = os.path.join(grid_folder, file)
+                iterations = None
+                exchange_times = []
+                elapsed_times = []
+
+                # Read the output file and parse the data
+                with open(filepath, "r") as f:
+                    for line in f:
+                        # Parse iterations
+                        match_iterations = re.search(r"Number of iterations\s*:\s*(\d+)", line)
+                        if match_iterations:
+                            iterations = int(match_iterations.group(1))
+
+                        # Parse exchange times
+                        match_exchange = re.search(r"Exchange time:\s+([\d\.]+)", line)
+                        if match_exchange:
+                            exchange_times.append(float(match_exchange.group(1)))
+
+                        # Parse elapsed times
+                        match_elapsed = re.search(r"Elapsed Wtime\s+([\d\.]+)", line)
+                        if match_elapsed:
+                            elapsed_times.append(float(match_elapsed.group(1)))
+
+                # If no valid data was found in the file, skip it
+                if not exchange_times or not elapsed_times or iterations is None:
+                    print(f"Warning: No valid data in {filepath}. Skipping.")
+                    continue
+
+                # Compute average values for the current file
+                avg_exchange_time = np.mean(exchange_times)
+                avg_elapsed_time = np.mean(elapsed_times)
+                all_exchange_times.append(avg_exchange_time)
+                all_elapsed_times.append(avg_elapsed_time)
+                all_iterations.append(iterations)
+
+            # Compute the overall mean and std for exchange time and elapsed time
+            if all_exchange_times:
+                mean_exchange_time = np.mean(all_exchange_times)
+                std_exchange_time = np.std(all_exchange_times)
+                mean_elapsed_time = np.mean(all_elapsed_times)
+                std_elapsed_time = np.std(all_elapsed_times)
+                fraction_exchange = mean_exchange_time / mean_elapsed_time
+
+                print(f"Grid: {grid}, Topology: {topology}, Iterations: {np.mean(all_iterations):.2f}")
+                print(f"Mean Exchange Time: {mean_exchange_time:.6f} ± {std_exchange_time:.6f}")
+                print(f"Mean Elapsed Time: {mean_elapsed_time:.6f} ± {std_elapsed_time:.6f}")
+                print(f"Fraction Exchange: {fraction_exchange:.6f}")
+
+                # Store results
+                gridres[grid] = {
+                    "processors": processors,
+                    "iterations": np.mean(all_iterations),
+                    "mean_exchange_time": mean_exchange_time,
+                    "std_exchange_time": std_exchange_time,
+                    "mean_elapsed_time": mean_elapsed_time,
+                    "std_elapsed_time": std_elapsed_time,
+                    "fraction_exchange": fraction_exchange
+                }
+
+        results[topology] = gridres
+
+    return results
 
 def visualize_exchange_time(results, grids):
 
@@ -160,6 +258,6 @@ if __name__ == "__main__":
     grids = [(100, 100), (200, 200), (400, 400), (800, 800)]
 
     # Measure and visualize
-    results = measure_exchange_time(topologies, grids)
+    results = measure_exchange_time_from_files("/home/etschgi1/REPOS/HPC/02_lab1/scripts/output/1210",topologies, grids)
     print(results)
     visualize_exchange_time(results, grids)
