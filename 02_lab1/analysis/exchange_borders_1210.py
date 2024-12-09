@@ -120,6 +120,8 @@ def measure_exchange_time_from_files(basefolder, topologies, grids, omega=1.95, 
         topology_folder = os.path.join(basefolder, f"{topology[0]}_{topology[1]}")
 
         for grid in grids:
+            if grid not in gridres:  # Initialize the grid key
+                gridres[grid] = []
             grid_folder = os.path.join(topology_folder, f"{grid[0]}x{grid[1]}")
             if not os.path.exists(grid_folder):
                 print(f"Warning: Grid folder {grid_folder} does not exist. Skipping.")
@@ -183,15 +185,10 @@ def measure_exchange_time_from_files(basefolder, topologies, grids, omega=1.95, 
                 print(f"Fraction Exchange: {fraction_exchange:.6f}")
 
                 # Store results
-                gridres[grid] = {
-                    "processors": processors,
-                    "iterations": np.mean(all_iterations),
-                    "mean_exchange_time": mean_exchange_time,
-                    "std_exchange_time": std_exchange_time,
-                    "mean_elapsed_time": mean_elapsed_time,
-                    "std_elapsed_time": std_elapsed_time,
-                    "fraction_exchange": fraction_exchange
-                }
+                gridres[grid].append((processors, np.mean(all_iterations), 
+                                  mean_exchange_time, std_exchange_time, 
+                                  mean_elapsed_time, std_elapsed_time, 
+                                  fraction_exchange))
 
         results[topology] = gridres
 
@@ -239,6 +236,7 @@ def visualize_exchange_time(results, grids):
     plt.ylabel("Fraction of Time in Exchange")
     plt.title("Fraction of Time in Exchange (All Configurations)")
     plt.legend(loc="best", fontsize=10)
+    plt.xticks(processors_list)
     plt.grid()
 
     # Save the plot
@@ -253,11 +251,12 @@ if __name__ == "__main__":
     os.chdir(path)
     
     # Configurations
-    topologies = [(i, i) for i in range(2, 4)]  # Generate (2,2), (3,3), ..., (5,5)
+    topologies = [(i, i) for i in range(2, 7)]  # Generate (2,2), (3,3), ..., (6,6)
     topologies += [(2,3), (2,4), (3,4), (2,5)]  # Add (4,1) and (1,4)
     grids = [(100, 100), (200, 200), (400, 400), (800, 800)]
 
     # Measure and visualize
     results = measure_exchange_time_from_files("/home/etschgi1/REPOS/HPC/02_lab1/scripts/output/1210",topologies, grids)
+    # results = measure_exchange_time(topologies, grids)
     print(results)
     visualize_exchange_time(results, grids)

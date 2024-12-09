@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from uncertainties import ufloat, UFloat
 
-def parse_solver_output():
+def parse_solver_output(filepath="output.txt"):
     """
     Parse the output from the solver to extract aggregated metrics for each processor.
     Returns:
@@ -12,7 +12,7 @@ def parse_solver_output():
     """
     metrics = []
 
-    with open("output.txt", "r") as file:
+    with open(filepath, "r") as file:
         lines = file.readlines()
 
     current_data = {}
@@ -153,12 +153,13 @@ if __name__ == "__main__":
     grids = [(200, 200), (400, 400), (800, 800)]
 
     all_results = []
-
+    basepath = "/home/etschgi1/REPOS/HPC/02_lab1/scripts/output/1211"
     for topology in topologies:
         for grid in grids:
             print(f"Processing topology={topology}, grid={grid}")
-            os.system(f"mpirun -np {topology[0] * topology[1]} ./MPI_Poisson.out {topology[0]} {topology[1]} > output.txt")
-            metrics = parse_solver_output()
+            # os.system(f"mpirun -np {topology[0] * topology[1]} ./MPI_Poisson.out {topology[0]} {topology[1]} > output.txt")
+            # metrics = parse_solver_output()
+            metrics = parse_solver_output(os.path.join(basepath, f"{topology[0]}_{topology[1]}", f"{grid[0]}x{grid[1]}", "output.txt"))
             aggregated = aggregate_metrics(metrics, topology, grid)
             all_results.append(aggregated)
 

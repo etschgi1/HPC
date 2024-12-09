@@ -275,43 +275,44 @@ So we get a minimal speedup of about 17\% by optimizing the loop which is a enor
 The reason for this is that we avoid unnecessary looping and if statements. This means that we have less overhead in the loop and can therefore calculate faster by skipping the unnecessary loop entries. 
 
 \subsubsection{\Shining{Optional} - Time spent within \texttt{Exchange\_Borders}}
-We can measure the time spent in \texttt{Exchange\_Borders} by adding a timer to the function. We run the program with $\omega = 1.93$ and different topologies and grid sizes and get the results shown in \autoref{fig:exchange_time}.
+We can measure the time spent in \texttt{Exchange\_Borders} by adding a timer to the function. We run the program with $\omega = 1.93$ and different topologies\footnote{\{(2,2), (3,3), (4,4), (5,5), (6,6), (2,3), (2,4), (2,5), (3,4)\}} and grid sizes and get the results shown in \autoref{fig:exchange_time}.
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.7\textwidth]{../fig/lab1/fraction_exchange_comparison_connected.png}
     \caption{Fraction of total time spent in \texttt{Exchange\_Borders}}
     \label{fig:exchange_time}
 \end{figure}
-As we can clearly see, the time spent in \texttt{Exchange\_Borders} is initially smaller and grows with processor count. The curves are generally shifted downward for larger gridssizes. \\
+As we can clearly see, the time spent in \texttt{Exchange\_Borders} is initially smaller and grows with processor count with some remarkable peaks especially for small grids and certain processor topologies. The curves are generally shifted downward for larger gridsizes. \\
 
 \Shining{Interpretation:}\\
 One would expect larger grid sizes to be more computationally expensive and we have already established that iterations take longer the bigger the grid. Communication obviously also takes longer for a larger grid because we have more data to sent. However, the circumference of a square grows linearly, while the area grows quadratically. The quadratic growth of the area is the reason for the downward shift in the curves for larger grid sizes because the communication overhead grows slower than the computational overhead for larger grids.\\
+Besides the peaks at $p=6$ and $p=12$ we see a general trend of increasing time spent in \texttt{Exchange\_Borders} increasing processor count. This is not surprising as we have more processes which have to communicate with each other and the data locality is worse for larger processor counts.
 
 \Shining{When is the time spent in \texttt{Exchange\_Borders} significant / comparable to computation?}\\
-As can be seen in \autoref{fig:exchange_time} the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes from the start (between 5 and 25\%). Thereafter it grows to around 30\% to 45\% for 9 processors. This means that the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes and processor counts, but especially as the processor count grows.
+As can be seen in \autoref{fig:exchange_time} the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes from the start (between 2.5 and 7.5\%). Thereafter it peaks for $p=6$ and again for $p=12$ to around 5\% to 38\% and 10\% to 54\% respectively. This means that the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes and processor counts, but especially as the processor count grows.
 
 \subsubsection{Latency and bandwith in \texttt{Exchange\_Borders}}
-We use the configurations from \autoref{subsec:scaling}: $4 \times 1$, $2 \times 2$ and \Shining{$3 \times 3$} topologies with grid sizes of $200 \times 200$, $400 \times 400$ and $800 \times 800$ and $\omega = 1.95$. We obtain the results in \autoref{tab:latency_bandwith}.
+We use the configurations from \autoref{subsec:scaling}: $4 \times 1$, $2 \times 2$ and \Shining{$3 \times 3$} topologies with grid sizes of $200 \times 200$, $400 \times 400$ and $800 \times 800$ and $\omega = 1.95$ as well as the other settings set to their defaults. We obtain the results in \autoref{tab:latency_bandwith}.
 \begin{table}[H]
     \centering
     \caption{Metrics for \texttt{Exchange\_Borders} latency and bandwith}
     \label{tab:latency_bandwith}
-    \begin{tabular}{|l|l|S[table-format=3(3)]|S[table-format=1.1]|S[table-format=9]|S[table-format=9]|}
+    \begin{tabular}{|c|c|S[table-format=3.1(2.1)]|S[table-format=2.1]|S[table-format=10]|S[table-format=8]|}
     \hline
     Topology & Grid Size & {Latency (ms)} & {Latency (\%)} & {Bandwidth (\si{\byte\per\second})} & {Total Data (\si{\byte})} \\\hline
-    4x1 & 200x200 & 370(44) & 6.6 & 447314206 & 135548032 \\\hline
-    4x1 & 400x400 & 328(39) & 6.0 & 511267773 & 135548032 \\\hline
-    4x1 & 800x800 & 401(38) & 7.1 & 390446955 & 135548032 \\\hline
-    2x2 & 200x200 & 346(83) & 6.2 & 426689734 & 108546432 \\\hline
-    2x2 & 400x400 & 281(74) & 5.2 & 576865986 & 108546432 \\\hline
-    2x2 & 800x800 & 288(71) & 5.3 & 558562482 & 108546432 \\\hline
-    3x3 & 200x200 & 1054(204) & 25.2 & 78386044 & 72364288 \\\hline
-    3x3 & 400x400 & 1147(229) & 27.6 & 81623075 & 72364288 \\\hline
-    3x3 & 800x800 & 1082(148) & 26.7 & 60819112 & 72499296 \\\hline
+    4x1 & 200x200 & 2.0(0.6)& 3.9  & 2034737840 & 3104896 \\\hline
+    4x1 & 400x400 & 9.8(4)  & 1.4  & 2005275269 & 19450368 \\\hline
+    4x1 & 800x800 & 51(23)  & 0.8  & 2112229431 & 96480384 \\\hline
+    2x2 & 200x200 & 3.6(1.0)& 5.0  & 541474183  & 2493696 \\\hline
+    2x2 & 400x400 & 17(7)   & 2.3  & 668287123  & 15591168 \\\hline
+    2x2 & 800x800 & 92(37)  & 1.4  & 665489803  & 77261184 \\\hline
+    3x3 & 200x200 & 161(80) & 43.9 & 9006796    & 1686912 \\\hline
+    3x3 & 400x400 & 105(53) & 18.9 & 56268947   & 10419840 \\\hline
+    3x3 & 800x800 & 219(67) & 6.2  & 2369103880 & 51603552 \\\hline
     \end{tabular}
 \end{table}
 \Shining{Interpretation:}\\
-As can be seen the latency is more or less comparable between the $4 \times 1$ and $2 \times 2$ topologies. The $3 \times 3$ topology has a significantly higher latency. This is due to the fact that the $3 \times 3$ topology has more neighbors to communicate with. 
+As can be seen the latency is lowest for the $4\times1$ topology followed by $2\times2$ and $3\times3$. This is not surprising as the $4\times1$ topology has the least amount of neighbors to communicate with per processor. The worst latencies can generally be observed for the $3\times3$ topology because every processor has to communicate with 2,3 or 8 neighbors. As can be seen by the huge discrepancy in the latency percentage for the $3\times3$ topology, the latency is strongly dependent on the grid size (problem size). While nearly half of the time is spent in latency for the $200 \times 200$ grid, only 6.2\% of the time is spent in latency for the $800 \times 800$ grid.\\
 
 \subsubsection{Exchange Border potential improvements}
 Indeed we communicate twice as much as we need after each \texttt{Do\_Step} call. We shall analyze this considering the following points: 
