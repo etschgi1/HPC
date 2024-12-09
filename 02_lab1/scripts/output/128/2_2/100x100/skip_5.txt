@@ -1,0 +1,61 @@
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 5
+(0) (x,y)=(0,0)
+(0) top -2,  right  2,  bottom  1,  left  -2
+SOR using omega: 1.93000
+(0) Number of iterations : 961
+(0) Exchange time:       0.001398
+
+--- Aggregated Metrics ---
+Total Exchanges: 386
+Total Data Transferred: 642304.00 bytes
+Total Exchange Time: 0.001397636 s
+Average Exchange Time per Call: 0.000003621 s
+Average Latency per Call: 0.000001300 s
+Average Bandwidth: 459564579.05 bytes/s
+(0) Elapsed Wtime       0.056018 s ( 87.1% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 5
+(2) (x,y)=(1,0)
+(2) top -2,  right  -2,  bottom  3,  left  0
+(2) Number of iterations : 961
+(2) Exchange time:       0.001596
+
+--- Aggregated Metrics ---
+Total Exchanges: 386
+Total Data Transferred: 642304.00 bytes
+Total Exchange Time: 0.001595711 s
+Average Exchange Time per Call: 0.000004134 s
+Average Latency per Call: 0.000001414 s
+Average Bandwidth: 402519002.50 bytes/s
+(2) Elapsed Wtime       0.044485 s ( 91.9% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 5
+(1) (x,y)=(0,1)
+(1) top 0,  right  3,  bottom  -2,  left  -2
+(1) Number of iterations : 961
+(1) Exchange time:       0.002169
+
+--- Aggregated Metrics ---
+Total Exchanges: 386
+Total Data Transferred: 642304.00 bytes
+Total Exchange Time: 0.002169014 s
+Average Exchange Time per Call: 0.000005619 s
+Average Latency per Call: 0.000000149 s
+Average Bandwidth: 296127180.37 bytes/s
+(1) Elapsed Wtime       0.041732 s ( 97.8% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 5
+(3) (x,y)=(1,1)
+(3) top 2,  right  -2,  bottom  -2,  left  1
+(3) Number of iterations : 961
+(3) Exchange time:       0.002313
+
+--- Aggregated Metrics ---
+Total Exchanges: 386
+Total Data Transferred: 642304.00 bytes
+Total Exchange Time: 0.002313496 s
+Average Exchange Time per Call: 0.000005994 s
+Average Latency per Call: 0.000000181 s
+Average Bandwidth: 277633503.58 bytes/s
+(3) Elapsed Wtime       0.041678 s ( 97.9% CPU)

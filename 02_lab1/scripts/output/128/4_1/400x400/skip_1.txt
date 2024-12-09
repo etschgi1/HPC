@@ -1,0 +1,61 @@
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 1
+(0) (x,y)=(0,0)
+(0) top -2,  right  1,  bottom  -2,  left  -2
+SOR using omega: 1.93000
+(0) Number of iterations : 1561
+(0) Exchange time:       0.006998
+
+--- Aggregated Metrics ---
+Total Exchanges: 3122
+Total Data Transferred: 25175808.00 bytes
+Total Exchange Time: 0.006997641 s
+Average Exchange Time per Call: 0.000002241 s
+Average Latency per Call: 0.000000071 s
+Average Bandwidth: 3597756443.92 bytes/s
+(0) Elapsed Wtime       0.969794 s ( 99.4% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 1
+(2) (x,y)=(2,0)
+(2) top -2,  right  3,  bottom  -2,  left  1
+(2) Number of iterations : 1561
+(2) Exchange time:       0.023429
+
+--- Aggregated Metrics ---
+Total Exchanges: 3122
+Total Data Transferred: 25175808.00 bytes
+Total Exchange Time: 0.023429310 s
+Average Exchange Time per Call: 0.000007505 s
+Average Latency per Call: 0.000000083 s
+Average Bandwidth: 1074543296.41 bytes/s
+(2) Elapsed Wtime       0.960807 s ( 99.5% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 1
+(3) (x,y)=(3,0)
+(3) top -2,  right  -2,  bottom  -2,  left  2
+(3) Number of iterations : 1561
+(3) Exchange time:       0.015437
+
+--- Aggregated Metrics ---
+Total Exchanges: 3122
+Total Data Transferred: 25175808.00 bytes
+Total Exchange Time: 0.015437237 s
+Average Exchange Time per Call: 0.000004945 s
+Average Latency per Call: 0.000000081 s
+Average Bandwidth: 1630849354.71 bytes/s
+(3) Elapsed Wtime       0.961170 s ( 99.5% CPU)
+Set sor_omega over argv to 1.9300
+Set skip_exchange over argv to 1
+(1) (x,y)=(1,0)
+(1) top -2,  right  2,  bottom  -2,  left  0
+(1) Number of iterations : 1561
+(1) Exchange time:       0.017783
+
+--- Aggregated Metrics ---
+Total Exchanges: 3122
+Total Data Transferred: 25175808.00 bytes
+Total Exchange Time: 0.017782571 s
+Average Exchange Time per Call: 0.000005696 s
+Average Latency per Call: 0.000000062 s
+Average Bandwidth: 1415757485.24 bytes/s
+(1) Elapsed Wtime       0.960608 s ( 99.5% CPU)
