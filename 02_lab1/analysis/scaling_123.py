@@ -2,6 +2,7 @@ import os, re
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
+from util import bcolors
 
 orig_input = """nx: 100
 ny: 100
@@ -88,7 +89,7 @@ def scaling_from_files(basefolder, topologies, grids, maxIters, omega=1.95):
                 filepath = os.path.join(basefolder, f"{topology_name}", f"{nx}x{ny}", f"maxiter_{maxIter}.txt")
                 
                 if not os.path.exists(filepath):
-                    print(f"Warning: Output file {filepath} does not exist. Skipping.")
+                    print(f"{bcolors.FAIL} Warning: Output file {filepath} does not exist. Skipping.{bcolors.ENDC}")
                     continue
 
                 # Read and parse the output file
@@ -192,8 +193,8 @@ if __name__ == "__main__":
     path = os.path.join(path, src)
     os.chdir(path)
     tops = [(4, 1), (1, 4), (2, 2)]
-    grids = [(200, 200), (400, 400), (800, 800)]#, (1600, 1600)]
+    grids = [(50, 50), (100, 100), (200, 200)]#, (1600, 1600)]
     maxIters = [500, 1000, 2000]
     # res = scaling(tops, grids, maxIters)
-    res = scaling_from_files(tops, grids, maxIters)
+    res = scaling_from_files("/home/etschgi1/REPOS/HPC/02_lab1/scripts/output/123", tops, grids, maxIters)
     visualise(res, tops, grids, maxIters)

@@ -1,3 +1,18 @@
+\lstdefinelanguage{bash}{
+  keywords={if, else, for, while, do, done, exit, then, fi, mkdir, echo, srun},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={sudo, cp, rm, touch, python3},
+  ndkeywordstyle=\color{magenta}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{\#},
+  morecomment=[s]{\#\#}{\#\#},
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{darkgreen}\ttfamily,
+  morestring=[b]",
+  morestring=[b]'
+}
+
 \section*{Appendix - Introductory exercise}
 \label{app:pingpong}
 The following code was used for the ping pong task:
@@ -11,6 +26,8 @@ The matrix multiplication used the following code:
 
 \section*{Appendix - Poisson solver}
 \label{app:poisson}
-The parallel Poisson solver used the following code:
+The parallel Poisson solver used the following code:\\
+\underline{Note:} Sbatch scripts used for the exercises will be included after the Poisson-solver code.\\
 \lstinputlisting[language=c]{../../02_lab1/src/MPI_Poisson.c}
-
+Script used for \autoref{subsec:scaling}:
+\lstinputlisting[language=bash]{../../02_lab1/scripts/scaling_123.sh}
