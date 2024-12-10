@@ -79,18 +79,23 @@ def parse_mpi_output(output):
 
     return times_dict
 
-def run_scenarios(topologies, grid_sizes):
+def run_scenarios(topologies, grid_sizes, use_files=True):
     res = {}
     for topology in topologies: 
         res[topology] = {}
         for grid_size in grid_sizes: 
-            setup(topology, grid_size)
-            # run Solver
-            print("----------------- Running Solver (topology: {}, grid_size: {}) -----------------".format(topology, grid_size))
-            output = os.popen(f"mpirun -np {topology[0]*topology[1]} ./MPI_Fempois.out").read()
-            times = getTimes(output)
-            clean()
-            print(output)
+
+            if not use_files:
+                setup(topology, grid_size)
+                # run Solver
+                print("----------------- Running Solver (topology: {}, grid_size: {}) -----------------".format(topology, grid_size))
+                output = os.popen(f"mpirun -np {topology[0]*topology[1]} ./MPI_Fempois.out").read()
+                times = getTimes(output)
+                clean()
+                print(output)
+            else: 
+                with open(f"/home/etschgi1/REPOS/HPC/03_lab2/scripts/output/22/{topology[0]}_{topology[1]}/{grid_size[0]}x{grid_size[1]}/output.txt", "r") as f:
+                    output = f.read()
             res[topology][grid_size] = parse_mpi_output(output)
     return res
 
@@ -177,5 +182,5 @@ if __name__ == "__main__":
     src = "../src"
     path = os.path.join(path, src)
     os.chdir(path)
-    res = run_scenarios([(1,4),(2,2)], [(100,100), (200,200), (400,400)])
-    # latex(res)
+    res = run_scenarios([(1,4),(2,2)], [(100,100), (200,200), (400,400)], use_files=True)
+    latex(res)

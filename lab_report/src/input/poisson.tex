@@ -82,6 +82,7 @@ Checking the output files of the MPI-implementation with the sequential referenc
 For this subsection we'll define the following shorthand notation: \\
 \begin{table}[h!]
     \centering
+    \caption{Notation for this section}
     \begin{tabular}{|l|l|}
         \hline
         $n$:  &the number of iterations\\\hline
@@ -92,7 +93,6 @@ For this subsection we'll define the following shorthand notation: \\
         $x$:  &number of processors in x-direction\\
         $y$:  &number of processors in y-direction\\\hline
        \end{tabular}
-    \caption{Notation for this section}
 \end{table}
 $pt = 414$ means 4 processors in a $1\times 4$ topology. \\
 
@@ -147,6 +147,7 @@ This investigation is carried out three times: Once with a $4\times 1$ topology 
 As seen by the high $R^2$ values in the plots, the scaling behavior is very close to linear for the grids. We obtain the following scaling factors for the different grid sizes and topologies from the linear fits:
 \begin{table}[H]
     \centering
+    \caption{Scaling factors for different processor topologies for the Poisson solver\\Using: $t(n) = \alpha + \beta \cdot n$ as a model}
     \begin{tabular}{|c|c|c|c|}
         \hline
         Topology & Gridsize & $\alpha$ & $\beta$ \\\hline
@@ -163,7 +164,6 @@ As seen by the high $R^2$ values in the plots, the scaling behavior is very clos
         $2\times 2$ & $800\times 800$ & $7.30e-02$ & $2.35e-03$ \\ \hline
         $2\times 2$ & $1600\times 1600$ & $1.79e-01$ & $9.40e-03$ \\ \hline
     \end{tabular}
-    \caption{Scaling factors for different processor topologies for the Poisson solver\\Using: $t(n) = \alpha + \beta \cdot n$ as a model}
 \end{table}
 \Shining{What can you conclude from the scaling behavior?}\\
 We see that the scaling behavior is very close to linear for all topologies. This means that the parallel implementation scales as expected with the number of grid points.\\
@@ -211,6 +211,8 @@ We again solve with a $4 \times 1$ topology, $\omega = 1.93$ and a $800 \times 8
 We run the program three times with \texttt{MPI\_Allreduce} calls every 1, 10 and 100 iterations and get the speedups in \texttt{MPI\_Allreduce} calls as shown in \autoref{tab:allreduce_speedup}.
 \begin{table}[H]
     \centering
+    \caption{Speedup in \texttt{MPI\_Allreduce} calls for different iteration counts and calculated overall speedup (\%)}
+    \label{tab:allreduce_speedup}
     \begin{tabular}{|c|c|c|}
         \hline
         Iterations & \texttt{MPI\_Allreduce} - speedup (factor) & calculated overall speedup (\%)\\\hline
@@ -218,8 +220,6 @@ We run the program three times with \texttt{MPI\_Allreduce} calls every 1, 10 an
         10 & $6.0 \pm 2.0$ & $ 5.9 \pm 0.5$\\\hline
         100& $62 \pm 6$    & $ 6.9 \pm 0.4$\\\hline
     \end{tabular}
-    \caption{Speedup in \texttt{MPI\_Allreduce} calls for different iteration counts and calculated overall speedup (\%)}
-    \label{tab:allreduce_speedup}
 \end{table}
 As can be clearly seen from the table we can gain around 6 \% using \texttt{MPI\_Allreduce} calls every 10 iterations and around 7 \% using \texttt{MPI\_Allreduce} calls every 100 iterations. This is a significant speedup for a very small change in the code.\\
 \Shining{Note:} The speedup is calculated to account for fluctuations in the runtime of the program, due to other processes running on the same machine / cluster. 
