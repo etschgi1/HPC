@@ -1,0 +1,25 @@
+Number of iterations : 529
+(0) Elapsed Wtime:       1.495461 s ( 99.3% CPU)
+(0) - Compute time: 1.353088
+(0) - Exchange time (neighbors): 0.007009
+(0) - Exchange time (global): 0.031439
+(0) - Sum of times (compute + exchange (global & local)): 1.391536
+(0) - Total time: 1.495520
+(1) Elapsed Wtime:       1.495437 s ( 99.3% CPU)
+(1) - Compute time: 1.362740
+(1) - Exchange time (neighbors): 0.007688
+(1) - Exchange time (global): 0.021119
+(1) - Sum of times (compute + exchange (global & local)): 1.391547
+(1) - Total time: 1.498058
+(2) Elapsed Wtime:       1.495136 s ( 99.3% CPU)
+(2) - Compute time: 1.366980
+(2) - Exchange time (neighbors): 0.011254
+(2) - Exchange time (global): 0.016682
+(2) - Sum of times (compute + exchange (global & local)): 1.394916
+(2) - Total time: 1.497768
+(3) Elapsed Wtime:       1.506621 s ( 98.5% CPU)
+(3) - Compute time: 1.348199
+(3) - Exchange time (neighbors): 0.014643
+(3) - Exchange time (global): 0.036480
+(3) - Sum of times (compute + exchange (global & local)): 1.399322
+(3) - Total time: 1.509214
