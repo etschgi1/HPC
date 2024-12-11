@@ -589,6 +589,10 @@ void report_times()
   printf("(%i) - Compute time: %f\n", proc_rank, compute_time);
   printf("(%i) - Exchange time (neighbors): %f\n", proc_rank, exchange_time_neighbors);
   printf("(%i) - Exchange time (global): %f\n", proc_rank, exchange_time_global);
+  double total_ex = exchange_time_global + exchange_time_neighbors;
+  double ratio = compute_time / total_ex;
+  printf("(%i) - Exchange time (total): %f\n", proc_rank, total_ex);
+  printf("(%i) - Exchange time - comp ratio: %f\n", proc_rank, ratio);
   printf("(%i) - Sum of times (compute + exchange (global & local)): %f\n", proc_rank, compute_time + exchange_time_neighbors + exchange_time_global);
   printf("(%i) - Total time: %f\n", proc_rank, total_time);
 }
