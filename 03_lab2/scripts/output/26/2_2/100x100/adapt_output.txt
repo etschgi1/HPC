@@ -1,0 +1,179 @@
+(0) Precision: 0.000200
+(1) Precision: 148.857878
+(2) Precision: 50.078099
+(3) Precision: 24.828578
+(4) Precision: 16.739129
+(5) Precision: 11.776215
+(6) Precision: 9.426484
+(7) Precision: 7.431950
+(8) Precision: 6.370789
+(9) Precision: 5.323433
+(10) Precision: 4.733125
+(11) Precision: 4.053835
+(12) Precision: 3.671608
+(13) Precision: 3.199479
+(14) Precision: 2.913440
+(15) Precision: 2.581351
+(16) Precision: 2.356187
+(17) Precision: 2.123610
+(18) Precision: 1.942518
+(19) Precision: 1.787194
+(20) Precision: 1.655428
+(21) Precision: 1.609734
+(22) Precision: 1.591905
+(23) Precision: 1.644629
+(24) Precision: 1.570596
+(25) Precision: 1.563832
+(26) Precision: 1.467411
+(27) Precision: 1.449922
+(28) Precision: 1.282778
+(29) Precision: 1.270132
+(30) Precision: 1.162694
+(31) Precision: 1.153373
+(32) Precision: 1.079679
+(33) Precision: 1.109381
+(34) Precision: 1.082604
+(35) Precision: 1.148864
+(36) Precision: 1.100442
+(37) Precision: 1.053976
+(38) Precision: 0.947331
+(39) Precision: 0.889546
+(40) Precision: 0.865498
+(41) Precision: 0.842301
+(42) Precision: 0.860992
+(43) Precision: 0.827578
+(44) Precision: 0.807713
+(45) Precision: 0.738115
+(46) Precision: 0.685777
+(47) Precision: 0.601316
+(48) Precision: 0.571340
+(49) Precision: 0.553769
+(50) Precision: 0.521877
+(51) Precision: 0.494478
+(52) Precision: 0.474736
+(53) Precision: 0.454351
+(54) Precision: 0.429460
+(55) Precision: 0.394453
+(56) Precision: 0.360407
+(57) Precision: 0.334786
+(58) Precision: 0.304013
+(59) Precision: 0.298061
+(60) Precision: 0.289919
+(61) Precision: 0.283160
+(62) Precision: 0.264998
+(63) Precision: 0.240452
+(64) Precision: 0.224050
+(65) Precision: 0.208237
+(66) Precision: 0.203485
+(67) Precision: 0.210172
+(68) Precision: 0.221407
+(69) Precision: 0.223986
+(70) Precision: 0.218462
+(71) Precision: 0.212183
+(72) Precision: 0.196253
+(73) Precision: 0.181017
+(74) Precision: 0.164474
+(75) Precision: 0.151805
+(76) Precision: 0.134313
+(77) Precision: 0.117882
+(78) Precision: 0.097656
+(79) Precision: 0.086708
+(80) Precision: 0.076177
+(81) Precision: 0.068173
+(82) Precision: 0.059909
+(83) Precision: 0.053761
+(84) Precision: 0.048034
+(85) Precision: 0.043327
+(86) Precision: 0.040557
+(87) Precision: 0.039390
+(88) Precision: 0.037755
+(89) Precision: 0.034764
+(90) Precision: 0.032834
+(91) Precision: 0.029837
+(92) Precision: 0.027519
+(93) Precision: 0.025107
+(94) Precision: 0.023422
+(95) Precision: 0.022231
+(96) Precision: 0.020025
+(97) Precision: 0.019114
+(98) Precision: 0.017811
+(99) Precision: 0.016128
+(100) Precision: 0.014128
+(101) Precision: 0.012633
+(102) Precision: 0.010836
+(103) Precision: 0.011136
+(104) Precision: 0.011499
+(105) Precision: 0.011855
+(106) Precision: 0.011079
+(107) Precision: 0.010658
+(108) Precision: 0.009930
+(109) Precision: 0.009087
+(110) Precision: 0.008178
+(111) Precision: 0.007406
+(112) Precision: 0.006700
+(113) Precision: 0.006151
+(114) Precision: 0.005655
+(115) Precision: 0.005251
+(116) Precision: 0.005160
+(117) Precision: 0.004819
+(118) Precision: 0.004370
+(119) Precision: 0.003794
+(120) Precision: 0.003422
+(121) Precision: 0.003212
+(122) Precision: 0.002955
+(123) Precision: 0.002764
+(124) Precision: 0.002458
+(125) Precision: 0.002206
+(126) Precision: 0.001851
+(127) Precision: 0.001650
+(128) Precision: 0.001539
+(129) Precision: 0.001486
+(130) Precision: 0.001423
+(131) Precision: 0.001314
+(132) Precision: 0.001079
+(133) Precision: 0.000873
+(134) Precision: 0.000737
+(135) Precision: 0.000634
+(136) Precision: 0.000536
+(137) Precision: 0.000451
+(138) Precision: 0.000375
+(139) Precision: 0.000308
+(140) Precision: 0.000260
+(141) Precision: 0.000224
+(142) Precision: 0.000186
+(143) Precision: 0.000150
+(144) Precision: 0.000124
+(145) Precision: 0.000101
+Number of iterations : 146
+(0) Elapsed Wtime:       0.032313 s ( 95.3% CPU)
+(0) - Compute time: 0.020274
+(0) - Exchange time (neighbors): 0.001315
+(0) - Exchange time (global): 0.002710
+(0) - Exchange time (total): 0.004025
+(0) - Exchange time - comp ratio: 5.036629
+(0) - Sum of times (compute + exchange (global & local)): 0.024299
+(0) - Total time: 0.032375
+(2) Elapsed Wtime:       0.032364 s ( 96.3% CPU)
+(2) - Compute time: 0.021907
+(2) - Exchange time (neighbors): 0.003134
+(2) - Exchange time (global): 0.001045
+(2) - Exchange time (total): 0.004179
+(2) - Exchange time - comp ratio: 5.242298
+(2) - Sum of times (compute + exchange (global & local)): 0.026086
+(2) - Total time: 0.032426
+(3) Elapsed Wtime:       0.031854 s ( 96.9% CPU)
+(3) - Compute time: 0.021197
+(3) - Exchange time (neighbors): 0.003191
+(3) - Exchange time (global): 0.001988
+(3) - Exchange time (total): 0.005178
+(3) - Exchange time - comp ratio: 4.093440
+(3) - Sum of times (compute + exchange (global & local)): 0.026375
+(3) - Total time: 0.031922
+(1) Elapsed Wtime:       0.031933 s ( 96.2% CPU)
+(1) - Compute time: 0.020603
+(1) - Exchange time (neighbors): 0.002452
+(1) - Exchange time (global): 0.002589
+(1) - Exchange time (total): 0.005041
+(1) - Exchange time - comp ratio: 4.086764
+(1) - Sum of times (compute + exchange (global & local)): 0.025644
+(1) - Total time: 0.031984
