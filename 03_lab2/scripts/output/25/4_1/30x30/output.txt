@@ -1,33 +1,33 @@
-(1) Elapsed Wtime:       0.023671 s ( 50.0% CPU)
-(1) - Compute time: 0.001377
-(1) - Exchange time (neighbors): 0.000739
-(1) - Exchange time (global): 0.000712
-(1) - Exchange time (total): 0.001451
-(1) - Exchange time - comp ratio: 0.948859
-(1) - Sum of times (compute + exchange (global & local)): 0.002828
-(1) - Total time: 0.023741
-(2) Elapsed Wtime:       0.022054 s ( 51.3% CPU)
-(2) - Compute time: 0.000977
-(2) - Exchange time (neighbors): 0.000405
-(2) - Exchange time (global): 0.000673
-(2) - Exchange time (total): 0.001078
-(2) - Exchange time - comp ratio: 0.905759
-(2) - Sum of times (compute + exchange (global & local)): 0.002055
-(2) - Total time: 0.022085
-(3) Elapsed Wtime:       0.024772 s ( 45.8% CPU)
-(3) - Compute time: 0.001071
-(3) - Exchange time (neighbors): 0.000491
-(3) - Exchange time (global): 0.000619
-(3) - Exchange time (total): 0.001109
-(3) - Exchange time - comp ratio: 0.965160
-(3) - Sum of times (compute + exchange (global & local)): 0.002180
-(3) - Total time: 0.024844
+(2) Elapsed Wtime:       0.003433 s ( 77.6% CPU)
+(2) - Compute time: 0.000883
+(2) - Exchange time (neighbors): 0.000372
+(2) - Exchange time (global): 0.000265
+(2) - Exchange time (total): 0.000637
+(2) - Exchange time - comp ratio: 1.386420
+(2) - Sum of times (compute + exchange (global & local)): 0.001520
+(2) - Total time: 0.003465
+(1) Elapsed Wtime:       0.003666 s ( 74.8% CPU)
+(1) - Compute time: 0.000893
+(1) - Exchange time (neighbors): 0.000282
+(1) - Exchange time (global): 0.000279
+(1) - Exchange time (total): 0.000561
+(1) - Exchange time - comp ratio: 1.590305
+(1) - Sum of times (compute + exchange (global & local)): 0.001454
+(1) - Total time: 0.004038
+(3) Elapsed Wtime:       0.003572 s ( 74.9% CPU)
+(3) - Compute time: 0.000978
+(3) - Exchange time (neighbors): 0.000429
+(3) - Exchange time (global): 0.000206
+(3) - Exchange time (total): 0.000635
+(3) - Exchange time - comp ratio: 1.540187
+(3) - Sum of times (compute + exchange (global & local)): 0.001613
+(3) - Total time: 0.003955
 Number of iterations : 49
-(0) Elapsed Wtime:       0.025385 s ( 13.0% CPU)
-(0) - Compute time: 0.001406
-(0) - Exchange time (neighbors): 0.000907
-(0) - Exchange time (global): 0.001423
-(0) - Exchange time (total): 0.002330
-(0) - Exchange time - comp ratio: 0.603217
-(0) - Sum of times (compute + exchange (global & local)): 0.003736
-(0) - Total time: 0.025434
+(0) Elapsed Wtime:       0.003541 s ( 62.0% CPU)
+(0) - Compute time: 0.000731
+(0) - Exchange time (neighbors): 0.000277
+(0) - Exchange time (global): 0.000562
+(0) - Exchange time (total): 0.000839
+(0) - Exchange time - comp ratio: 0.871195
+(0) - Sum of times (compute + exchange (global & local)): 0.001570
+(0) - Total time: 0.003926

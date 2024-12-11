@@ -17,7 +17,7 @@ cd ../src || { echo "Error: ../src directory not found"; exit 1; }
 basefolder="25/${1}_${2}"
 mkdir -p ../scripts/output/$basefolder || { echo "Error creating output directory"; exit 1; }
 
-grids=("10 10" "20 20" "30 30" "40 40" "50 50" "75 75" "84 84" "90 90")
+grids=("10 10" "20 20" "30 30" "35 35" "40 40" "50 50" "75 75" "84 84" "90 90")
 
 for grid in "${grids[@]}"; do
     nx=$(echo $grid | cut -d' ' -f1)
