@@ -120,8 +120,8 @@ def adapt(paths):
     print(time_conv_ref)
     bar_width = 0.4
     x = np.arange(len(labels))
-    plt.bar(x-bar_width/2, time_conv_ref, width=bar_width, label="Reference")
-    plt.bar(x+bar_width/2, time_conv_adapt, width=bar_width, label="Adaptive")
+    plt.bar(x-bar_width/2, time_conv_ref, width=bar_width,color="#F05956", label="Reference")
+    plt.bar(x+bar_width/2, time_conv_adapt, width=bar_width,color="#54B6A5", label="Adaptive")
     plt.xticks(x, labels)
     plt.grid()
     plt.xlabel("Grid size (n)")
