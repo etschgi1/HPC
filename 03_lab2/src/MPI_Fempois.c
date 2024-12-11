@@ -480,6 +480,9 @@ void Solve()
   r1 = 2 * precision_goal;
   while ((count < max_iter) && (r1 > precision_goal))
   {
+    if(proc_rank==0){
+      printf("<%i> Precision: %.6f\n", count, r1);
+    }
     /* r1 = r' * r */
     sub = 0.0;
     for (i = 0; i < N_vert; i++)
