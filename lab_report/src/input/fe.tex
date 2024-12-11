@@ -211,5 +211,42 @@ We measure the ratio \nicefrac{$t_{\text{comp}}$}{$t_{\text{comm}}$} and get the
 We see that our initial guess of $84\times84$ grid for 4 processes is off by a long-shot. However, we also notice that the ratio is highly volatile as can be seen by the high uncertainties on the ratio. A rerun of the code produced notably different ratios (e.g. $\num{1.35(25)}$ for $30\times30$ grid). It seems that the actual position of the equilibrium point is around $n=35$. As a physicist I have to say that our initial guess was of the same magnitude and therefore not too far off \smiley.\\
 
 Let's see how our prediction for the $1000\times1000$ grid with 29 processes holds up. Using a $29\times1$ topology we get $\num{4.04(1.83)}$ for the ratio. It seems we have made a lower prediction in terms of $P$ for the equilibrium point. However, the ratio is in the same ballpark as the ratio for the $84\times84$ grid which is not surprising since we used the same underlying data to make the prediction.\\
-\subsection{4.6}
-\TODO{Run shell-script on DB} 
+\subsection{Adaptive gird}
+We will now make our grid denser in the source point areas. \texttt{GridDist} already implements an argument (\textit{adapt}) for that purpose. In order to gauge the speed of convergence we let process 0 print the current precision of the solution. We perform runs with a reference and a denser grid to compare the convergence speed, convergence count and amount of computing time for a $2\times2$ topology and a $100\times100$, $200\times200$ and $400\times400$ grids.\\
+We first take a look at the iterations needed for convergence using the standard percision goal of $0.0001$ we get the results in \autoref{tab:adapt_it_count}.\\
+It becomes clear that the adaptive grid needs a few more iterations to converge. This is most likely due to the fact that the dense region near the sources initially lead to a slower \glq spreading\grq\, of the solution near the source.\\
+\begin{table}[H]
+    \centering
+    \caption{Iterations needed for convergence on $2\times2$ topology for different grid sizes with and without adapt keyword.}
+    \label{tab:adapt_it_count}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        {{{Grid Size}}} & {100x100} & {200x200} & {400x400} \\\hline
+        {Iterations Reference} & 141 & 274 & 529 \\\hline
+        {Iterations Adapt} &     146 & 278 & 532 \\\hline
+    \end{tabular}
+\end{table}
+\Shining{Does such a distored grid lead to faster convergence?}\\
+We can answer this questin with a clear no, at least in terms of iterations. Next we'll look at the time it takes to converge.\\
+
+A bar-plot of the time till convergence is shown in \autoref{fig:adapt_time}. We see that the time till convergence is roughly the same for the reference and the adaptive grid. This is not surprising since the time till convergence is mainly determined by the number of iterations needed. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../fig/lab2/adapt_time.png}
+    \caption{Time till convergence (with setup) on $2\times2$ topology for different grid sizes with and without adapt keyword.}
+    \label{fig:adapt_time}
+\end{figure}
+\Shining{Does it affect the speed of convergence?}\\
+Also no for this one. The time for the reference / adaptive grid is roughly the same with one exception for the $100\times100$ grid.\\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../fig/lab2/adapt_stacked_time.png}
+    \caption{Time till convergence (without setup) on $2\times2$ topology for different grid sizes with and without adapt keyword.}
+    \label{fig:adapt_time2}
+\end{figure}
+If we stack the time needed for computation and communication we see that the computation as well as the communication time is roughly the same for the reference and the adaptive grid as shown in \autoref{fig:adapt_time2}.\\
+
+\Shining{Does it affect the amount of computing time?}\\
+So again no, the amount of computing time is roughly the same for the reference and the adaptive grid.\\
+

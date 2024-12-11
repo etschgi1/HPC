@@ -10,7 +10,7 @@ GD_OBJS = GridDist.o
 all: clean MPI_Fempois.out GridDist.out
 
 run: all
-	./GridDist.out 2 2 100 100
+	./GridDist.out 2 2 100 100 adapt
 	mpirun -np 4 ./MPI_Fempois.out
 
 # Score-P targets
