@@ -155,11 +155,17 @@ For $3\times3$ grid we have 4 corner processes which have to communicate with 2 
 \subsection{Estimates for computation $\equiv$ communication time}
 \Shining{N.B.} This section will use two different ways to estimate the equilibrium point.\\
 
-Let's assume that we have 4 processes and want to estimate for which grid size the computation time is equal to the communication time. \\
-One way to estimate this is by extrapolating from our measurements in \autoref{tab:timing} and find the point where the times are equal.
-Thereafter we can use this information to fit the side length of the grid to the computation time for the given time to find the grid size where the computation time is equal to the communication time. This process gives us a value of $n\approx79$ for the grid size as shown in \autoref{fig:comp_eq_comm}\\
+1) Let's assume that we have 4 processes and want to estimate for which grid size the computation time is equal to the communication time. 
+One way to estimate this is by fitting a polynomial of degree 2 to the computation and a linear fit to the exchange time for our measurements in \autoref{tab:timing} and find the point where the times are equal. Thereafter we can use this information to determine the grid size where this happens. This process gives us a \underline{value of $n\approx84$} for the grid size as shown in \autoref{fig:comp_eq_comm}\\
 
-We'll also estimate this equilibrium point for a $1000\times1000$ grid. However, this time around we'll actually use a different way of calculating the number of Processes. We use the definitions from the lecture for stencil type computation: 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../fig/lab2/estimate25.png}
+    \caption{Fitting expected computation time $\equiv$ communication time for 4 processes.}
+    \label{fig:comp_eq_comm}
+\end{figure}
+
+2) We'll also estimate this equilibrium point for a $1000\times1000$ grid. However, this time around we'll actually use a different way of calculating the number of Processes. We use the definitions from the lecture for stencil type computation: 
 \begin{itemize}
     \item Computation time: $T_{\text{S}} = \text{number\_ops} \cdot t_\text{op} \sim  4 t_\text{op} \cdot n^2 \hspace{5mm} \text{(for stencil type - overall)}$
     \item Communication time: $T_{\text{comm}} = \text{number\_comm} \cdot t_\text{comm} \sim 2 n \cdot t_\text{data}\hspace{5mm} \text{(for stencil type - overall)}$
@@ -170,22 +176,40 @@ We can calculate the time for communication from the data in \autoref{tab:timing
 Similarly we can calculate the time for computation as follows:
 \[t_\text{op} = \frac{t_\text{comp.}}{4 \cdot n^2 \cdot \#_\text{{iterations}}}\]
 Note that the later doesn't depend on the number of processes.\\
-If we rearange for $t_{\text{comp.}}$ and solve for $n=1000$ we get an approximate value of $t_{\text{comp.}}\approx 29$ s. From this we want to solve for $P$ in the $t_\text{data}(P)$ using $t_\text{data}(P) = 29$ s. 
+Using the data from \autoref{tab:timing} we determine that one operation takes $t_\text{op} = \SI{3.3(3)e-6}{\milli\second}$. From that we can determine the computation time $t_{\text{comp.}}$ for $n=1000$ as follows:
+\[t_{\text{comp.}} = 4 \cdot n^2 \cdot t_\text{op} \cdot \#_\text{{iterations}} = 4 \cdot 1000^2 \cdot 3.3(3) \cdot 10^{-6} \cdot 1241 = \SI{17.8(15)}{\second}\]
+where 1241 ($\#_\text{{iterations}}$) is the number of iterations to converge. We set $t_{\text{comp.}} = t_{\text{data}}$ and solve for $P$. We need values for $t_\text{global\_comm}$ and $t_\text{neighbor\_comm}$ and take a look at \autoref{fig:comp_eq_comm} and decide to further investigate the trend for the excahnge time ($= t_\text{global\_comm} + t_\text{neighbor\_comm}$). We decide to use a linear extrapolation as shown in \autoref{fig:comp_sencil_extra}. We get an estimated communication time of $\SI{100}{\milli\second}$. \\
 
+Now we have everything to solve for P and using 1241 for $\#_\text{{iterations}}$ again we get $P = \num{29(3)}$ processes. 
 \begin{figure}[H]
     \centering
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../fig/lab2/estimate25.png}
-    \end{minipage}%
-    \hspace{0.02\textwidth}
-    \begin{minipage}{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../fig/lab2/grid_to_time_fit.png}
-    \end{minipage}
-    \caption{Fitting expected computation time $\equiv$ communication time for 4 processes.}
-    \label{fig:comp_eq_comm}
+    \includegraphics[width=0.5\textwidth]{../fig/lab2/estimate25_stencil.png}
+    \caption{Extrapolating the communication time for $n=1000$ using a linear fit.}
+    \label{fig:comp_sencil_extra}
 \end{figure}
-\TODO{Test on DB}
+
+Our predictions are in: a $84\times84$ grid for 4 processes with equal computation and communication times and a $1000\times1000$ grid for 29 processes (also having equal computation and communication time).\\
+We measure the ratio \nicefrac{$t_{\text{comp}}$}{$t_{\text{comm}}$} and get the following results for a $4\times1$ topology in \autoref{tab:comp_comm_ratio}:
+
+\begin{table}[H]
+    \centering
+    \caption{Ratio of computation to communication time for different grid sizes.}
+    \label{tab:comp_comm_ratio}
+    \begin{tabular}{|c|S[table-format=1.2(1.2)]|}
+        \hline
+        {{{Grid Size}}} & {Ratio} \\\hline
+        10x10 & \num{0.53(0.06)} \\\hline
+        20x20 & \num{0.84(0.15)} \\\hline
+        30x30 & \num{0.86(0.13)} \\\hline
+        40x40 & \num{1.97(0.24)} \\\hline
+        50x50 & \num{2.66(0.61)} \\\hline
+        75x75 & \num{4.37(1.00)} \\\hline
+        84x84 & \num{3.70(0.85)} \\\hline
+        90x90 & \num{6.06(1.94)} \\\hline
+    \end{tabular}
+\end{table}
+We see that our initial guess of $84\times84$ grid for 4 processes is off by a long-shot. However, we also notice that the ratio is highly volatile as can be seen by the high uncertainties on the ratio. A rerun of the code produced notably different ratios (e.g. $\num{1.35(25)}$ for $30\times30$ grid). It seems that the actual position of the equilibrium point is around $n=35$. As a physicist I have to say that our initial guess was of the same magnitude and therefore not too far off \smiley.\\
+
+Let's see how our prediction for the $1000\times1000$ grid with 29 processes holds up. Using a $29\times1$ topology we get $\num{4.04(1.83)}$ for the ratio. It seems we have made a lower prediction in terms of $P$ for the equilibrium point. However, the ratio is in the same ballpark as the ratio for the $84\times84$ grid which is not surprising since we used the same underlying data to make the prediction.\\
 \subsection{4.6}
 \TODO{Run shell-script on DB} 

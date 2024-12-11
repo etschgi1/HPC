@@ -13,14 +13,14 @@ mpl.rc('font', family='serif', size=14)
 plot_path = "../../lab_report/fig/lab2"
 # grid points
 grid_size = [100,200,400]
-comp = [32.5,289.1,1886.9]
-exchange = [5.6+13.3,13.3+48.8,22.2+206.1]
+comp = [18.6,150.6,1357.8]
+exchange = [1.3+1.7,3.6*6.8,10.1+26.4]
 plt.plot(comp, exchange, 'o')
 # fit using least squares
-coefficients = np.polyfit(comp, exchange, 2)
-# quadratic fit
-poly = lambda x: coefficients[0]*x**2 + coefficients[1]*x + coefficients[2]
-x = np.linspace(0, max(comp), int(max(comp)))
+coefficients = np.polyfit(np.sqrt(comp[:2]), exchange[:2], 1)
+# sqrt fit
+poly = lambda x: coefficients[0]*np.sqrt(x) + coefficients[1]
+x = np.linspace(0, comp[1]*1.1, int(max(comp)))
 
 min_id = np.argmin(abs(poly(x)-x))
 print(f"Minimum at x = {x[min_id]}")
@@ -30,7 +30,7 @@ print(min_x, poly(min_x))
 ax1 = plt.gca()
 
 
-ax1.plot(x, poly(x), label=f"y = ${coefficients[0]:.2e}x^2 + {coefficients[1]:.2f}x + {coefficients[2]:.2f}$, \nR$^2$ = {np.corrcoef(comp, exchange)[0,1]**2:.3f}")
+ax1.plot(x, poly(x), label=f"y = ${coefficients[0]:.2e}x^2 + {coefficients[1]:.2f}x$, \nR$^2$ = {np.corrcoef(comp, exchange)[0,1]**2:.3f}")
 # add twin x with grid_size - second axis
 ax1.grid()
 ax1.vlines(min_x, 0, max(exchange), linestyles='dashed', label=f"Comm. = Comp. at x = {min_x:.1f}")
