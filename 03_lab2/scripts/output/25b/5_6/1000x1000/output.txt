@@ -1,0 +1,241 @@
+(22) Elapsed Wtime:       3.629410 s ( 99.4% CPU)
+(22) - Compute time: 3.064612
+(22) - Exchange time (neighbors): 0.134782
+(22) - Exchange time (global): 0.468846
+(22) - Exchange time (total): 0.603628
+(22) - Exchange time - comp ratio: 5.076988
+(22) - Sum of times (compute + exchange (global & local)): 3.668240
+(22) - Total time: 3.629836
+(16) Elapsed Wtime:       3.629477 s ( 99.5% CPU)
+(16) - Compute time: 2.513617
+(16) - Exchange time (neighbors): 0.094038
+(16) - Exchange time (global): 1.017655
+(16) - Exchange time (total): 1.111692
+(16) - Exchange time - comp ratio: 2.261073
+(16) - Sum of times (compute + exchange (global & local)): 3.625310
+(16) - Total time: 3.629870
+Number of iterations : 1241
+(0) Elapsed Wtime:       3.632711 s ( 99.3% CPU)
+(0) - Compute time: 2.851267
+(0) - Exchange time (neighbors): 0.013634
+(0) - Exchange time (global): 0.683534
+(0) - Exchange time (total): 0.697168
+(0) - Exchange time - comp ratio: 4.089784
+(0) - Sum of times (compute + exchange (global & local)): 3.548435
+(0) - Total time: 3.633094
+(4) Elapsed Wtime:       3.631597 s ( 99.4% CPU)
+(4) - Compute time: 2.884086
+(4) - Exchange time (neighbors): 0.044661
+(4) - Exchange time (global): 0.651024
+(4) - Exchange time (total): 0.695684
+(4) - Exchange time - comp ratio: 4.145682
+(4) - Sum of times (compute + exchange (global & local)): 3.579771
+(4) - Total time: 3.632019
+(15) Elapsed Wtime:       3.641497 s ( 99.1% CPU)
+(15) - Compute time: 2.958585
+(15) - Exchange time (neighbors): 0.086317
+(15) - Exchange time (global): 0.575832
+(15) - Exchange time (total): 0.662150
+(15) - Exchange time - comp ratio: 4.468152
+(15) - Sum of times (compute + exchange (global & local)): 3.620735
+(15) - Total time: 3.641789
+(20) Elapsed Wtime:       3.630834 s ( 99.4% CPU)
+(20) - Compute time: 3.000061
+(20) - Exchange time (neighbors): 0.113286
+(20) - Exchange time (global): 0.533572
+(20) - Exchange time (total): 0.646858
+(20) - Exchange time - comp ratio: 4.637895
+(20) - Sum of times (compute + exchange (global & local)): 3.646920
+(20) - Total time: 3.631234
+(12) Elapsed Wtime:       3.630643 s ( 99.4% CPU)
+(12) - Compute time: 2.985318
+(12) - Exchange time (neighbors): 0.075769
+(12) - Exchange time (global): 0.547266
+(12) - Exchange time (total): 0.623035
+(12) - Exchange time - comp ratio: 4.791574
+(12) - Sum of times (compute + exchange (global & local)): 3.608353
+(12) - Total time: 3.631026
+(13) Elapsed Wtime:       3.629199 s ( 99.4% CPU)
+(13) - Compute time: 2.514830
+(13) - Exchange time (neighbors): 0.085579
+(13) - Exchange time (global): 1.016278
+(13) - Exchange time (total): 1.101856
+(13) - Exchange time - comp ratio: 2.282357
+(13) - Sum of times (compute + exchange (global & local)): 3.616686
+(13) - Total time: 3.629575
+(9) Elapsed Wtime:       3.630392 s ( 99.5% CPU)
+(9) - Compute time: 2.479031
+(9) - Exchange time (neighbors): 0.068941
+(9) - Exchange time (global): 1.053906
+(9) - Exchange time (total): 1.122847
+(9) - Exchange time - comp ratio: 2.207808
+(9) - Sum of times (compute + exchange (global & local)): 3.601878
+(9) - Total time: 3.630788
+(5) Elapsed Wtime:       3.629424 s ( 99.5% CPU)
+(5) - Compute time: 2.448361
+(5) - Exchange time (neighbors): 0.039360
+(5) - Exchange time (global): 1.084353
+(5) - Exchange time (total): 1.123713
+(5) - Exchange time - comp ratio: 2.178813
+(5) - Sum of times (compute + exchange (global & local)): 3.572074
+(5) - Total time: 3.629832
+(11) Elapsed Wtime:       3.628481 s ( 99.6% CPU)
+(11) - Compute time: 2.437078
+(11) - Exchange time (neighbors): 0.074528
+(11) - Exchange time (global): 1.097523
+(11) - Exchange time (total): 1.172051
+(11) - Exchange time - comp ratio: 2.079328
+(11) - Sum of times (compute + exchange (global & local)): 3.609129
+(11) - Total time: 3.628876
+(18) Elapsed Wtime:       3.630647 s ( 99.4% CPU)
+(18) - Compute time: 3.020921
+(18) - Exchange time (neighbors): 0.112745
+(18) - Exchange time (global): 0.512992
+(18) - Exchange time (total): 0.625737
+(18) - Exchange time - comp ratio: 4.827779
+(18) - Sum of times (compute + exchange (global & local)): 3.646658
+(18) - Total time: 3.631039
+(8) Elapsed Wtime:       3.630468 s ( 99.5% CPU)
+(8) - Compute time: 2.974390
+(8) - Exchange time (neighbors): 0.061248
+(8) - Exchange time (global): 0.560205
+(8) - Exchange time (total): 0.621454
+(8) - Exchange time - comp ratio: 4.786182
+(8) - Sum of times (compute + exchange (global & local)): 3.595843
+(8) - Total time: 3.630856
+(21) Elapsed Wtime:       3.642720 s ( 99.1% CPU)
+(21) - Compute time: 3.385940
+(21) - Exchange time (neighbors): 0.119868
+(21) - Exchange time (global): 0.147004
+(21) - Exchange time (total): 0.266871
+(21) - Exchange time - comp ratio: 12.687541
+(21) - Sum of times (compute + exchange (global & local)): 3.652811
+(21) - Total time: 3.643123
+(1) Elapsed Wtime:       3.629717 s ( 99.5% CPU)
+(1) - Compute time: 2.428034
+(1) - Exchange time (neighbors): 0.023113
+(1) - Exchange time (global): 1.105229
+(1) - Exchange time (total): 1.128342
+(1) - Exchange time - comp ratio: 2.151859
+(1) - Sum of times (compute + exchange (global & local)): 3.556376
+(1) - Total time: 3.630129
+(23) Elapsed Wtime:       3.642574 s ( 99.0% CPU)
+(23) - Compute time: 3.412553
+(23) - Exchange time (neighbors): 0.140062
+(23) - Exchange time (global): 0.120137
+(23) - Exchange time (total): 0.260199
+(23) - Exchange time - comp ratio: 13.115151
+(23) - Sum of times (compute + exchange (global & local)): 3.672752
+(23) - Total time: 3.642715
+(14) Elapsed Wtime:       3.643064 s ( 99.0% CPU)
+(14) - Compute time: 3.347409
+(14) - Exchange time (neighbors): 0.091229
+(14) - Exchange time (global): 0.187351
+(14) - Exchange time (total): 0.278580
+(14) - Exchange time - comp ratio: 12.015969
+(14) - Sum of times (compute + exchange (global & local)): 3.625989
+(14) - Total time: 3.643355
+(17) Elapsed Wtime:       3.642362 s ( 99.0% CPU)
+(17) - Compute time: 3.350421
+(17) - Exchange time (neighbors): 0.101217
+(17) - Exchange time (global): 0.182774
+(17) - Exchange time (total): 0.283991
+(17) - Exchange time - comp ratio: 11.797639
+(17) - Sum of times (compute + exchange (global & local)): 3.634412
+(17) - Total time: 3.642733
+(26) Elapsed Wtime:       3.631798 s ( 99.4% CPU)
+(26) - Compute time: 3.063425
+(26) - Exchange time (neighbors): 0.149332
+(26) - Exchange time (global): 0.469927
+(26) - Exchange time (total): 0.619259
+(26) - Exchange time - comp ratio: 4.946918
+(26) - Sum of times (compute + exchange (global & local)): 3.682685
+(26) - Total time: 3.632186
+(7) Elapsed Wtime:       3.628706 s ( 99.5% CPU)
+(7) - Compute time: 2.422737
+(7) - Exchange time (neighbors): 0.055190
+(7) - Exchange time (global): 1.110417
+(7) - Exchange time (total): 1.165607
+(7) - Exchange time - comp ratio: 2.078519
+(7) - Sum of times (compute + exchange (global & local)): 3.588344
+(7) - Total time: 3.629095
+(24) Elapsed Wtime:       3.641391 s ( 99.0% CPU)
+(24) - Compute time: 3.046790
+(24) - Exchange time (neighbors): 0.155134
+(24) - Exchange time (global): 0.488445
+(24) - Exchange time (total): 0.643579
+(24) - Exchange time - comp ratio: 4.734134
+(24) - Sum of times (compute + exchange (global & local)): 3.690369
+(24) - Total time: 3.641759
+(29) Elapsed Wtime:       3.630540 s ( 99.4% CPU)
+(29) - Compute time: 3.421500
+(29) - Exchange time (neighbors): 0.161285
+(29) - Exchange time (global): 0.112682
+(29) - Exchange time (total): 0.273967
+(29) - Exchange time - comp ratio: 12.488723
+(29) - Sum of times (compute + exchange (global & local)): 3.695467
+(29) - Total time: 3.630918
+(3) Elapsed Wtime:       3.628891 s ( 99.6% CPU)
+(3) - Compute time: 2.399839
+(3) - Exchange time (neighbors): 0.039224
+(3) - Exchange time (global): 1.135399
+(3) - Exchange time (total): 1.174623
+(3) - Exchange time - comp ratio: 2.043071
+(3) - Sum of times (compute + exchange (global & local)): 3.574462
+(3) - Total time: 3.629287
+(6) Elapsed Wtime:       3.643801 s ( 99.0% CPU)
+(6) - Compute time: 3.294577
+(6) - Exchange time (neighbors): 0.042648
+(6) - Exchange time (global): 0.238233
+(6) - Exchange time (total): 0.280881
+(6) - Exchange time - comp ratio: 11.729431
+(6) - Sum of times (compute + exchange (global & local)): 3.575458
+(6) - Total time: 3.644206
+(2) Elapsed Wtime:       3.630858 s ( 99.4% CPU)
+(2) - Compute time: 3.237773
+(2) - Exchange time (neighbors): 0.027386
+(2) - Exchange time (global): 0.296376
+(2) - Exchange time (total): 0.323762
+(2) - Exchange time - comp ratio: 10.000478
+(2) - Sum of times (compute + exchange (global & local)): 3.561535
+(2) - Total time: 3.631272
+(10) Elapsed Wtime:       3.631326 s ( 99.3% CPU)
+(10) - Compute time: 3.311634
+(10) - Exchange time (neighbors): 0.056416
+(10) - Exchange time (global): 0.222460
+(10) - Exchange time (total): 0.278876
+(10) - Exchange time - comp ratio: 11.874953
+(10) - Sum of times (compute + exchange (global & local)): 3.590510
+(10) - Total time: 3.631707
+(28) Elapsed Wtime:       3.631553 s ( 99.3% CPU)
+(28) - Compute time: 3.405854
+(28) - Exchange time (neighbors): 0.161188
+(28) - Exchange time (global): 0.128616
+(28) - Exchange time (total): 0.289805
+(28) - Exchange time - comp ratio: 11.752237
+(28) - Sum of times (compute + exchange (global & local)): 3.695659
+(28) - Total time: 3.631933
+(25) Elapsed Wtime:       3.643053 s ( 99.0% CPU)
+(25) - Compute time: 3.361056
+(25) - Exchange time (neighbors): 0.140593
+(25) - Exchange time (global): 0.173387
+(25) - Exchange time (total): 0.313980
+(25) - Exchange time - comp ratio: 10.704671
+(25) - Sum of times (compute + exchange (global & local)): 3.675036
+(25) - Total time: 3.643420
+(27) Elapsed Wtime:       3.631432 s ( 99.4% CPU)
+(27) - Compute time: 3.400029
+(27) - Exchange time (neighbors): 0.155595
+(27) - Exchange time (global): 0.133990
+(27) - Exchange time (total): 0.289584
+(27) - Exchange time - comp ratio: 11.741064
+(27) - Sum of times (compute + exchange (global & local)): 3.689613
+(27) - Total time: 3.631802
+(19) Elapsed Wtime:       3.643303 s ( 99.0% CPU)
+(19) - Compute time: 3.371188
+(19) - Exchange time (neighbors): 0.120659
+(19) - Exchange time (global): 0.163022
+(19) - Exchange time (total): 0.283681
+(19) - Exchange time - comp ratio: 11.883725
+(19) - Sum of times (compute + exchange (global & local)): 3.654869
+(19) - Total time: 3.643698
