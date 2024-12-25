@@ -1,5 +1,7 @@
 # load mpi on delftblue
-module load 2024r1 openmpi python py-numpy
+module load 2024r1 openmpi python py-numpy nvhpc
+
+module load 2024r1 nvhpc
 
 # compile
 mpicc <prog.c> -o <name_of_prog>
