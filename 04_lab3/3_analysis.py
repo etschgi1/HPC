@@ -25,8 +25,8 @@ plt.rc('text', usetex=True)
 plt.rc('font', family='serif', size=18)
 
 plt.figure(figsize=(15, 4))
-plt.scatter( speedup_no_mem,np.zeros(len(speedup_no_mem)), label="Speedup w/o Memory", color="blue")
-plt.scatter( speedup_w_mem, np.zeros(len(speedup_no_mem)),label="Speedup with Memory", color="orange")
+plt.scatter( speedup_no_mem,np.zeros(len(speedup_no_mem)), label="Speedup w/o Memory", color="blue", alpha=0.7)
+plt.scatter( speedup_w_mem, np.zeros(len(speedup_no_mem)),label="Speedup with Memory", color="orange", alpha=0.7)
 
 # Mittelwerte hervorheben
 plt.scatter(speedup_no_mem_mean , 0, color="blue", edgecolor="black", s=100, label="Mean w/o Memory")

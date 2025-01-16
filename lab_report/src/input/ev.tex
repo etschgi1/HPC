@@ -36,7 +36,18 @@ A scematic overview of the iteration loop for the power method is shown bellow i
 All of the following benchmarks are perfromed in the supplied IPython notebook on Google Collab using T4 GPUs. 
 
 \subsection{Step 1: Shared vs. global memory for matrix-vector multiplication}
-\TODO{open}
+To investigate the performance impact of shared vs. global memory during the matrix vector multiplication we first need an alternative kernel which doesn't use shared memory. This kernel is given bellow: 
+\lstinputlisting[language=c]{input/code/03/Av_Product_Global.c}
+Subsequently, 10 measurements are perfromed with the original kernel and the changed kernel to determine the mean times depending on memory usage patterns. 
+We obtain a \Shining{scatter plot} seen in \autoref{fig:cuda_step1}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../fig/lab3/step1.png}
+    \caption{Measurements }
+    \label{fig:cuda_step1}
+\end{figure}
+Furthermore, we obtain a mean time using global memory of $t_{global} = \SI{576(7)}{\milli\second}$ and by using shared memory in this kernel we get $t_{shared} = \SI{425(3)}{\milli\second}$. 
+This means we have time savings of $\SI{26(1)}{\percent}$ or about $\nicefrac{1}{4}$ when using shared memory compared to global memory. 
 \subsection{Step 2: Execution time for different N and threads per block}
 I implemented a small loop to run the GPU code for 5 different $N$ with $N \in \{50, 500, 2000, 4000, 5000\}$. The resulting time benchmarks for 32, 64 and 100 threds per block can be seen in \autoref{fig:cuda_step2}. 
 \begin{figure}[H]
