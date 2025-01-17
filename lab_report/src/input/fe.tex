@@ -1,6 +1,7 @@
 
 
 \section{Finite elements simulation}
+\label{sec:fempois}
 We will now shift our focus to a more general grid which is based on triangulation. In this section we will compare our parallel implementation from the previous section and disect the differences and similarities. For that reason we shall use the same sources in our grid as given in \texttt{sources.dat}. \\
 Note that the sections for the exercises will be labeled as (2.1, 2.2, 2.3, ...) corresponding to exercises (4.1, 4.2, 4.3, ...) in the lab manual.\\
 \subsection{Code understanding \& \texttt{Exchange\_Borders}}
@@ -20,6 +21,7 @@ void Exchange_Borders(double *vect)
 \end{lstlisting}
 
 \subsection{Time benchmarking}
+\label{subsec:timing_fe}
 Next we turn our attention to timing of different sections in the code. \\
 We have to measure: 
 \begin{itemize}
@@ -57,7 +59,7 @@ The \underline{idle time} is calculated as denoted above and therefore not shown
 
 \begin{table}[H]
     \centering
-    \caption{Rank averaged time benchmark for different grid sizes and topologies.\\ All times are in milliseconds.\\\textbf{Note:} WTime does also include setup and teardown (mallocs, frees, etc.) - therefore the sum of the times is not equal to WTime.}
+    \caption{Rank averaged time benchmark for different grid sizes and topologies.\\ All \underline{times are in milliseconds (ms)}.\\\textbf{Note:} WTime does also include setup and teardown (mallocs, frees, etc.) - therefore the sum of the times is not equal to WTime.}
     \label{tab:timing}
     \begin{tabular}{|l|l|S[table-format=4.1]|S[table-format=4.1]|S[table-format=2.1]|S[table-format=2.1]|S[table-format=2.1]|}
         \hline
@@ -71,8 +73,10 @@ The \underline{idle time} is calculated as denoted above and therefore not shown
     \end{tabular}
 \end{table}
 We see that the total time is comparable between the two topologies for all grid sizes. Furthermore, the total runtime also increases non-surprisingly with the gridsize. \\
+
 \Shining{Why does computation time increase faster than linearly?}\\
 One could expect, that the grid with $200\times200$ elements would take 4 times as long as the grid with $100\times100$ elements. However, the runtime roughly 8 times longer. This happens because additionally to the higher number of grid points the algorithm also takes longer (more iterations) to converge and hence the computation time is longer. \\
+
 \Shining{Analysis of the different times}\\
 To get a better grasp on the data a stacked bar plot, as shown in \autoref{fig:timingbar}, is created. We immediately see that the bulk of the time is spent on computing the solution. The second biggest contributor is the global exchange time and the idle time, followed by local exchange time.\\
 That computation takes up the biggest part of the time is of non surprise especially on the bigger grids this is to be expected. Rather surprisingly the global excahnge time takes up a lot of time. This begs the question why two lines of the form:
@@ -91,7 +95,8 @@ take up this much time. This actually comes down to masked idle time. While the 
         \centering
         \includegraphics[width=\linewidth]{../fig/lab2/average_times_stacked_bar_no_comp_22.png}
     \end{minipage}
-    \caption{Scaling behavior of the Poisson solver with different grid sizes and processor topologies}
+    \caption{Scaling behavior of the Poisson solver with different grid sizes and processor topologies.\\
+    with compute time (left) and without compute time (right).}
     \label{fig:timingbar}
 \end{figure}
 We conclude that most of the time spent on communication in our solver is actually due to the waiting time in the \texttt{MPI\_Allreduce} calls and the other idle time (waiting for the slowest core to finish). The actual exchange of data only represents a fraction of this time. Biggest, especially for larger grids, contributor for the time is still the computation which takes up north of 95\% of the total time on larger grids.\\
@@ -129,6 +134,7 @@ This means that a striped partitioning is less efficient compared to a boxed par
 \end{figure}
 \subsection{Unbalanced communication}
 In the last section we assumed that every process has to communicate with the same amount of neighbors in our given scenario. That is actually not entierly true. There is an imbalance, even if just a small one.\\ 
+
 \Shining{But where does this imbalance come from?}\\
 Let's take a look at a \Shining{uniformly triangulated grid} with $P=4$ processes. We assume that the grid is box-partitioned as given in \autoref{fig:boxpart24}.\\
 \begin{figure}[H]
@@ -188,7 +194,7 @@ Now we have everything to solve for P and using 1241 for $\#_\text{{iterations}}
     \label{fig:comp_sencil_extra}
 \end{figure}
 
-Our predictions are in: a $84\times84$ grid for 4 processes with equal computation and communication times and a $1000\times1000$ grid for 29 processes (also having equal computation and communication time).\\
+Our predictions are: a $84\times84$ grid for 4 processes with equal computation and communication times and a $1000\times1000$ grid for 29 processes (also having equal computation and communication time).\\
 We measure the ratio \nicefrac{$t_{\text{comp}}$}{$t_{\text{comm}}$} and get the following results for a $4\times1$ topology in \autoref{tab:comp_comm_ratio}:
 
 \begin{table}[H]
@@ -208,7 +214,7 @@ We measure the ratio \nicefrac{$t_{\text{comp}}$}{$t_{\text{comm}}$} and get the
         90x90 & \num{6.06(1.94)} \\\hline
     \end{tabular}
 \end{table}
-We see that our initial guess of $84\times84$ grid for 4 processes is off by a long-shot. However, we also notice that the ratio is highly volatile as can be seen by the high uncertainties on the ratio. A rerun of the code produced notably different ratios (e.g. $\num{1.35(25)}$ for $30\times30$ grid). It seems that the actual position of the equilibrium point is around $n=35$. As a physicist I have to say that our initial guess was of the same magnitude and therefore not too far off \smiley.\\
+We see that our initial guess of $84\times84$ grid for 4 processes is off by a long-shot. However, we also notice that the ratio is highly volatile as can be seen by the high uncertainties on the ratio.\\\underline{A rerun of the code produced notably different ratios (e.g. $\num{1.35(25)}$ for $30\times30$ grid)}. It seems that the actual position of the equilibrium point is around $n=35$. Being a physicis, I have to say that our initial guess was of the same magnitude and therefore actually not too far off by our standards \smiley.\\
 
 Let's see how our prediction for the $1000\times1000$ grid with 29 processes holds up. Using a $29\times1$ topology we get $\num{4.04(1.83)}$ for the ratio. It seems we have made a lower prediction in terms of $P$ for the equilibrium point. However, the ratio is in the same ballpark as the ratio for the $84\times84$ grid which is not surprising since we used the same underlying data to make the prediction.\\
 \subsection{Adaptive gird}
@@ -249,4 +255,7 @@ If we stack the time needed for computation and communication we see that the co
 
 \Shining{Does it affect the amount of computing time?}\\
 So again no, the amount of computing time is roughly the same for the reference and the adaptive grid.\\
+
+\Shining{Why is there hardly any difference between the two?}\\
+It seems that in our rather simple example (3 sources) the adaptive grid doesn't lead to a faster convergence. This can likely be attributed to the low complexity of our problem. Due to this low complexity our convergence in iterations is mostly gouverned by the spreading of the solution from the sources to the rest of the grid. Adaptive grids slow down this spreading which is needed to reduce our error in order to converge. The local error in the vicinity of the sources is not the limiting factor as it seems for the convergence in our case.\\
 

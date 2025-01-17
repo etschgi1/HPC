@@ -37,23 +37,21 @@ All this data is shown in the following graph:
     \label{fig:pingpong}
 \end{figure}
 As can be seen in the data and the fits, there are outliers especially for the larger data sizes. \\
-For our runs we get the following fits and R² values:
+For our runs we get the following fits and $R^2$ values:
 \begin{table}[h!]
     \centering
     \begin{tabular}{|l|l|l|l|}
         \hline
-        \textbf{Run Type}   & \textbf{Data Size} & \textbf{Fit Equation}                                      & \textbf{R² Value} \\ \hline
+        \textbf{Run Type}   & \textbf{Data Size} & \textbf{Fit Equation}                                      & \textbf{$R^2$ Value} \\ \hline
         \textbf{Single Node} & Small (<=131072)             & $5.95 \times 10^{-7} \cdot x + 7.97 \times 10^{-4}$        & 0.92              \\ \hline
         \textbf{Single Node} & Large (>= 131072)& $4.61 \times 10^{-7} \cdot x + 1.23 \times 10^{-2}$        & 0.89              \\ \hline
         \textbf{Two Node}    & Small (<=32768)& $1.07 \times 10^{-6} \cdot x + 2.60 \times 10^{-3}$        & 0.97              \\ \hline
         \textbf{Two Node}    & Large (>=32768)   & $4.41 \times 10^{-7} \cdot x + 3.42 \times 10^{-3}$        & 0.97              \\ \hline
     \end{tabular}
-    \caption{Fit Equations and R² Values for Single Node and Two Node Runs}
+    \caption{Fit Equations and $R^2$ Values for Single Node and Two Node Runs}
 \end{table}
 
-\Shining{Note:} Each run was performed 5 times (for 1 and 2 nodes) to get a fit on the data and calculate a R² value. 
-
-\TODO{Further analysis needed? }
+\Shining{Note:} Each run was performed 5 times (for 1 and 2 nodes) to get a fit on the data and calculate a $R^2$ value. 
 
 \subsubsection*{\Shining{Extra: Ping Pong with MPI\_SendRecv}}
 We do the same analysis for the changed program utilizing \texttt{MPI\_SendRecv}. The code can be found in the appendix for this section. \\
@@ -66,22 +64,19 @@ We get the following graph from the measurements which were performed in the sam
     \label{fig:pingpongSendRecv}
 \end{figure}
 
-We get the following fits and R² values for the runs:
+We get the following fits and $R^2$ values for the runs:
 \begin{table}[h!]
     \centering
     \begin{tabular}{|l|l|l|l|}
         \hline
-        \textbf{Run Type}   & \textbf{Data Size} & \textbf{Fit Equation}                                      & \textbf{R² Value} \\ \hline
+        \textbf{Run Type}   & \textbf{Data Size} & \textbf{Fit Equation}                                      & \textbf{$R^2$ Value} \\ \hline
         \textbf{Single Node} & Small (<=32768)  & $3.51 \times 10^{-7} \cdot x + 1.19 \times 10^{-3}$        & 0.98              \\ \hline
         \textbf{Single Node} & Large (>=32768)  & $1.69 \times 10^{-7} \cdot x + 4.00 \times 10^{-3}$        & 1.00              \\ \hline
         \textbf{Two Node}    & Small (<=32768)  & $6.65 \times 10^{-7} \cdot x + 9.47 \times 10^{-4}$        & 0.98              \\ \hline
         \textbf{Two Node}    & Large (>=32768)  & $1.66 \times 10^{-7} \cdot x + 4.93 \times 10^{-3}$        & 1.00              \\ \hline
     \end{tabular}
-    \caption{Fit Equations and R² Values for Single Node and Two Node Runs}
+    \caption{Fit Equations and $R^2$ Values for Single Node and Two Node Runs}
 \end{table}
-
-\TODO{Further analysis needed? }
-
 
 
 \subsection{MM-product}
@@ -206,7 +201,7 @@ Another interesting fact can be seen when comparing the time taken for $n=1$ and
 
 Additional notes: The flag \texttt{--mem-per-cpu=<\#>GB} was set depending on the number of nodes used. For 1-24 nodes 8GB was used, for 32-48 nodes 4GB, and for 64 nodes 3GB. This had to be done to comply with QOS policy on the cluster. 
 
-\TODO{Data locality?}
+% \TODO{Data locality?}
 
 
 

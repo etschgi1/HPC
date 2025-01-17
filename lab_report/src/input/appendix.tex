@@ -24,10 +24,24 @@ For the bonus task, the following code was used:
 The matrix multiplication used the following code: 
 \lstinputlisting[language=c]{../../01_lab0/src/MM-product.c}
 
+\newpage
 \section*{Appendix - Poisson solver}
 \label{app:poisson}
 The parallel Poisson solver used the following code:\\
 \underline{Note:} Sbatch scripts used for the exercises will be included after the Poisson-solver code.\\
 \lstinputlisting[language=c]{../../02_lab1/src/MPI_Poisson.c}
-Script used for \autoref{subsec:scaling}:
+As an example for a launch-script for DB I'll present the following script used for \autoref{subsec:scaling} bellow. 
+For a exhaustive reference of all scripts / files used go to \hrefu{https://github.com/etschgi1/HPC}{GitHub}.
 \lstinputlisting[language=bash]{../../02_lab1/scripts/scaling_123.sh}
+
+\newpage
+\section*{Appendix - Finite elements simulation}
+The following code was used to solve the tasks in \autoref{sec:fempois}:\\
+\lstinputlisting[language=c]{../../03_lab2/src/MPI_Fempois.c}
+An example of a sbatch script used for the timing of the finite elements simulation in \autoref{subsec:timing_fe} is shown bellow: 
+\lstinputlisting[language=bash]{../../03_lab2/scripts/timing_22.sh}
+
+\newpage
+\section*{Appendix - Eigenvalue solution by Power Method on GPU}
+The code for the CUDA assignment was mostly given and adapted in the main function and some kernels as detailed in \autoref{sec:ev}. The full code is given bellow: 
+\lstinputlisting[language=c]{../../04_lab3/src/power_gpu.cu}
