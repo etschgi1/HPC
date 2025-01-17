@@ -33,9 +33,16 @@ A scematic overview of the iteration loop for the power method is shown bellow i
 
 \textbf{Note:} A $sqrt()$ was added in the \texttt{NormalizeW} kernel over \texttt{g\_NormW[0]}. This way we can use the output of \texttt{FindNormW} directly in the \texttt{NormalizeW} kernel.\\
 
-All of the following benchmarks are perfromed in the supplied IPython notebook on Google Collab using T4 GPUs. 
+All of the following benchmarks are perfromed in the supplied IPython notebook on Google Collab using T4 GPUs.\\ 
+
+I performed all the following measurements after throwing away the first GPU run (burner-run). The reason beaing, that the first run always took around 10 times longer than the following runs. This is likely due to some GPU initialization and setup overhead. It should also be noted, that I freed the GPU memory after each run to avoid caching effects. The basic setup in the main looks like this schematically: 
+\lstinputlisting[language=c]{input/code/03/gpu_main.c}
+Here \texttt{RunGPUPowerMethod} runs the power method on the GPU and on the top we can see the burner run. \texttt{CleanGPU} is a function that frees the allocated memory on the GPU as mentioned above.\\
+
+\Shining{Iterations to convergence needed}
 
 \subsection{Step 1: Shared vs. global memory for matrix-vector multiplication}
+As can be seen in the code snippet from above, we perfrom a 5 runs of the power method on the GPU. First with global memory and then with shared memory. This is done by using different kernels for the AV-product. The kernel used for shared memory is unchanged, while the kernel for global memory is given by the following code snippet: \TODO{snippet kernel!}
 \TODO{open}
 \subsection{Step 2: Execution time for different N and threads per block}
 I implemented a small loop to run the GPU code for 5 different $N$ with $N \in \{50, 500, 2000, 4000, 5000\}$. The resulting time benchmarks for 32, 64 and 100 threds per block can be seen in \autoref{fig:cuda_step2}. 
