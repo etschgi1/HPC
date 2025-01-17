@@ -34,7 +34,6 @@ plt.scatter(1000*shared_mem_mean,0, color="orange", edgecolor="black", s=100, la
 
 plt.ylim(-0.01, 0.01)
 plt.yticks([])
-plt.xticks(np.arange(20,max(global_mem)+10,10))
 plt.xlabel("t / ms")
 plt.legend(bbox_to_anchor=(0.38, 1))
 plt.grid(alpha=0.3)
