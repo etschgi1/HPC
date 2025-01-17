@@ -60,11 +60,9 @@ We obtain a \Shining{scatter plot} seen in \autoref{fig:cuda_step1}
 Furthermore, we obtain a mean time using global memory of $t_{global} = \SI{57.6(7)}{\milli\second}$ and by using shared memory in this kernel we get $t_{shared} = \SI{42.5(3)}{\milli\second}$. 
 This means we have time savings of $\SI{26(1)}{\percent}$ or about $\nicefrac{1}{4}$ when using shared memory compared to global memory. \\
 \Shining{Why is shared memory faster?}\\
-First and foremost we shall keep in mind, that the shared memory kernel is at a disadvantage in our comparison with the global kernel. To get insights why it still performs faster we look at benchmark results for the T4 cards to answer this question. According to a benchmark by Liu et al \footnote{Liu, Andy T., Yang, Shu-wen, Chi, Po-Han, Hsu, Pei-Hung, and Lee, Hung-yi. 
-"Mockingjay: Unsupervised Speech Representation Learning with Deep Bidirectional Transformer Encoders." 
-\textit{arXiv preprint arXiv:1903.07486}, 2019. \url{https://arxiv.org/abs/1903.07486}} not all cards have lower latency for shared memory compared to global memory. 
+First and foremost we shall keep in mind, that the shared memory kernel is at a disadvantage in our comparison with the global kernel. To get insights why it still performs faster we look at benchmark results for the T4 cards to answer this question. According to a benchmark by Liu, et al. \footnote{Liu, Andy T., Yang, Shu-wen, Chi, Po-Han, Hsu, Pei-Hung, and Lee, Hung-yi. "Mockingjay: Unsupervised Speech Representation Learning with Deep Bidirectional Transformer Encoders." \textit{arXiv preprint arXiv:1903.07486}, 2019. \url{https://arxiv.org/abs/1903.07486}} not all cards have lower latency for shared memory compared to global memory. However, as their research showed the latency for the T4 architecture is actually lower by a factor of around 2-10 (depending on the number of threads simultaniously accessing the same memory bank). Additional, the bandwidth of the shared memory is much higher (> Tb/s \footnote{I sadly couldn't find information about the exact bandwidth of the shared memory}) compared to the global memory (360 Gb/s). A lower latency and higher bandwidth for the shared memory thus makes the difference. In our problem, matrix-vector multiplication, we use the matrix rows multiple time (dimensionality of vector!) and therefore the first copy operation of the data from global to shared memory pays off. \\
+Stated differently, we sacrefice at first by copying to shared memory to gain better data locality and use this to our advantage in the actual calculation. 
 
-\TODO{Why faster? -> maybe data locality}
 \subsection{Step 2: Execution time for different N and threads per block}
 I implemented a small loop to run the GPU code for 5 different $N$ with $N \in \{50, 500, 2000, 4000, 5000\}$. The resulting time benchmarks for 32, 64 and 100 threds per block can be seen in \autoref{fig:cuda_step2}. 
 \begin{figure}[H]
@@ -73,20 +71,44 @@ I implemented a small loop to run the GPU code for 5 different $N$ with $N \in \
     \caption{Runtime for $N \in \{50, 500, 2000, 4000, 5000\}$ and for 32, 64 and 100 threads per block respectively.}
     \label{fig:cuda_step2}
 \end{figure}
-\TODO{maybe add somethin, justification whatever?!}
+Looking at the results we do not see an overall fastest option with 64- and 100-threads per block changing places. On the other hand, the 32- \& 96-threads per block option seem to be the slowest in terms of total runtime. \\
+
+\Shining{Interpretation of the results}\\
+The threads of a block are usually further subdivided into different wraps which perform the actual SIMT opertations. NVidia GPUs usually have a warp size of 32 threads which means for our first option (blue line in \autoref{fig:cuda_step2}) we only have one warp per block. Since warps are scheduled at the same time for the same operation (SIMT) pipelining within one wrap is not possible. However, multiple wraps in one block might be pipelined in order to hide latency. Therefore, it is plausible that for the second option (orange line in \autoref{fig:cuda_step2}) two wrap could hide some latency of each other. While one wrap is computing stuff using the ALU the other one might access memory already and vice versa. \\
+Given the not so clear result between the with 64- and 100-threads case we should focus the multiplicity of 32 first. It would inherently mean that we have 4 wraps and the last has 28 (32*4 - 28 = 100) threads which lay dormant. This is generally inefficient because these threads can't do work due to the software limitation imposed.\\
+Ultimately this problem is a very complex problem of latency and latency hiding and (used/unused) hardware optimization. There is no clear trend, as can be seen by the 96-threads per block option which is not really noticably better most of the time compared to the 32-threads per block option. In practice it is best to determine the most efficient thread per block size for the given problem and grid size experimentally. 
+
+
 \subsection{Step 3: Speedups}
-We measure two different scenarios: 
+Now we really dive into the benefits of GPUs over CPUs in terms of computation speed for paralellizable programs. \\
+
+We measure two different scenario's computation time: 
 \begin{enumerate}[i]
     \item excluding time of memory copy from CPU $\rightarrow$ GPU
     \item including time of memory copy from CPU $\rightarrow$ GPU
 \end{enumerate}
-After measuring \Shining{5} rounds without (i) and with (ii) memory access time we obtain the following \Shining{scatter plot} in \autoref{fig:cuda_step3}
+After measuring \Shining{5} rounds without (i) and with (ii) memory access time we obtain the following \Shining{scatter plot} in \autoref{fig:cuda_step3}. For these measurements the initial shared memory kernel was used. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{../fig/lab3/step3.png}
     \caption{Speedup of GPU implementation vs. CPU with and without memory transfer times.}
     \label{fig:cuda_step3}
 \end{figure}
-The mean speedup without memory access times is $\times 65$ and with memory access timed it comes out to $\times 24$.
-\subsection{Step 4: Explanation of the results}
-\TODO{Mach was hier Junge!!!}
+The mean speedup without memory access times is $\times 65$ and with memory access timed it comes out to $\times 24$.\\
+
+\Shining{Why is there such a huge speedup when switching to GPU?}\\
+As touched upon above, the SIMD/SIMT nature of GPUs let's them parallize work much more efficiently than a CPU. While it is true that a CPU could also use multiple threads\footnote{This is of course only "simulated" or software-level parallelisim since they are scheduled after one another by the OS!} or processes\footnote{This on the other hand is true parallelisim: e.g. MPI}, CPUs have way fewer cores (roughly a factor of 100) compared to GPUs. The high number of seperate Cores makes GPUs so fast because they all run simultaniously on different parts of the data.\\
+A short theoretical derivation may give us more insights into the speedup we might expect from a GPU: \\
+Given that a CPU (take a typical Ryzen Server CPU with 64 cores) has around 50 GFLOPS/core and a T4 GPU has 8 TFLOPS in total in single-precision. We pit them against each other (CPU without MPI -> only one core): 
+\[\text{speedup}_\text{theory} = \nicefrac{8000}{50} = 160\]
+We can expect a speedup of around 160 times without taking transfer time and other overhead of a GPU into account. This seems quite plausible because we indeed measure a speedup of a factor around 65. The reduction from 160 to 65 is likely due to the added complexity in memory operations $\rightarrow$ copying into shared memory and out again and setup times for the GPU kernels.  
+
+\subsection{Step 4: Explanation of the Results}
+
+The GPU implementation of the power method demonstrates significant performance benefits across multiple aspects. In \textbf{Step 1}, comparing global and shared memory usage, we observed a clear advantage for shared memory, with a time saving of around \( \SI{26}{\percent} \). This improvement is due to the lower latency and higher bandwidth of shared memory compared to global memory, which allows for efficient reuse of matrix rows during matrix-vector multiplication. Despite the initial cost of copying data into shared memory, the better data locality and reduced global memory accesses outweigh this overhead, leading to faster overall computation.\\
+
+In \textbf{Step 2}, the analysis of execution time for varying numbers of threads per block highlighted the importance of optimizing thread configurations. Blocks with 64 threads performed better for the biggest problem, likely due to efficient warp utilization, allowing latency hiding between multiple warps. Blocks with 32 threads suffered from insufficient pipelining as only one warp could be active at a time, while 96- and 100-thread (for the biggest problem) configurations showed diminishing returns due to inefficiencies such as underutilized threads or increased memory contention. This emphasizes the need to experimentally determine the optimal thread count for a specific problem and grid size.\\
+
+Finally, in \textbf{Step 3}, we observed a significant speedup of \( \times 65 \) without memory transfer times and \( \times 24 \) when including memory transfers, compared to the CPU implementation. The GPU's massively parallel architecture allows it to handle matrix-vector multiplications more efficiently than CPUs with limited cores. However, the reduction in speedup when including memory transfers reflects the overhead of data movement between CPU and GPU memory. The theoretical speedup derived from FLOPS capabilities aligns well with these results, validating the practical measurements. Variations in GPU convergence times were attributed to floating-point precision and non-associative operations, which differ from the deterministic order of operations on CPUs.\\
+
+Overall, the results highlight the importance of leveraging GPU-specific optimizations like shared memory and optimal thread configurations while managing overheads such as memory transfers (especially form CPU to GPU and back).
