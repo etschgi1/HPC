@@ -33,10 +33,18 @@ A scematic overview of the iteration loop for the power method is shown bellow i
 
 \textbf{Note:} A $sqrt()$ was added in the \texttt{NormalizeW} kernel over \texttt{g\_NormW[0]}. This way we can use the output of \texttt{FindNormW} directly in the \texttt{NormalizeW} kernel.\\
 
-All of the following benchmarks are perfromed in the supplied IPython notebook on Google Collab using T4 GPUs. 
+All of the following benchmarks are perfromed in the supplied IPython notebook on Google Collab using T4 GPUs.\\ 
+
+I performed all the following measurements after throwing away the first GPU run (burner-run). The reason beaing, that the first run always took around 10 times longer than the following runs. This is likely due to some GPU initialization and setup overhead. It should also be noted, that I freed the GPU memory after each run to avoid caching effects. The basic setup in the main looks like this schematically: 
+\lstinputlisting[language=c]{input/code/03/gpu_main.c}
+Here \texttt{RunGPUPowerMethod} runs the power method on the GPU and on the top we can see the burner run. \texttt{CleanGPU} is a function that frees the allocated memory on the GPU as mentioned above.\\
+
+\Shining{Iterations to convergence needed}
+\TODO{todo}
 
 \subsection{Step 1: Shared vs. global memory for matrix-vector multiplication}
-To investigate the performance impact of shared vs. global memory during the matrix vector multiplication we first need an alternative kernel which doesn't use shared memory. This kernel is given bellow: 
+As can be seen in the code snippet from above, we perfrom multiple runs of the power method on the GPU. First with global memory and then with shared memory. This is done by using different kernels for the AV-product. The kernel used for shared memory is unchanged.
+Furthermore, to investigate the performance impact of shared vs. global memory during the matrix vector multiplication we first need an alternative kernel which doesn't use shared memory. This kernel is given bellow: 
 \lstinputlisting[language=c]{input/code/03/Av_Product_Global.c}
 Subsequently, 10 measurements are perfromed with the original kernel and the changed kernel to determine the mean times depending on memory usage patterns. 
 We obtain a \Shining{scatter plot} seen in \autoref{fig:cuda_step1}
@@ -48,6 +56,7 @@ We obtain a \Shining{scatter plot} seen in \autoref{fig:cuda_step1}
 \end{figure}
 Furthermore, we obtain a mean time using global memory of $t_{global} = \SI{576(7)}{\milli\second}$ and by using shared memory in this kernel we get $t_{shared} = \SI{425(3)}{\milli\second}$. 
 This means we have time savings of $\SI{26(1)}{\percent}$ or about $\nicefrac{1}{4}$ when using shared memory compared to global memory. 
+\TODO{Why faster? -> maybe data locality}
 \subsection{Step 2: Execution time for different N and threads per block}
 I implemented a small loop to run the GPU code for 5 different $N$ with $N \in \{50, 500, 2000, 4000, 5000\}$. The resulting time benchmarks for 32, 64 and 100 threds per block can be seen in \autoref{fig:cuda_step2}. 
 \begin{figure}[H]
