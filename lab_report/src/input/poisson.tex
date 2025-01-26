@@ -2,6 +2,7 @@
 \label{sec:poisson}
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 In this section of the lab report, we will dicuss a prallel implementation of the Poisson solver. The Poisson solver is a numerical method used to solve the Poisson equation, which is a partial differential equation that is useful in many areas of physics. \\
+
 \textbf{Note:} For local testing and development I'll run the code with \texttt{mpirun} instead of the \texttt{srun} command on the cluster. \\
 
 \subsection{Building a parallel Poisson solver}
@@ -39,6 +40,7 @@ For the first part of the exercise we follow the steps lined out in the assignme
     \end{figure}
     When there is no neighbor in a certain direction, -2 (or \texttt{MPI\_PROC\_NULL}) is returned. 
     \item \textbf{Step:} We overhaul the setup to get a proper local grid for each process. Furthermore, we only save the relevant source fields in the local grid for each process. \\
+    
     \Shining{With for instance 3 processes you should see that 1 or 2 processes do not do any 
     iteration. Do you understand why?}\\
     If we have a look at the input file we see that there are only 3 source fields in the grid. This means that the process that does not have a source field in its local grid will not do any iterations (or only 1). Therefore, if we have 3 processes and the distribution of source fields as given in the input file only 1 process will do iterations if processes are ordered in x-direction and 2 if ordered in y-direction. From this we can conclude that indeed all processes have different local grids and perform different calculations. 
@@ -94,6 +96,7 @@ For this subsection we'll define the following shorthand notation: \\
         $y$:  &number of processors in y-direction\\\hline
        \end{tabular}
 \end{table}
+
 $pt = 414$ means 4 processors in a $1\times 4$ topology. \\
 
 \textbf{Note on different Versions:}\\
@@ -186,7 +189,7 @@ We investigate the number of iterations needed for convergence using the $4 \tim
     \caption{Iterations needed for convergence with different grid side lengths}
     \label{fig:iterations_125}
 \end{figure}
-We can clearly see that the number of iterations till convergence increases with the problem size. At first, I expected linear growth proportional to the number of gridpoints. However, it turns out that the number of iterations actually grow slower and in a square root like fashion. This can be seen by the linear behavior in the plot of grid-side length against iterations. 
+We can clearly see that the number of iterations till convergence increases with the problem size. At first, I expected linear growth proportional to the number of gridpoints. However, it turns out that the number of iterations actually grow slower and in a square root like fashion. This can be seen by the linear behavior in the plot of grid-side length against iterations. \\
 
 \Shining{Why is the number of iterations needed for convergence $\propto \sqrt{g}$?}\\
 Our poisson problem is a discretized system in 2D space. The condition number of the matrix we have to solve is proportional to the number of gridpoints in our system. SOR uses the spectral properties of the matrix to solve in a way such that the dominant error mode takes time proportional to the diameter of the domain to converge. This means it is proportional to $\sqrt{g} = \sqrt{n_x \cdot n_y}$.\\
@@ -203,6 +206,7 @@ With the same $4 \times 1$ topology and grid sizes of $800 \times 800$ the error
     \label{fig:error_126}
 \end{figure}
 At first the error decreases rapidly in the first few iterations to about $10^{-3}$ (logarithmic scale!). After that the error decreases more slowly until it is below floating point precision.\\ 
+
 \Shining{Note:} All calculations are done using double precision floating point numbers and only the error recording was done using single precision which leaves the step-like artifacts in the plot. Obviously these steps would also be present in the double precision error calculation, but they would be much smaller at comparable iteration numbers and only become visible at much larger iteration numbers. 
 
 \subsubsection{\Shining{Optional} - Gain performance by reducing \texttt{MPI\_Allreduce} calls}
@@ -222,6 +226,7 @@ We run the program three times with \texttt{MPI\_Allreduce} calls every 1, 10 an
     \end{tabular}
 \end{table}
 As can be clearly seen from the table we can gain around 6 \% using \texttt{MPI\_Allreduce} calls every 10 iterations and around 7 \% using \texttt{MPI\_Allreduce} calls every 100 iterations. This is a significant speedup for a very small change in the code.\\
+
 \Shining{Note:} The speedup is calculated to account for fluctuations in the runtime of the program, due to other processes running on the same machine / cluster. 
 
 \subsubsection{Reduce border communication}
@@ -235,6 +240,7 @@ Another way to reduce communication overhead is to reduce the number of border e
 \end{figure}
 
 Running the with different numbers of skipped border exchanges naturally slows down convergence, meaning we need more iterations to reach the same error. For all tested grid sizes the initial SOR version without skipping border exchanges has the fewest iterations needed to convergence and also the fastes runtime. \\
+
 \Shining{What can you conclude from the results?}\\
 We can conclude that reducing the number of border exchanges does not yield a speedup. The reason for this is that we have to calculate more iterations to converge to the solution which outweighs the gains from reduced communication overhead. Interestingly, for the $100 \times 100$ grid there exists a local minimum in time at 4 skipped border exchanges compared to 3 skipped. This is likely due to our source field distribution and thus specific to our problem.\\
 
@@ -269,7 +275,7 @@ and we change it to:
 The basic idea is to avoid y-coordinates which are not in the parity we are currently updating. 
 We measure 10 runs for a $800 \times 800$ grid and a $4 \times 1$ topology with $\omega = 1.93$ and get the following times: 
 \[t_{\text{no\_improvements}} = \SI{5.59(5)}{\second}\hspace{1cm}\text{and}\hspace{1cm}t_{\text{loop\_improvements}} = \SI{4.64(7)}{\second}\]
-So we get a minimal speedup of about 17\% by optimizing the loop which is a enormous speedup for such a small change.
+So we get a minimal speedup of about 17\% by optimizing the loop which is a enormous speedup for such a small change.\\
 
 \Shining{Why does this make such a difference}\\
 The reason for this is that we avoid unnecessary looping and if statements. This means that we have less overhead in the loop and can therefore calculate faster by skipping the unnecessary loop entries. 
@@ -286,7 +292,7 @@ As we can clearly see, the time spent in \texttt{Exchange\_Borders} is initially
 
 \Shining{Interpretation:}\\
 One would expect larger grid sizes to be more computationally expensive and we have already established that iterations take longer the bigger the grid. Communication obviously also takes longer for a larger grid because we have more data to sent. However, the circumference of a square grows linearly, while the area grows quadratically. The quadratic growth of the area is the reason for the downward shift in the curves for larger grid sizes because the communication overhead grows slower than the computational overhead for larger grids.\\
-Besides the peaks at $p=6$ and $p=12$ we see a general trend of increasing time spent in \texttt{Exchange\_Borders} increasing processor count. This is not surprising as we have more processes which have to communicate with each other and the data locality is worse for larger processor counts.
+Besides the peaks at $p=6$ and $p=12$ we see a general trend of increasing time spent in \texttt{Exchange\_Borders} increasing processor count. This is not surprising as we have more processes which have to communicate with each other and the data locality is worse for larger processor counts.\\
 
 \Shining{When is the time spent in \texttt{Exchange\_Borders} significant / comparable to computation?}\\
 As can be seen in \autoref{fig:exchange_time} the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes from the start (between 2.5 and 7.5\%). Thereafter it peaks for $p=6$ and again for $p=12$ to around 5\% to 38\% and 10\% to 54\% respectively. This means that the time spent in \texttt{Exchange\_Borders} is significant for all grid sizes and processor counts, but especially as the processor count grows.
